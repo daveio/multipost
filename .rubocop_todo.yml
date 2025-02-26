@@ -31,19 +31,19 @@ Metrics/PerceivedComplexity:
 # Configuration parameters: AllowedConstants.
 Style/Documentation:
   Exclude:
-    - "spec/**/*"
-    - "test/**/*"
-    - "app/controllers/application_controller.rb"
-    - "app/helpers/application_helper.rb"
-    - "app/mailers/application_mailer.rb"
-    - "app/models/application_record.rb"
-    - "config/application.rb"
+    - spec/**/*
+    - test/**/*
+    - app/controllers/application_controller.rb
+    - app/helpers/application_helper.rb
+    - app/mailers/application_mailer.rb
+    - app/models/application_record.rb
+    - config/application.rb
 
 # Offense count: 1
 # This cop supports safe autocorrection (--autocorrect).
 Style/IfUnlessModifier:
   Exclude:
-    - "bin/bundle"
+    - bin/bundle
 
 # Offense count: 1
 # This cop supports safe autocorrection (--autocorrect).
