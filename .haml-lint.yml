@@ -1,0 +1,5 @@
+linters:
+  LineLength:
+    max: 120
+  AllCops:
+    TargetRubyVersion: 3.4

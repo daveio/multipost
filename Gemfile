@@ -55,7 +55,9 @@ group :development, :test do
   gem 'rubocop', require: false
   gem 'rubocop-capybara', require: false
   gem 'rubocop-rails', require: false
-  # gem "rubocop-rails-omakase", require: false
+  gem 'rubocop-rails-omakase', require: false
+  gem 'html2haml', require: false
+  gem 'haml-lint', require: false
 end
 
 group :development do
@@ -86,6 +88,4 @@ gem 'argon2', '~> 2.3'
 # Used by Rodauth for JWT support
 gem 'jwt', '~> 2.9'
 
-gem "haml-rails", "~> 2.1"
-
-gem "html2haml", "~> 2.3"
+gem 'haml-rails', '~> 2.1'

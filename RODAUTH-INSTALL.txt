@@ -25,4 +25,3 @@
   * You can copy email templates and generate mailer integration by running:
 
       rails g rodauth:mailer
-

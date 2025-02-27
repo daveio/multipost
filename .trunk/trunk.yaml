@@ -18,6 +18,7 @@ runtimes:
 # This is the section where you manage your linters. (https://docs.trunk.io/check/configuration)
 lint:
   enabled:
+    - haml-lint
     - renovate@39.182.3
     - taplo@0.9.3
     - rubocop
