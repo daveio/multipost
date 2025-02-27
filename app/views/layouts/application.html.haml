@@ -2,7 +2,7 @@
 %html
   %head
     %meta{ content: "Content-Type: text/html; charset=UTF-8", name: "http-equiv" }/
-    %title= content_for(:title) || "Multipost"
+    %title= @page_title || content_for(:title) || "Multipost"
     %meta{ content: "width=device-width,initial-scale=1", name: "viewport" }/
     %meta{ content: "yes", name: "apple-mobile-web-app-capable" }/
     %meta{ content: "yes", name: "mobile-web-app-capable" }/
