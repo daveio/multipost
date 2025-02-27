@@ -35,7 +35,7 @@ ActiveRecord::Schema[8.0].define(version: 20_250_227_013_815) do
     t.integer 'status', default: 1, null: false
     t.string 'email', null: false
     t.string 'password_hash'
-    t.index ['email'], name: 'index_accounts_on_email', unique: true, where: 'status IN (1, 2)'
+    t.index [ 'email' ], name: 'index_accounts_on_email', unique: true, where: 'status IN (1, 2)'
   end
 
   add_foreign_key 'account_login_change_keys', 'accounts', column: 'id'
