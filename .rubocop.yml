@@ -13,6 +13,9 @@ plugins:
 require:
   - rubocop-capybara
 
+AllCops:
+  NewCops: enable
+
 # Omakase Ruby styling for Rails
 inherit_gem:
   rubocop-rails-omakase: rubocop.yml
