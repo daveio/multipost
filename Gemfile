@@ -87,3 +87,5 @@ gem 'argon2', '~> 2.3'
 gem 'jwt', '~> 2.9'
 
 gem "haml-rails", "~> 2.1"
+
+gem "html2haml", "~> 2.3"
