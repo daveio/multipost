@@ -85,3 +85,5 @@ gem 'tilt', '~> 2.4'
 gem 'argon2', '~> 2.3'
 # Used by Rodauth for JWT support
 gem 'jwt', '~> 2.9'
+
+gem "haml-rails", "~> 2.1"
