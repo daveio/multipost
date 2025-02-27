@@ -22,7 +22,7 @@ gem 'tailwindcss-rails'
 gem 'jbuilder'
 
 # Use Active Model has_secure_password [https://guides.rubyonrails.org/active_model_basics.html#securepassword]
-gem 'bcrypt', '~> 3.1.7'
+# gem 'bcrypt', '~> 3.1.7'
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem 'tzinfo-data', platforms: %i[windows jruby]
@@ -72,3 +72,15 @@ group :test do
   gem 'capybara'
   gem 'selenium-webdriver'
 end
+
+gem 'rodauth-rails', '~> 2.0'
+# Enables Sequel to use Active Record's database connection
+gem 'sequel-activerecord_connection', '~> 2.0'
+# Used by Rodauth for password hashing
+gem 'bcrypt', '~> 3.1'
+# Used by Rodauth for rendering built-in view and email templates
+gem 'tilt', '~> 2.4'
+# Used by Rodauth for password hashing
+gem 'argon2', '~> 2.3'
+# Used by Rodauth for JWT support
+gem 'jwt', '~> 2.9'
