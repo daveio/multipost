@@ -5,6 +5,10 @@ on:
   push:
     branches: [main]
 
+# Set read-only permissions by default
+permissions:
+  contents: read
+
 jobs:
   scan_ruby:
     runs-on: ubuntu-latest
