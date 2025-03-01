@@ -66,3 +66,5 @@ end
 
 gem "devise", "~> 4.9"
 gem "dotenv-rails", "~> 3.1"
+
+gem "mysql2", "~> 0.5.6"
