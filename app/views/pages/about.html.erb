@@ -1,4 +1,62 @@
-<div>
-  <h1 class="font-bold text-4xl">Pages#about</h1>
-  <p>Find me in app/views/pages/about.html.erb</p>
+<div class="max-w-4xl mx-auto">
+  <h1 class="font-bold text-4xl text-center mb-8">About Multipost</h1>
+
+  <div class="bg-white rounded-lg shadow-md p-8 mb-8">
+    <h2 class="text-2xl font-semibold mb-4">Our Mission</h2>
+    <p class="text-gray-700 mb-6">
+      At Multipost, we're on a mission to simplify social media management for creators, businesses, and marketers.
+      We believe that creating and sharing content should be efficient, allowing you to focus on what matters most -
+      engaging with your audience and growing your online presence.
+    </p>
+
+    <h2 class="text-2xl font-semibold mb-4">What We Offer</h2>
+    <div class="grid md:grid-cols-2 gap-6 mb-6">
+      <div class="border border-gray-200 rounded p-4">
+        <h3 class="font-semibold text-xl mb-2">Multi-Platform Publishing</h3>
+        <p class="text-gray-600">Create content once and publish it across all your social networks with customization for each platform.</p>
+      </div>
+
+      <div class="border border-gray-200 rounded p-4">
+        <h3 class="font-semibold text-xl mb-2">Content Calendar</h3>
+        <p class="text-gray-600">Plan and schedule your posts with our intuitive drag-and-drop calendar interface.</p>
+      </div>
+
+      <div class="border border-gray-200 rounded p-4">
+        <h3 class="font-semibold text-xl mb-2">Analytics Dashboard</h3>
+        <p class="text-gray-600">Track performance across platforms with unified analytics and custom reporting.</p>
+      </div>
+
+      <div class="border border-gray-200 rounded p-4">
+        <h3 class="font-semibold text-xl mb-2">Team Collaboration</h3>
+        <p class="text-gray-600">Work together with role-based permissions, approval workflows, and shared assets.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="bg-white rounded-lg shadow-md p-8 mb-8">
+    <h2 class="text-2xl font-semibold mb-4">Our Story</h2>
+    <p class="text-gray-700 mb-4">
+      Multipost was founded in 2023 by a team of social media professionals who were frustrated with
+      the complexity and time-consuming nature of managing multiple social accounts. We built the tool
+      we wished existed - one that combines power with simplicity.
+    </p>
+    <p class="text-gray-700">
+      Today, we're proud to help thousands of users save time and improve their social media presence
+      through our constantly evolving platform.
+    </p>
+  </div>
+
+  <div class="text-center">
+    <h2 class="text-2xl font-semibold mb-6">Ready to streamline your social media workflow?</h2>
+
+    <% if user_signed_in? %>
+    <p class="mb-4">You're already part of the Multipost family. Thank you for your trust!</p>
+    <a href="#" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg inline-block transition-colors">Go to Dashboard</a>
+    <% else %>
+    <div class="flex justify-center space-x-4">
+      <%= link_to "Get Started", new_user_registration_path, class: "bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition-colors" %>
+      <%= link_to "Contact Us", pages_contact_path, class: "bg-gray-200 hover:bg-gray-300 px-6 py-2 rounded-lg transition-colors" %>
+    </div>
+    <% end %>
+  </div>
 </div>
