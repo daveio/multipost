@@ -1,0 +1,1 @@
+.linters/svgo.config.mjs
