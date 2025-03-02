@@ -39,6 +39,11 @@ lint:
     - shfmt@3.6.0
     - trufflehog@3.88.14
     - yamllint@1.35.1
+  ignore:
+    - linters:
+        - brakeman
+      paths:
+        - _DEVELOPMENT-GOODIES/**
 actions:
   enabled:
     - trunk-announce
