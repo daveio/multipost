@@ -1,0 +1,67 @@
+<%= form_with(model: post, class: "contents") do |form| %>
+  <% if post.errors.any? %>
+    <div id="error_explanation" class="bg-red-50 text-red-500 px-3 py-2 font-medium rounded-md mt-3">
+      <h2><%= pluralize(post.errors.count, "error") %> prohibited this post from being saved:</h2>
+
+      <ul class="list-disc ml-6">
+        <% post.errors.each do |error| %>
+          <li><%= error.full_message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="my-5">
+    <%= form.label :text %>
+    <%= form.textarea :text, rows: 4, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": post.errors[:text].none?, "border-red-400 focus:outline-red-600": post.errors[:text].any?}] %>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :mastodon %>
+    <%= form.textarea :mastodon, rows: 4, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": post.errors[:mastodon].none?, "border-red-400 focus:outline-red-600": post.errors[:mastodon].any?}] %>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :bluesky %>
+    <%= form.textarea :bluesky, rows: 4, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": post.errors[:bluesky].none?, "border-red-400 focus:outline-red-600": post.errors[:bluesky].any?}] %>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :threads %>
+    <%= form.textarea :threads, rows: 4, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": post.errors[:threads].none?, "border-red-400 focus:outline-red-600": post.errors[:threads].any?}] %>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :x %>
+    <%= form.textarea :x, rows: 4, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": post.errors[:x].none?, "border-red-400 focus:outline-red-600": post.errors[:x].any?}] %>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :facebook %>
+    <%= form.textarea :facebook, rows: 4, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": post.errors[:facebook].none?, "border-red-400 focus:outline-red-600": post.errors[:facebook].any?}] %>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :tumblr %>
+    <%= form.textarea :tumblr, rows: 4, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": post.errors[:tumblr].none?, "border-red-400 focus:outline-red-600": post.errors[:tumblr].any?}] %>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :dreamwidth %>
+    <%= form.textarea :dreamwidth, rows: 4, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": post.errors[:dreamwidth].none?, "border-red-400 focus:outline-red-600": post.errors[:dreamwidth].any?}] %>
+  </div>
+
+  <div class="my-5">
+    <%= form.label :pillowfort %>
+    <%= form.textarea :pillowfort, rows: 4, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": post.errors[:pillowfort].none?, "border-red-400 focus:outline-red-600": post.errors[:pillowfort].any?}] %>
+  </div>
+
+  <div class="my-5 flex items-center gap-2">
+    <%= form.label :ready %>
+    <%= form.checkbox :ready, class: ["block shadow-sm rounded-md border order-first h-5 w-5", {"border-gray-400 focus:outline-blue-600": post.errors[:ready].none?, "border-red-400 focus:outline-red-600": post.errors[:ready].any?}] %>
+  </div>
+
+  <div class="inline">
+    <%= form.submit class: "rounded-md px-3.5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white inline-block font-medium cursor-pointer" %>
+  </div>
+<% end %>
