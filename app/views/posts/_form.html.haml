@@ -9,31 +9,31 @@
           %li= error.full_message
   .my-5
     = form.label :text
-    = form.textarea :text, rows: 4, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": post.errors[:text].none?, "border-red-400 focus:outline-red-600": post.errors[:text].any?}]
+    = form.textarea :text, rows: 4, class: [ "block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", { "border-gray-400 focus:outline-blue-600": post.errors[:text].none?, "border-red-400 focus:outline-red-600": post.errors[:text].any? } ]
   .my-5
     = form.label :mastodon
-    = form.textarea :mastodon, rows: 4, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": post.errors[:mastodon].none?, "border-red-400 focus:outline-red-600": post.errors[:mastodon].any?}]
+    = form.textarea :mastodon, rows: 4, class: [ "block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", { "border-gray-400 focus:outline-blue-600": post.errors[:mastodon].none?, "border-red-400 focus:outline-red-600": post.errors[:mastodon].any? } ]
   .my-5
     = form.label :bluesky
-    = form.textarea :bluesky, rows: 4, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": post.errors[:bluesky].none?, "border-red-400 focus:outline-red-600": post.errors[:bluesky].any?}]
+    = form.textarea :bluesky, rows: 4, class: [ "block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", { "border-gray-400 focus:outline-blue-600": post.errors[:bluesky].none?, "border-red-400 focus:outline-red-600": post.errors[:bluesky].any? } ]
   .my-5
     = form.label :threads
-    = form.textarea :threads, rows: 4, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": post.errors[:threads].none?, "border-red-400 focus:outline-red-600": post.errors[:threads].any?}]
+    = form.textarea :threads, rows: 4, class: [ "block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", { "border-gray-400 focus:outline-blue-600": post.errors[:threads].none?, "border-red-400 focus:outline-red-600": post.errors[:threads].any? } ]
   .my-5
     = form.label :x
-    = form.textarea :x, rows: 4, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": post.errors[:x].none?, "border-red-400 focus:outline-red-600": post.errors[:x].any?}]
+    = form.textarea :x, rows: 4, class: [ "block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", { "border-gray-400 focus:outline-blue-600": post.errors[:x].none?, "border-red-400 focus:outline-red-600": post.errors[:x].any? } ]
   .my-5
     = form.label :facebook
-    = form.textarea :facebook, rows: 4, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": post.errors[:facebook].none?, "border-red-400 focus:outline-red-600": post.errors[:facebook].any?}]
+    = form.textarea :facebook, rows: 4, class: [ "block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", { "border-gray-400 focus:outline-blue-600": post.errors[:facebook].none?, "border-red-400 focus:outline-red-600": post.errors[:facebook].any? } ]
   .my-5
     = form.label :tumblr
-    = form.textarea :tumblr, rows: 4, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": post.errors[:tumblr].none?, "border-red-400 focus:outline-red-600": post.errors[:tumblr].any?}]
+    = form.textarea :tumblr, rows: 4, class: [ "block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", { "border-gray-400 focus:outline-blue-600": post.errors[:tumblr].none?, "border-red-400 focus:outline-red-600": post.errors[:tumblr].any? } ]
   .my-5
     = form.label :dreamwidth
-    = form.textarea :dreamwidth, rows: 4, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": post.errors[:dreamwidth].none?, "border-red-400 focus:outline-red-600": post.errors[:dreamwidth].any?}]
+    = form.textarea :dreamwidth, rows: 4, class: [ "block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", { "border-gray-400 focus:outline-blue-600": post.errors[:dreamwidth].none?, "border-red-400 focus:outline-red-600": post.errors[:dreamwidth].any? } ]
   .my-5
     = form.label :pillowfort
-    = form.textarea :pillowfort, rows: 4, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": post.errors[:pillowfort].none?, "border-red-400 focus:outline-red-600": post.errors[:pillowfort].any?}]
+    = form.textarea :pillowfort, rows: 4, class: [ "block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", { "border-gray-400 focus:outline-blue-600": post.errors[:pillowfort].none?, "border-red-400 focus:outline-red-600": post.errors[:pillowfort].any? } ]
   .my-5.flex.items-center.gap-2
     = form.label :ready
     = form.checkbox :ready, class: [ "block shadow-sm rounded-md border order-first h-5 w-5", { "border-gray-400 focus:outline-blue-600": post.errors[:ready].none?, "border-red-400 focus:outline-red-600": post.errors[:ready].any? } ]

@@ -1,17 +1,17 @@
 !!!
 %html.h-full.bg-gray-50
   %head
-    %meta{:content => "text/html; charset=UTF-8", "http-equiv" => "Content-Type"}/
+    %meta{ :content => "text/html; charset=UTF-8", "http-equiv" => "Content-Type" }/
     %title= content_for(:title) || "Multipost"
-    %meta{:content => "width=device-width,initial-scale=1", :name => "viewport"}/
-    %meta{:content => "yes", :name => "apple-mobile-web-app-capable"}/
-    %meta{:content => "yes", :name => "mobile-web-app-capable"}/
+    %meta{ content: "width=device-width,initial-scale=1", name: "viewport" }/
+    %meta{ content: "yes", name: "apple-mobile-web-app-capable" }/
+    %meta{ content: "yes", name: "mobile-web-app-capable" }/
     = csrf_meta_tags
     = csp_meta_tag
     = yield :head
-    %link{:href => "/icon.png", :rel => "icon", :type => "image/png"}/
-    %link{:href => "/icon.svg", :rel => "icon", :type => "image/svg+xml"}/
-    %link{:href => "/icon.png", :rel => "apple-touch-icon"}/
+    %link{ href: "/icon.png", rel: "icon", type: "image/png" }/
+    %link{ href: "/icon.svg", rel: "icon", type: "image/svg+xml" }/
+    %link{ href: "/icon.png", rel: "apple-touch-icon" }/
     = stylesheet_link_tag :app, "data-turbo-track": "reload"
     = javascript_importmap_tags
     = yield :styles
@@ -30,7 +30,7 @@
             = link_to "Sign In", new_user_session_path, class: "hover:text-gray-300"
             = link_to "Sign Up", new_user_registration_path, class: "bg-blue-600 hover:bg-blue-700 px-3 py-1 rounded inline-block"
     - if notice
-      .bg-green-100.border.border-green-400.text-green-700.px-4.py-3.rounded.relative.mt-4.mx-auto.max-w-7xl{:role => "alert"}
+      .bg-green-100.border.border-green-400.text-green-700.px-4.py-3.rounded.relative.mt-4.mx-auto.max-w-7xl{ role: "alert" }
         %span.block.sm:inline= notice
     - if alert
       .bg-red-100.border.border-red-400.text-red-700.px-4.py-3.rounded.relative.mt-4.mx-auto.max-w-7xl{ role: "alert" }
