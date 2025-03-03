@@ -1,0 +1,19 @@
+- content_for :title, "Posts"
+.w-full
+  - if notice.present?
+    %p#notice.py-2.px-3.bg-green-50.mb-5.text-green-500.font-medium.rounded-md.inline-block= notice
+  .flex.justify-between.items-center
+    %h1.font-bold.text-4xl Posts
+    = link_to "New post", new_post_path, class: "rounded-md px-3.5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white block font-medium"
+  #posts.min-w-full.divide-y.divide-gray-200.space-y-5
+    - if @posts.any?
+      - @posts.each do |post|
+        .flex.justify-between.items-center
+          = render post
+          .space-x-2
+            = link_to "Show", post, class: "rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-50 inline-block font-medium"
+            = link_to "Edit", edit_post_path(post), class: "rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-50 inline-block font-medium"
+            .inline-block
+              = button_to "Destroy", post, method: :delete, class: "rounded-md px-3.5 py-2.5 text-white bg-red-600 hover:bg-red-500 font-medium cursor-pointer", data: { turbo_confirm: "Are you sure?" }
+    - else
+      %p.text-center.my-10 No posts found.
