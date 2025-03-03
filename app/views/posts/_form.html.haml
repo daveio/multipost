@@ -36,6 +36,6 @@
     = form.textarea :pillowfort, rows: 4, class: ["block shadow-sm rounded-md border px-3 py-2 mt-2 w-full", {"border-gray-400 focus:outline-blue-600": post.errors[:pillowfort].none?, "border-red-400 focus:outline-red-600": post.errors[:pillowfort].any?}]
   .my-5.flex.items-center.gap-2
     = form.label :ready
-    = form.checkbox :ready, class: ["block shadow-sm rounded-md border order-first h-5 w-5", {"border-gray-400 focus:outline-blue-600": post.errors[:ready].none?, "border-red-400 focus:outline-red-600": post.errors[:ready].any?}]
+    = form.checkbox :ready, class: [ "block shadow-sm rounded-md border order-first h-5 w-5", { "border-gray-400 focus:outline-blue-600": post.errors[:ready].none?, "border-red-400 focus:outline-red-600": post.errors[:ready].any? } ]
   .inline
     = form.submit class: "rounded-md px-3.5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white inline-block font-medium cursor-pointer"

@@ -33,7 +33,7 @@
     %h2.text-2xl.font-semibold.mb-6 Ready to streamline your social media workflow?
     - if user_signed_in?
       %p.mb-4 You're already part of the Multipost family. Thank you for your trust!
-      %a.bg-blue-600.hover:bg-blue-700.text-white.px-6.py-2.rounded-lg.inline-block.transition-colors{:href => "#"} Go to Dashboard
+      %a.bg-blue-600.hover:bg-blue-700.text-white.px-6.py-2.rounded-lg.inline-block.transition-colors{ href: "#" } Go to Dashboard
     - else
       .flex.justify-center.space-x-4
         = link_to "Get Started", new_user_registration_path, class: "bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg transition-colors"

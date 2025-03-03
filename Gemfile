@@ -49,8 +49,12 @@ group :development, :test do
   # Static analysis for security vulnerabilities [https://brakemanscanner.org/]
   gem "brakeman", require: false
 
+  gem "rubocop-rails", require: false
+
   # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
   gem "rubocop-rails-omakase", require: false
+
+  gem "rubocop-haml", require: false
 end
 
 group :development do
@@ -64,11 +68,11 @@ group :test do
   gem "selenium-webdriver"
 end
 
-gem "devise", "~> 4.9"
-gem "dotenv-rails", "~> 3.1"
+gem "devise"
+gem "dotenv-rails"
 
-gem "mysql2", "~> 0.5.6"
+gem "mysql2"
 
-gem "haml-rails", "~> 2.1"
+gem "haml-rails"
 
-gem "html2haml", "~> 2.3", require: false
+gem "html2haml"

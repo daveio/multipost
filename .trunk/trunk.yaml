@@ -20,19 +20,21 @@ runtimes:
 # This is the section where you manage your linters. (https://docs.trunk.io/check/configuration)
 lint:
   enabled:
-    - renovate@39.182.3
+    - haml-lint
+    - renovate@39.185.0
     - oxipng@9.1.4
     - svgo@3.3.2
     - actionlint@1.7.7
     - brakeman@5.4.0
-    - checkov@3.2.378
+    - checkov@3.2.379
     - git-diff-check
     - hadolint@2.12.1-beta
     - markdownlint@0.44.0
     - osv-scanner@1.9.2
-    - prettier@3.5.2
+    - prettier@3.5.3
     - rubocop:
         packages:
+          - rubocop-haml
           - rubocop-rails
           - rubocop-rails-omakase
     - shellcheck@0.10.0
