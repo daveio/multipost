@@ -1,9 +1,154 @@
 <% content_for :title, "New post" %>
 
-<div class="md:w-2/3 w-full">
-  <h1 class="font-bold text-4xl">New post</h1>
+<div class="max-w-4xl mx-auto mt-8 px-4 sm:px-6 lg:px-8">
+  <h1 class="text-3xl font-bold text-gray-900 mb-6">Create New Post</h1>
 
-  <%= render "form", post: @post %>
+  <%= form_with(model: @post, local: true, class: "bg-white rounded-lg shadow-sm") do |f| %>
+  <div class="p-6" data-controller="post-composer">
+    <div class="mb-6">
+      <label for="post_content" class="block text-sm font-medium text-gray-700 mb-2">Post Content</label>
+      <%= f.text_area :content,
+              class: "w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500",
+              rows: 5,
+              placeholder: "What's on your mind?",
+              data: {
+                post_composer_target: "input",
+                action: "keyup->post-composer#updateCounts input->post-composer#updateCounts paste->post-composer#updateCounts"
+              } %>
+    </div>
 
-  <%= link_to "Back to posts", posts_path, class: "ml-2 rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-50 inline-block font-medium" %>
+    <div class="space-y-4 max-w-2xl">
+      <!-- Bluesky -->
+      <div>
+        <div class="flex justify-between items-center mb-1">
+          <span class="font-medium text-gray-700 flex items-center">
+            <svg class="w-5 h-5 text-blue-500 mr-2" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 3L20 7V17L12 21L4 17V7L12 3Z" />
+            </svg>
+            Bluesky
+          </span>
+          <span class="text-sm text-gray-600" data-post-composer-target="blueskyCount">0/300</span>
+        </div>
+        <div class="h-2 bg-gray-200 rounded-full overflow-hidden">
+          <div class="h-full bg-green-500 transition-all duration-300 ease-out" style="width: 0%" data-post-composer-target="blueskyBar"></div>
+        </div>
+        <p class="mt-1 text-sm text-red-600 hidden" data-post-composer-target="blueskyParts"></p>
+      </div>
+
+      <!-- Mastodon -->
+      <div>
+        <div class="flex justify-between items-center mb-1">
+          <span class="font-medium text-gray-700 flex items-center">
+            <svg class="w-5 h-5 text-purple-500 mr-2" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M21.327 8.566c0-4.339-2.843-5.61-2.843-5.61-1.433-.658-3.894-.935-6.451-.956h-.063c-2.557.021-5.016.298-6.45.956 0 0-2.843 1.271-2.843 5.61 0 .993-.019 2.181.012 3.441.103 4.243.778 8.425 4.701 9.463 1.809.479 3.362.579 4.612.51 2.268-.126 3.541-.809 3.541-.809l-.075-1.646s-1.621.511-3.441.449c-1.804-.062-3.707-.194-3.999-2.409a4.523 4.523 0 0 1-.04-.621s1.77.433 4.014.536c1.372.063 2.658-.08 3.965-.236 2.506-.299 4.688-1.843 4.962-3.254.434-2.223.398-5.424.398-5.424zm-3.353 5.59h-2.081V9.057c0-1.075-.452-1.62-1.357-1.62-1 0-1.501.647-1.501 1.927v2.791h-2.069V9.364c0-1.28-.501-1.927-1.502-1.927-.905 0-1.357.546-1.357 1.62v5.099H6.026V8.903c0-1.074.273-1.927.823-2.558.566-.631 1.307-.955 2.228-.955 1.065 0 1.872.409 2.405 1.228l.518.869.519-.869c.533-.819 1.34-1.228 2.405-1.228.92 0 1.662.324 2.228.955.549.631.822 1.484.822 2.558v5.253z" />
+            </svg>
+            Mastodon
+          </span>
+          <span class="text-sm text-gray-600" data-post-composer-target="mastodonCount">0/500</span>
+        </div>
+        <div class="h-2 bg-gray-200 rounded-full overflow-hidden">
+          <div class="h-full bg-green-500 transition-all duration-300 ease-out" style="width: 0%" data-post-composer-target="mastodonBar"></div>
+        </div>
+        <p class="mt-1 text-sm text-red-600 hidden" data-post-composer-target="mastodonParts"></p>
+      </div>
+
+      <!-- Threads -->
+      <div>
+        <div class="flex justify-between items-center mb-1">
+          <span class="font-medium text-gray-700 flex items-center">
+            <svg class="w-5 h-5 text-gray-900 mr-2" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-1-13v6h2V7h-2zm0 8v2h2v-2h-2z" />
+            </svg>
+            Threads
+          </span>
+          <span class="text-sm text-gray-600" data-post-composer-target="threadsCount">0/500</span>
+        </div>
+        <div class="h-2 bg-gray-200 rounded-full overflow-hidden">
+          <div class="h-full bg-green-500 transition-all duration-300 ease-out" style="width: 0%" data-post-composer-target="threadsBar"></div>
+        </div>
+        <p class="mt-1 text-sm text-red-600 hidden" data-post-composer-target="threadsParts"></p>
+      </div>
+
+      <!-- X -->
+      <div>
+        <div class="flex justify-between items-center mb-1">
+          <span class="font-medium text-gray-700 flex items-center">
+            <svg class="w-5 h-5 text-gray-900 mr-2" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M13.3174 10.7749L19.1457 4H17.7646L12.7039 9.88256L8.66193 4H4L10.1566 12.6645L4 19.8369H5.38107L10.7674 13.5568L15.0678 19.8369H19.7298L13.3174 10.7749ZM11.4745 12.6225L10.8319 11.7071L5.87662 4.9697H8.00826L11.9908 10.498L12.6334 11.4135L17.8792 18.8672H15.7476L11.4745 12.6225Z" />
+            </svg>
+            X
+          </span>
+          <span class="text-sm text-gray-600" data-post-composer-target="xCount">0/280</span>
+        </div>
+        <div class="h-2 bg-gray-200 rounded-full overflow-hidden">
+          <div class="h-full bg-green-500 transition-all duration-300 ease-out" style="width: 0%" data-post-composer-target="xBar"></div>
+        </div>
+        <p class="mt-1 text-sm text-red-600 hidden" data-post-composer-target="xParts"></p>
+      </div>
+
+      <!-- Facebook -->
+      <div>
+        <div class="flex justify-between items-center mb-1">
+          <span class="font-medium text-gray-700 flex items-center">
+            <svg class="w-5 h-5 text-blue-600 mr-2" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
+            </svg>
+            Facebook
+          </span>
+          <span class="text-sm text-gray-600" data-post-composer-target="facebookCount">0/63206</span>
+        </div>
+        <div class="h-2 bg-gray-200 rounded-full overflow-hidden">
+          <div class="h-full bg-green-500 transition-all duration-300 ease-out" style="width: 0%" data-post-composer-target="facebookBar"></div>
+        </div>
+        <p class="mt-1 text-sm text-red-600 hidden" data-post-composer-target="facebookParts"></p>
+      </div>
+    </div>
+
+    <div class="mt-6">
+      <%= f.submit "Post to Selected Platforms", class: "inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2" %>
+    </div>
+  </div>
+  <% end %>
 </div>
+
+<% content_for :styles do %>
+<style>
+  .platform-limits {
+    max-width: 600px;
+  }
+
+  .progress {
+    background-color: #f0f0f0;
+    border-radius: 3px;
+    overflow: hidden;
+  }
+
+  .progress-bar {
+    transition: width 0.3s ease;
+  }
+
+  .platform-name {
+    font-weight: 500;
+  }
+
+  .character-count {
+    font-size: 0.9em;
+    color: #666;
+  }
+
+  textarea {
+    resize: vertical;
+    min-height: 120px;
+  }
+
+  .card {
+    border: none;
+    border-radius: 12px;
+  }
+
+  .btn-primary {
+    padding: 0.5rem 1.5rem;
+    border-radius: 6px;
+  }
+</style>
+<% end %>

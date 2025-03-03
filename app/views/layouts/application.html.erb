@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html class="h-full bg-gray-50">
 
 <head>
   <title><%= content_for(:title) || "Multipost" %></title>
@@ -21,9 +21,11 @@
   <%# Includes all stylesheet files in app/assets/stylesheets %>
   <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
   <%= javascript_importmap_tags %>
+
+  <%= yield :styles %>
 </head>
 
-<body>
+<body class="h-full">
   <header class="bg-gray-800 text-white shadow-md">
     <nav class="container mx-auto px-5 py-3 flex justify-between items-center">
       <div class="font-bold text-xl">
