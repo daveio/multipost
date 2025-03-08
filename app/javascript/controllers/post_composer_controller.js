@@ -77,8 +77,7 @@ export default class extends Controller {
 
     // Update parts count
     if (parts > 1) {
-      this[`${platform}PartsTarget`].textContent =
-        `Will be split into ${parts} posts`;
+      this[`${platform}PartsTarget`].textContent = `Will be split into ${parts} posts`;
       this[`${platform}PartsTarget`].classList.remove("hidden");
     } else {
       this[`${platform}PartsTarget`].classList.add("hidden");
