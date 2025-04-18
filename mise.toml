@@ -1,11 +1,11 @@
 [env]
-MULTIPOST_MISE_ACTIVE = "true"
+MULTIPOST_MISE_ACTIVE = 'true'
 
 [settings]
 env_file = '.env'
 
 [tools]
-ruby = '3.4.2'
+ruby = '3.4.3'
 
 [tasks]
-build = ["bundle install", "bundle exec rake build"]
+build = ['bundle install', 'bundle exec rake build']
