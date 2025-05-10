@@ -96,7 +96,7 @@ Inspired by Buffer and Hootsuite's posting interfaces, adapted with the Catppucc
 
 ## Further prompt which became necessary
 
-Don’t use JSX (or in this case, TSX). Alter the codebase to avoid it. In fact, I asked you not to use React, but you seem to be using it, as well as a bunch of Radix UI components; we should be using DaisyUI instead, with the Catppucin theming from https://github.com/catppuccin/daisyui and https://github.com/catppuccin/tailwindcss .
+Don’t use JSX (or in this case, TSX). Alter the codebase to avoid it. In fact, I asked you not to use React, but you seem to be using it, as well as a bunch of Radix UI components; we should be using DaisyUI instead, with the Catppucin theming from [https://github.com/catppuccin/daisyui](https://github.com/catppuccin/daisyui) and [https://github.com/catppuccin/tailwindcss](https://github.com/catppuccin/tailwindcss) .
 
 Do things the Vue way, instead of forcing TSX, React, and React components on Nuxt. Nuxt is a Vue framework.
 
@@ -125,10 +125,10 @@ I will reiterate and expand on the original instructions -
 - DO NOT use shadcn or Radix UI.
   - DO use DaisyUI instead.
   - DO use the Catppuccin theming from:
-    - https://github.com/catppuccin/daisyui
-    - https://github.com/catppuccin/tailwindcss
+    - [https://github.com/catppuccin/daisyui](https://github.com/catppuccin/daisyui)
+    - [https://github.com/catppuccin/tailwindcss](https://github.com/catppuccin/tailwindcss)
   - DO use the Catppuccin color palette.
 - The following libraries may be helpful, but feel free to use others if they are more appropriate:
-  - https://nuxt.com/modules/fonts
-  - https://nuxt.com/modules/icon
-  - https://nuxt.com/modules/image
+  - [https://nuxt.com/modules/fonts](https://nuxt.com/modules/fonts)
+  - [https://nuxt.com/modules/icon](https://nuxt.com/modules/icon)
+  - [https://nuxt.com/modules/image](https://nuxt.com/modules/image)
