@@ -14,22 +14,22 @@ Multipost is a web app which allows a user to crosspost to multiple social netwo
 
 ### Code Style and Libraries
 
-- Do use TypeScript.
-- Do not use React.
-  - Do not use React components.
-  - Do not use React libraries.
-  - Do not use JSX or TSX.
+- DO use TypeScript.
+- DO NOT use React.
+  - DO NOT use React components.
+  - DO NOT use React libraries.
+  - DO NOT use JSX or TSX.
 - Do things the Vue way, instead of forcing TSX, React, and React components on Nuxt.
-- Do not use shadcn.
-  - Use DaisyUI instead.
-  - Use the Catppuccin theming from:
+- DO NOT use shadcn or Radix UI.
+  - DO use DaisyUI instead.
+  - DO use the Catppuccin theming from:
     - [https://github.com/catppuccin/daisyui](https://github.com/catppuccin/daisyui)
     - [https://github.com/catppuccin/tailwindcss](https://github.com/catppuccin/tailwindcss)
-  - Use the Catppuccin color palette.
-  - Use the Catppuccin icon set.
+  - DO use the Catppuccin color palette.
 - The following libraries may be helpful, but feel free to use others if they are more appropriate:
-  - [https://github.com/nuxt/auth](https://github.com/nuxt/auth)
-  - [https://github.com/nuxt/api](https://github.com/nuxt/api)
+  - [https://nuxt.com/modules/fonts](https://nuxt.com/modules/fonts)
+  - [https://nuxt.com/modules/icon](https://nuxt.com/modules/icon)
+  - [https://nuxt.com/modules/image](https://nuxt.com/modules/image)
 
 ## Social Networks
 
@@ -104,7 +104,7 @@ I do like the design; try not to modify it too much, but the priority is to migr
 
 I will reiterate and expand on the original instructions -
 
-### Platform
+### Platform, again and with more detail
 
 - Nuxt, latest version.
   - All dependencies should be their latest version where possible, or the most recent version possible.
@@ -114,7 +114,7 @@ I will reiterate and expand on the original instructions -
   - Also allow the API to be called outside the frontend.
   - API uses the same JWT authentication as the frontend.
 
-### Code Style and Libraries
+### Code Style and Libraries, again and with more detail
 
 - DO use TypeScript.
 - DO NOT use React.
