@@ -4,10 +4,14 @@ Multipost is a web app which allows a user to crosspost to multiple social netwo
 
 ## Platform
 
-- This should be deployed as a Ruby on Rails app.
-- Set it up for a SQLite database.
-- JavaScript should be implemented using Stimulus.
-- Use Ruby idioms and Rails patterns and conventions.
+- Nuxt, latest version
+  - All dependencies should be their latest version where possible, or the most recent version possible
+  - Feel free to add Nuxt add-ons
+  - Don’t use React
+- JWT-based authentication
+- An API which the frontend uses
+  - Also allow the API to be called outside the frontend
+  - Using the same JWT authentication as the frontend
 
 ## Social Networks
 
