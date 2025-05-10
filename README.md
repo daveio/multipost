@@ -93,3 +93,42 @@ Inspired by Buffer and Hootsuite's posting interfaces, adapted with the Catppucc
 - Theme: Catppuccin color palette (implemented via [catppuccin/daisyui](https://github.com/catppuccin/daisyui) and [catppuccin/tailwindcss](https://github.com/catppuccin/tailwindcss))
 - Layout: Clean, organized posting interface with clear platform selection and preview capabilities
 - Components: Modern form elements, platform-specific preview cards, media upload area with conversion status indicators
+
+## Further prompt which became necessary
+
+Don’t use JSX (or in this case, TSX). Alter the codebase to avoid it. In fact, I asked you not to use React, but you seem to be using it, as well as a bunch of Radix UI components; we should be using DaisyUI instead, with the Catppucin theming from https://github.com/catppuccin/daisyui and https://github.com/catppuccin/tailwindcss .
+
+Do things the Vue way, instead of forcing TSX, React, and React components on Nuxt. Nuxt is a Vue framework.
+
+I do like the design; try not to modify it too much, but the priority is to migrate away from TSX, React, and React components.
+
+I will reiterate and expand on the original instructions -
+
+### Platform
+
+- Nuxt, latest version.
+  - All dependencies should be their latest version where possible, or the most recent version possible.
+  - Feel free to add Nuxt add-ons.
+- JWT-based authentication.
+- An API which the frontend uses.
+  - Also allow the API to be called outside the frontend.
+  - API uses the same JWT authentication as the frontend.
+
+### Code Style and Libraries
+
+- DO use TypeScript.
+- DO NOT use React.
+  - DO NOT use React components.
+  - DO NOT use React libraries.
+  - DO NOT use JSX or TSX.
+- Do things the Vue way, instead of forcing TSX, React, and React components on Nuxt.
+- DO NOT use shadcn or Radix UI.
+  - DO use DaisyUI instead.
+  - DO use the Catppuccin theming from:
+    - https://github.com/catppuccin/daisyui
+    - https://github.com/catppuccin/tailwindcss
+  - DO use the Catppuccin color palette.
+- The following libraries may be helpful, but feel free to use others if they are more appropriate:
+  - https://nuxt.com/modules/fonts
+  - https://nuxt.com/modules/icon
+  - https://nuxt.com/modules/image
