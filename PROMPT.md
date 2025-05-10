@@ -1,77 +1,27 @@
-# Multipost
+I want you to build ONLY the frontend for the spec described in the attached paste. Make it very visually appealing but functional, with plenty of real time feedback, especially when it comes to character count. Optimise it for desktop use, not mobile, but make it work on mobile too. Assume the backend will speak GraphQL and JSON. Create a mock backend and allow it to use it when configured to do so, so that it can be browsed in development before we've had a chance to write the backend.
 
-I want you to build ONLY the frontend for the spec described in the attached paste. Use the `@nuxt/ui` UI kit. Make it very visually appealing but functional, with plenty of real time feedback, especially when it comes to character count. Optimise it for desktop use, not mobile, but make it work on mobile too. I also want you to create a README which explains all of the backend endpoints which are required - what they need to return, their paths, details about them. Everything I will need to implement the backend myself, and/or get AI to work on it without any other insight into the codebase, just the README and **nothing** else. Assume the backend will speak GraphQL and JSON. Create a mock backend and allow it to use it when configured to do so, so that it can be browsed in development before we've had a chance to write the backend.
+---
+
+# Multipost
 
 Multipost is a web app which allows a user to crosspost to multiple social networks at the same time, and adjusts the post for each network.
 
+The frontend will not talk to social networks or AI services directly. Instead, it will use the API provided by the backend, which will handle all communication with third-party endpoints.
+
 ## Platform
 
-- Nuxt, latest version.
-  - Create a new Nuxt project using `bun create nuxt@latest`.
-    - Enable the `ui` module.
-    - Enable the `fonts` module.
-    - Enable the `icon` module.
-    - Enable the `image` module.
-    - Enable the `eslint` module.
-    - Enable the `scripts` module.
-    - Enable the `test-utils` module.
-  - All dependencies should be their latest version where possible, or the most recent version possible.
-  - Feel free to add Nuxt modules.
+- All dependencies should be their latest version where possible, or the most recent version possible.
 - JWT-based authentication.
 - An API which the frontend uses.
   - Also allow the API to be called outside the frontend.
   - API uses the same JWT authentication as the frontend.
 
-### Running the app
-
-Start the dev server with `bun run dev`.
-
-### `package.json`
-
-```json
-{
-  "name": "multipost-frontend",
-  "private": true,
-  "type": "module",
-  "scripts": {
-    "build": "nuxt build",
-    "dev": "nuxt dev",
-    "generate": "nuxt generate",
-    "preview": "nuxt preview",
-    "postinstall": "nuxt prepare"
-  },
-  "dependencies": {
-    "@nuxt/eslint": "1.3.0",
-    "@nuxt/fonts": "0.11.3",
-    "@nuxt/icon": "1.12.0",
-    "@nuxt/image": "1.10.0",
-    "@nuxt/scripts": "0.11.6",
-    "@nuxt/test-utils": "3.18.0",
-    "@nuxt/ui": "3.1.1",
-    "@unhead/vue": "^2.0.8",
-    "eslint": "^9.26.0",
-    "nuxt": "^3.17.2",
-    "typescript": "^5.8.3",
-    "vue": "^3.5.13",
-    "vue-router": "^4.5.1"
-  },
-  "trustedDependencies": ["@parcel/watcher", "@tailwindcss/oxide", "esbuild", "sharp", "unrs-resolver", "vue-demi"],
-  "packageManager": "bun@1.2.13"
-}
-```
-
 ### Code Style and Libraries
 
 - DO use TypeScript.
-- Do use the [https://github.com/nuxt/ui](https://github.com/nuxt/ui) UI kit.
 - DO use the Catppuccin theming from:
-  - [https://github.com/catppuccin/daisyui](https://github.com/catppuccin/daisyui)
   - [https://github.com/catppuccin/tailwindcss](https://github.com/catppuccin/tailwindcss)
   - DO use the Catppuccin color palette.
-- The following libraries may be helpful, but feel free to use others if they are more appropriate:
-  - [https://nuxt.com/modules/fonts](https://nuxt.com/modules/fonts)
-  - [https://nuxt.com/modules/icon](https://nuxt.com/modules/icon)
-  - [https://nuxt.com/modules/image](https://nuxt.com/modules/image)
 
 ## Social Networks
 
@@ -131,7 +81,6 @@ Inspired by Buffer and Hootsuite's posting interfaces, adapted with the Catppucc
 
 ### Style Guide
 
-- Design System: DaisyUI with Tailwind CSS v4
 - Theme: Catppuccin color palette, dark mode (Latté variant) and light mode
 - Layout: Clean, organized posting interface with clear platform selection and preview capabilities
 - Components: Modern form elements, platform-specific preview cards, media upload area with conversion status indicators
