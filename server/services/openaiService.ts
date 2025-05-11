@@ -53,34 +53,38 @@ export async function splitPost(
     try {
       const result = JSON.parse(responseContent);
       
-      // Ensure we have an array of posts
-      let splitTextArray: string[];
+      // Validate the expected response structure
+      if (!result.posts) {
+        throw new Error(`OpenAI response is missing 'posts' field. Response was: ${JSON.stringify(result)}`);
+      }
       
-      if (result.posts) {
-        if (Array.isArray(result.posts)) {
-          splitTextArray = result.posts;
-        } else if (typeof result.posts === 'string') {
-          splitTextArray = [result.posts];
+      // Ensure posts is an array
+      if (!Array.isArray(result.posts)) {
+        if (typeof result.posts === 'string') {
+          // Single post string is acceptable, convert to array
+          result.posts = [result.posts];
         } else {
-          console.warn("Invalid posts format from OpenAI:", result.posts);
-          splitTextArray = [content];
+          // Invalid format
+          throw new Error(`OpenAI 'posts' field must be an array or string. Received: ${typeof result.posts}`);
         }
-      } else {
-        splitTextArray = [content];
+      }
+      
+      // Validate that all posts are strings
+      for (let i = 0; i < result.posts.length; i++) {
+        if (typeof result.posts[i] !== 'string') {
+          throw new Error(`Post at index ${i} is not a string. Type: ${typeof result.posts[i]}, Value: ${JSON.stringify(result.posts[i])}`);
+        }
       }
       
       return {
-        splitText: splitTextArray,
+        splitText: result.posts,
         strategy,
-        reasoning: result.reasoning || "Split based on platform character limits"
+        reasoning: result.reasoning || "No reasoning provided"
       };
-    } catch (parseError) {
-      console.error("Error parsing OpenAI response:", responseContent, parseError);
-      return {
-        splitText: [content],
-        strategy,
-        reasoning: "Error parsing AI response, using original content"
-      };
+    } catch (parseError: any) {
+      console.error("Error processing OpenAI response:", parseError);
+      // Throw with more details to be handled upstream
+      throw new Error(`Invalid OpenAI response format: ${parseError.message}. Raw response: ${responseContent}`);
     }
   } catch (error: any) {
     console.error("Error splitting post:", error);
@@ -134,6 +138,7 @@ export async function generateSplittingOptions(
     for (const platform of platforms) {
       if (content.length > platformLimits[platform]) {
         try {
+          // Generate split for this strategy and platform
           results[strategy][platform] = await splitPost(
             content,
             platformLimits[platform],
@@ -141,15 +146,11 @@ export async function generateSplittingOptions(
           );
         } catch (error: any) {
           console.error(`Error generating splitting for ${platform} with ${strategy}:`, error);
-          // Create a fallback if the API fails
-          results[strategy as SplittingStrategy][platform] = {
-            splitText: [content],
-            strategy: strategy as SplittingStrategy,
-            reasoning: "Failed to generate splitting. Using original content."
-          };
+          // Propagate the error up with detailed information
+          throw new Error(`Failed to generate split for ${platform} using ${strategy} strategy: ${error.message}`);
         }
       } else {
-        // No splitting needed for this platform
+        // No splitting needed for this platform - use authentic data
         results[strategy as SplittingStrategy][platform] = {
           splitText: [content],
           strategy: strategy as SplittingStrategy,

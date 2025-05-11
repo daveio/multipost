@@ -92,6 +92,7 @@ export function AISplitPreview({
     
     setIsLoading(true);
     setError(null);
+    setSplitResults(null);
     setProgressStage('Initializing AI split');
     setProgressPercent(5);
     
@@ -107,59 +108,41 @@ export function AISplitPreview({
       updateProgress('Preparing splitting strategies...', 20);
       await new Promise(r => setTimeout(r, 500)); // UI smoothness
       
-      // Initialize the results structure with empty objects for all strategies
-      const results: Record<SplittingStrategy, Record<string, SplitPostResult>> = {
-        [SplittingStrategy.SEMANTIC]: {},
-        [SplittingStrategy.SENTENCE]: {}, 
-        [SplittingStrategy.RETAIN_HASHTAGS]: {}, 
-        [SplittingStrategy.PRESERVE_MENTIONS]: {}, 
-        [SplittingStrategy.THREAD_OPTIMIZED]: {}
-      };
+      // Get the first selected strategy (we'll make one API call at a time)
+      if (selectedStrategies.length === 0) {
+        throw new Error("No splitting strategies selected");
+      }
       
-      for (let i = 0; i < selectedStrategies.length; i++) {
-        const strategy = selectedStrategies[i];
-        const progressBase = 20 + (i * (60 / selectedStrategies.length));
-        
-        updateProgress(`Generating ${getStrategyName(strategy)} split (${i+1}/${selectedStrategies.length})...`, progressBase);
-        console.log(`Requesting split for strategy: ${strategy}`);
-        
-        try {
-          // Call the API for each selected strategy individually
-          const strategyResult = await splitPost(content, strategy);
-          
-          updateProgress(`Processing ${getStrategyName(strategy)} results...`, progressBase + 15);
-          console.log("Strategy result:", strategy, strategyResult);
-          
-          if (strategyResult && Object.keys(strategyResult).length > 0 && strategyResult[strategy]) {
-            // Update our initialized structure with the response data
-            results[strategy] = strategyResult[strategy];
-          }
-        } catch (err) {
-          console.error(`Error with strategy ${strategy}:`, err);
-          // Continue with other strategies even if one fails
-        }
+      const strategy = selectedStrategies[0];
+      updateProgress(`Generating ${getStrategyName(strategy)} split...`, 40);
+      console.log(`Requesting split for strategy: ${strategy}`);
+      
+      // Call the API for the selected strategy
+      const strategyResult = await splitPost(content, strategy);
+      
+      updateProgress(`Processing results...`, 80);
+      console.log("Strategy result:", strategy, strategyResult);
+      
+      if (!strategyResult || Object.keys(strategyResult).length === 0) {
+        throw new Error("API returned empty results");
       }
       
       updateProgress('Finalizing results...', 95);
+      setSplitResults(strategyResult);
+      updateProgress('Split generation complete!', 100);
       
-      // Check if we got any results
-      if (Object.keys(results).length > 0) {
-        setSplitResults(results);
-        updateProgress('Split generation complete!', 100);
-      } else {
-        setError("No valid results were returned from any strategy");
-        toast({
-          title: 'Error',
-          description: 'Failed to generate split options. All strategies failed.',
-          variant: 'destructive',
-        });
-      }
     } catch (error: any) {
       console.error('Failed to generate split options:', error);
-      setError(error.message || 'Failed to generate split options');
+      
+      // Extract detailed error message
+      let errorMessage = error.message || 'Failed to generate split options';
+      
+      // Display a detailed error message with helpful debugging info
+      setError(`Error: ${errorMessage}. Please try again with a different strategy.`);
+      
       toast({
-        title: 'Error',
-        description: 'Failed to generate split options. Please try again.',
+        title: 'Error Generating Splits',
+        description: errorMessage,
         variant: 'destructive',
       });
     } finally {
@@ -283,18 +266,14 @@ export function AISplitPreview({
     
     if (!splitResults[strategy]) {
       console.log("Strategy not found in results");
-      
-      // Create a fallback manual split
-      const limit = characterStats.find(s => s.platform === platformId)?.limit || 300;
-      
-      // Simple fallback strategy
-      const fallbackResult: SplitPostResult = {
-        splitText: createManualSplit(content, limit),
-        strategy: strategy,
-        reasoning: "Fallback: Manual splitting by character limit"
-      };
-      
-      return renderSplitResult(fallbackResult, platformId);
+      return (
+        <div className="p-4 text-center text-gray-500">
+          <AlertTriangle className="mx-auto h-8 w-8 text-amber-500 mb-3" />
+          <h3 className="text-base font-medium text-gray-800 mb-2">Strategy Not Available</h3>
+          <p>The requested splitting strategy could not be generated.</p>
+          <p className="mt-2">Please try another strategy or try again later.</p>
+        </div>
+      );
     }
     
     const result = splitResults[strategy][platformId];
@@ -307,49 +286,37 @@ export function AISplitPreview({
       
       if (availablePlatforms.length > 0) {
         const fallbackResult = splitResults[strategy][availablePlatforms[0]];
-        console.log("Using fallback result:", fallbackResult);
+        console.log("Using result from another platform:", fallbackResult);
         
         if (fallbackResult) {
-          return renderSplitResult(fallbackResult, platformId);
+          return (
+            <div>
+              <Alert className="mb-4 bg-yellow-50 border-yellow-200">
+                <AlertDescription>
+                  No specific split found for {getPlatformName(platformId)}. 
+                  Showing split for {getPlatformName(availablePlatforms[0])} instead.
+                </AlertDescription>
+              </Alert>
+              {renderSplitResult(fallbackResult, platformId)}
+            </div>
+          );
         }
       }
       
-      // If still no result, create a manual split
-      const limit = characterStats.find(s => s.platform === platformId)?.limit || 300;
-      
-      // Simple fallback strategy
-      const manualFallbackResult: SplitPostResult = {
-        splitText: createManualSplit(content, limit),
-        strategy: strategy,
-        reasoning: "Fallback: Manual splitting by character limit"
-      };
-      
-      return renderSplitResult(manualFallbackResult, platformId);
+      return (
+        <div className="p-4 text-center text-gray-500">
+          <AlertTriangle className="mx-auto h-8 w-8 text-amber-500 mb-3" />
+          <h3 className="text-base font-medium text-gray-800 mb-2">Platform Not Available</h3>
+          <p>Split results for {getPlatformName(platformId)} are not available.</p>
+          <p className="mt-2">Please try a different platform.</p>
+        </div>
+      );
     }
     
     return renderSplitResult(result, platformId);
   };
   
-  // Helper function to create manual splits
-  const createManualSplit = (text: string, limit: number): string[] => {
-    const totalLength = text.length;
-    
-    if (totalLength <= limit) {
-      return [text];
-    }
-    
-    // Simple splitting by character limit
-    const numPosts = Math.ceil(totalLength / limit);
-    const splitArray: string[] = [];
-    
-    for (let i = 0; i < numPosts; i++) {
-      const startIdx = i * limit;
-      const endIdx = Math.min(startIdx + limit, totalLength);
-      splitArray.push(text.substring(startIdx, endIdx));
-    }
-    
-    return splitArray;
-  };
+
   
   // Helper function to render a split result
   const renderSplitResult = (result: SplitPostResult, platformId: string) => {
@@ -358,23 +325,46 @@ export function AISplitPreview({
     // Ensure we have valid splitText data to render
     let splitTextArray: string[] = [];
     
-    // Handle different possible scenarios
-    if (result && result.splitText) {
-      if (Array.isArray(result.splitText) && result.splitText.length > 0) {
-        // Normal case - array of strings
-        splitTextArray = result.splitText;
-      } else if (typeof result.splitText === 'string') {
-        // Single string case
-        splitTextArray = [result.splitText];
-      } else {
-        // Fallback to manual split
-        splitTextArray = createManualSplit(content, 
-          characterStats.find(s => s.platform === platformId)?.limit || 300);
-      }
+    // Validate the expected data structure
+    if (!result || !result.splitText) {
+      console.error("Invalid split result data:", result);
+      return (
+        <div className="p-4 text-center text-gray-600">
+          <AlertTriangle className="mx-auto h-8 w-8 text-red-500 mb-3" />
+          <h3 className="text-base font-medium text-gray-800 mb-2">Invalid Data Structure</h3>
+          <p>The API returned an invalid data structure.</p>
+          <details className="mt-4 text-left bg-gray-50 p-2 rounded text-xs">
+            <summary>View Technical Details</summary>
+            <pre className="mt-2 whitespace-pre-wrap">
+              {JSON.stringify(result, null, 2)}
+            </pre>
+          </details>
+        </div>
+      );
+    }
+    
+    // Convert string to array if needed
+    if (Array.isArray(result.splitText)) {
+      splitTextArray = result.splitText;
+    } else if (typeof result.splitText === 'string') {
+      // Handle single string case
+      splitTextArray = [result.splitText];
     } else {
-      // Complete fallback case
-      splitTextArray = createManualSplit(content, 
-        characterStats.find(s => s.platform === platformId)?.limit || 300);
+      // Invalid type case
+      console.error("Invalid splitText type:", typeof result.splitText);
+      return (
+        <div className="p-4 text-center text-gray-600">
+          <AlertTriangle className="mx-auto h-8 w-8 text-red-500 mb-3" />
+          <h3 className="text-base font-medium text-gray-800 mb-2">Invalid Data Type</h3>
+          <p>Expected string or array but received: {typeof result.splitText}</p>
+          <details className="mt-4 text-left bg-gray-50 p-2 rounded text-xs">
+            <summary>View Technical Details</summary>
+            <pre className="mt-2 whitespace-pre-wrap">
+              {JSON.stringify(result, null, 2)}
+            </pre>
+          </details>
+        </div>
+      );
     }
     
     return (
