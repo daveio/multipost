@@ -6,38 +6,46 @@
 
 ## Future Features
 
-- Add a 'Connection Health' widget showing real-time API integration status.
-- Add a secret 'Synthwave Mode' with everything visually ridiculous.
-- Add animated thread navigation indicators.
-- Add emoji-based thread mood tagging system.
-- Add media transcoding for different platform requirements.
-- Add playful loading animations with platform-specific mascots.
-- Add subtle micro-interactions for improved user engagement.
-- Add subtle micro-interactions for thread navigation.
-- Build account management system for multiple accounts per platform.
-- Create a configurable notification system for post sharing status.
-- Create a mood-based content recommendation system.
-- Create a personalized thread recommendation engine.
-- Create a thread complexity score visualization.
-- Create an elegant onboarding tutorial with interactive walkthrough.
-- Create an interactive 'Platform Compatibility Wizard' for optimizing cross-platform posts.
-- Create an optional progressive webapp with an interface adjusted for mobile devices.
-  - Don't change the normal desktop interface.
-- Design a subtle toast notification system for API connection events.
-- Develop a collaborative thread editing mode.
-- Develop a color-coded platform compatibility indicator.
-- Develop a shareable config export/import feature.
-- Develop a 'Social Media Energy Meter' showing content engagement potential.
-- Develop an accessibility-focused keyboard navigation mode.
-- Don't change the normal desktop interface.
-- Implement a 'Copy Thread Preview' feature.
-- Implement a personalized platform recommendation engine based on content type.
-- Implement a playful 'thread mood' color-coding system.
-- Implement a 'Preview Across Platforms' visual simulator.
-- Implement a thread preview sharing widget with one-click social share.
-- Implement an intelligent content preview optimization tool.
-- Implement responsive design breakpoints for better mobile and tablet UI.
-- Integrate with actual social media APIs (Bluesky, Mastodon, Threads, Nostr).
+- Add a 'Connection Health' widget showing real-time API integration status
+- Add a playful 'Character Count Mood Indicator' that changes emoji based on remaining characters
+- Add a playful 'Content Chameleon' feature that suggests platform-specific emoji and tone adjustments
+- Add a secret 'Synthwave Mode' with everything visually ridiculous
+- Add animated thread navigation indicators
+- Add emoji-based thread mood tagging system
+- Add media transcoding for different platform requirements
+- Add playful loading animations with platform-specific mascots
+- Add subtle micro-interactions for improved user engagement
+- Add subtle micro-interactions for thread navigation
+- Build account management system for multiple accounts per platform
+- Create a 'Copy Formatting' button with smart clipboard integration
+- Create a configurable notification system for post sharing status
+- Create a mood-based content recommendation system
+- Create a personalized thread recommendation engine
+- Create a thread complexity score visualization
+- Create an elegant onboarding tutorial with interactive walkthrough
+- Create an intuitive 'Platform Compatibility Wizard' with step-by-step UI guidance
+- Create an optional progressive webapp with an interface adjusted for mobile devices
+  - Don't change the normal desktop interface
+- Design a subtle toast notification system for API connection events
+- Develop a 'Cross-Platform Preview' modal showing how the post will look on different social networks
+- Develop a 'Social Media Energy Meter' showing content engagement potential
+- Develop a collaborative thread editing mode
+- Develop a color-coded platform compatibility indicator
+- Develop a real-time 'Connection Health' widget with animated status indicators
+- Develop a shareable config export/import feature
+- Develop an accessibility-focused keyboard navigation mode
+- Gamify the platform with achievement badges for successful cross-platform posts
+- Implement a 'Copy Thread Preview' feature
+- Implement a 'Preview Across Platforms' visual simulator
+- Implement a dynamic platform icon animation when hovering over platform switches
+- Implement a personalized platform recommendation engine based on content type
+- Implement a playful 'thread mood' color-coding system
+- Implement a thread preview sharing widget with one-click social share
+- Implement an AI-powered 'Post Optimization Suggestions' tooltip with real-time feedback
+- Implement an intelligent content preview optimization tool
+- Implement responsive design breakpoints for better mobile and tablet UI
+- Implement a 'Social Media Energy Dashboard' with animated engagement visualizations
+- Integrate with actual social media APIs (Bluesky, Mastodon, Threads, Nostr)
 
 ## Review Pass
 
@@ -64,38 +72,13 @@
   - Document everything you do in `README.md`.
     - Also include how to run the tests.
 
-## Threading Indicator Fixes
-
-- Whenever threading indicators are used, make sure two newlines are used beforehand.
-- OpenAI is being told to add thread indicators with two newlines.
-  - We should also check that they actually do that.
-    - If they don't, correct it.
-
-### Good
-
-```plaintext
-Blake's 7 featured early representation with diverse casting and strong female characters. Its finale is one of TV's most shocking. Available on streaming platforms—give it three episodes. Fair warning: don't get attached to anyone.
-
-🧵 2 of 3
-```
-
-### Bad
-
-```plaintext
-Blake's 7 featured early representation with diverse casting and strong female characters. Its finale is one of TV's most shocking. Available on streaming platforms—give it three episodes. Fair warning: don't get attached to anyone. 🧵 2 of 3
-```
-
-- Update the tests if neceesary, run them, and make sure they pass.
-  - If they don't, fix the code or the tests until they do.
-- Document all of your changes, design, code, and tests, in `README.md`.
-
 ## Theming
 
 - Use the `catppuccin` theme framework for the look and feel of the site.
 - Implementation details can be found in:
   - The `@catppuccin/palette` `npm` package.
   - Elsewhere in the [`catppuccin`](https://github.com/catppuccin) GitHub organisation.
-  - Feel free to install this package and reference it for the colours.
+  - Feel free to install the `@catppuccin/palette` package from `npm` and reference it directly or indirectly for the colours.
 - Implement the four theme options:
   - Light theme:
     - `latte`
@@ -108,3 +91,8 @@ Blake's 7 featured early representation with diverse casting and strong female c
   - Ensure the theme switcher works properly.
 - Make sure that we are left with a visually appealing result in all four theme modes.
   - Previous attempts to implement a dark theme looked extremely unattractive and were almost unusable.
+- Default to dark mode.
+  - Use `Catppuccin Frappé` as the default dark mode.
+  - Take a screenshot and ensure everything looks right.
+- Update any appropriate tests and ensure they pass.
+- Document all theme-related work, config, and changes extensively in the `README.md`.
