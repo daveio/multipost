@@ -1,5 +1,7 @@
 // @ts-nocheck
-/* This file is intentionally not type-checked because of JSX errors with testing components */
+/* This file is intentionally not type-checked because of JSX errors with testing components.
+ * We're using React.createElement instead of JSX to avoid parsing issues.
+ */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
@@ -104,7 +106,7 @@ describe('usePostForm hook', () => {
     const { result } = renderHook(() => usePostForm({ 
       initialPlatforms 
     }), {
-      wrapper: createWrapper()
+      wrapper: createTestWrapper()
     });
     
     // Find mastodon platform to toggle
@@ -127,7 +129,7 @@ describe('usePostForm hook', () => {
 
   it('should handle advanced options', () => {
     const { result } = renderHook(() => usePostForm(), {
-      wrapper: createWrapper()
+      wrapper: createTestWrapper()
     });
     
     const newOptions = { showReasoning: true };
@@ -143,7 +145,7 @@ describe('usePostForm hook', () => {
     const { result } = renderHook(() => usePostForm({
       initialContent: 'Test content'
     }), {
-      wrapper: createWrapper()
+      wrapper: createTestWrapper()
     });
     
     expect(result.current.formState.content).toBe('Test content');
