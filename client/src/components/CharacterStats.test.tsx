@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { screen } from '@testing-library/react';
 import { CharacterStats } from './CharacterStats';
-import { renderWithProviders } from '../../test/test-utils';
+import { renderWithProviders } from '../../../test/test-utils';
 
 describe('CharacterStats component', () => {
   const mockStats = [

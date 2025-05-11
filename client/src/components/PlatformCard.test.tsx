@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { screen, fireEvent } from '@testing-library/react';
 import { PlatformCard } from './PlatformCard';
-import { renderWithProviders, mockPlatforms } from '../../test/test-utils';
+import { renderWithProviders, mockPlatforms } from '../../../test/test-utils';
 
 describe('PlatformCard component', () => {
   const mockPlatform = mockPlatforms[0]; // Using the Bluesky platform from test utils

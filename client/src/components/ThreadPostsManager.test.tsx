@@ -1,14 +1,14 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { screen, fireEvent } from '@testing-library/react';
 import { ThreadPostsManager } from './ThreadPostsManager';
-import { renderWithProviders, mockThreadPosts } from '../../test/test-utils';
+import { renderWithProviders, mockThreadPosts } from '../../../test/test-utils';
 
 describe('ThreadPostsManager component', () => {
   // Create test posts based on mockThreadPosts from test utils
   const testThreadPosts = [
-    { content: 'First post', index: 0 },
-    { content: 'Second post', index: 1 },
-    { content: 'Third post', index: 2 }
+    { content: 'First post', order: 0, isActive: true },
+    { content: 'Second post', order: 1, isActive: false },
+    { content: 'Third post', order: 2, isActive: false }
   ];
   
   const mockHandlers = {
