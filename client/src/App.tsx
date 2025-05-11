@@ -17,8 +17,8 @@ function App() {
   // Check localStorage for saved Catppuccin theme preference
   const getInitialTheme = () => {
     const savedTheme = localStorage.getItem("catppuccin-theme");
-    // Default to mocha (dark theme) if no preference is saved
-    return (savedTheme as "latte" | "frappe" | "macchiato" | "mocha") || "mocha";
+    // Default to frappe (dark theme) if no preference is saved
+    return (savedTheme as "latte" | "frappe" | "macchiato" | "mocha") || "frappe";
   };
 
   return (

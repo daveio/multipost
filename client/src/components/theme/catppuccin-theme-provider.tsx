@@ -51,7 +51,9 @@ export function CatppuccinThemeProvider({
     if (savedTheme && ["latte", "frappe", "macchiato", "mocha"].includes(savedTheme)) {
       return savedTheme as CatppuccinTheme;
     }
-    return defaultTheme;
+    // If no saved theme, use system preference but default to frappe for dark mode
+    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    return prefersDark ? "frappe" : "latte";
   });
 
   // Get theme mode (light or dark)

@@ -81,5 +81,5 @@ export const getPreferredColorScheme = (): "light" | "dark" => {
 // Get a theme name based on user preference
 export const getPreferredTheme = (): CatppuccinTheme => {
   const prefersDark = getPreferredColorScheme() === "dark";
-  return prefersDark ? "mocha" : "latte";
+  return prefersDark ? "frappe" : "latte";
 };
