@@ -320,11 +320,13 @@ export function AISplitPreview({
   // Helper function to render a split result
   const renderSplitResult = (result: SplitPostResult, platformId: string) => {
     console.log("Rendering split result:", result);
+    console.log("Result splitText type:", typeof result.splitText);
+    console.log("Result splitText value:", result.splitText);
     
     // Ensure splitText is an array
     const splitTextArray = Array.isArray(result.splitText) 
       ? result.splitText 
-      : [result.splitText];
+      : (typeof result.splitText === 'string' ? [result.splitText] : ['Error: Invalid split text format']);
     
     return (
       <div className="space-y-4">
@@ -344,7 +346,7 @@ export function AISplitPreview({
                     <span className="font-semibold">{getDisplayName(platformId)}</span>
                     <span className="text-gray-500 text-sm">{getUsername(platformId)}</span>
                   </div>
-                  <p className="mt-2 text-sm">{post}</p>
+                  <p className="mt-2 text-sm">{typeof post === 'string' ? post : JSON.stringify(post)}</p>
                   
                   {/* Thread numbering */}
                   <div className="mt-2">
@@ -355,7 +357,7 @@ export function AISplitPreview({
                   
                   {/* Character count */}
                   <div className="mt-2 text-xs text-gray-500">
-                    {post.length} / {characterStats.find(s => s.platform === platformId)?.limit || 500} characters
+                    {typeof post === 'string' ? post.length : '?'} / {characterStats.find(s => s.platform === platformId)?.limit || 500} characters
                   </div>
                 </div>
               </div>
