@@ -192,12 +192,26 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // If specific strategy is provided, only generate that one
       if (strategy && Object.values(SplittingStrategy).includes(strategy)) {
-        const result = await splitPost(
-          content, 
-          Math.min(...Object.values(platformLimits)), 
-          strategy
-        );
-        return res.json({ [strategy]: result });
+        try {
+          const result = await splitPost(
+            content, 
+            Math.min(...Object.values(platformLimits)), 
+            strategy
+          );
+          
+          // Create properly structured response with platform keys
+          const structuredResult: Record<string, any> = {};
+          
+          // Add to each platform
+          for (const platform of Object.keys(platformLimits)) {
+            structuredResult[platform] = result;
+          }
+          
+          return res.json({ [strategy]: structuredResult });
+        } catch (error) {
+          console.error("Error in split post with specific strategy:", error);
+          throw error;
+        }
       }
       
       // Generate all splitting options

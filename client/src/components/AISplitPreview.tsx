@@ -276,39 +276,66 @@ export function AISplitPreview({
       );
     }
     
-    const result = splitResults[strategy][platformId];
-    if (!result) {
-      console.log("No result for platform:", platformId);
+    // Handle different response formats
+    let result: SplitPostResult | null = null;
+    
+    // Check if the strategy exists in results
+    const strategyResults = splitResults[strategy];
+    console.log("Strategy results:", strategyResults);
+    
+    // Check different formats
+    if (strategyResults[platformId]) {
+      // Standard format with platform keys
+      result = strategyResults[platformId];
+    } else if (Array.isArray(strategyResults) || (strategyResults.splitText && Array.isArray(strategyResults.splitText))) {
+      // Direct array or object with splitText array - format into proper result
+      console.log("Converting direct result format");
       
-      // Try to get any platform result for this strategy
-      const availablePlatforms = Object.keys(splitResults[strategy]);
-      console.log("Available platforms for strategy:", availablePlatforms);
-      
-      if (availablePlatforms.length > 0) {
-        const fallbackResult = splitResults[strategy][availablePlatforms[0]];
-        console.log("Using result from another platform:", fallbackResult);
+      const splitTextArray = Array.isArray(strategyResults) 
+        ? strategyResults 
+        : strategyResults.splitText;
         
-        if (fallbackResult) {
-          return (
-            <div>
-              <Alert className="mb-4 bg-yellow-50 border-yellow-200">
-                <AlertDescription>
-                  No specific split found for {getPlatformName(platformId)}. 
-                  Showing split for {getPlatformName(availablePlatforms[0])} instead.
-                </AlertDescription>
-              </Alert>
-              {renderSplitResult(fallbackResult, platformId)}
-            </div>
-          );
-        }
+      result = {
+        splitText: splitTextArray,
+        strategy: strategy,
+        reasoning: strategyResults.reasoning || `Split optimized for ${getPlatformName(platformId)}`
+      };
+    } else if (strategyResults.bluesky || strategyResults.mastodon || strategyResults.threads || strategyResults.nostr) {
+      // Try to use any available platform
+      const availablePlatforms = Object.keys(strategyResults);
+      if (availablePlatforms.length > 0) {
+        const alternatePlatform = availablePlatforms[0];
+        result = strategyResults[alternatePlatform];
+        
+        console.log(`Using ${alternatePlatform} results for ${platformId}`);
+        
+        return (
+          <div>
+            <Alert className="mb-4 bg-yellow-50 border-yellow-200">
+              <AlertDescription>
+                No specific split found for {getPlatformName(platformId)}. 
+                Showing split for {getPlatformName(alternatePlatform)} instead.
+              </AlertDescription>
+            </Alert>
+            {result && renderSplitResult(result, platformId)}
+          </div>
+        );
       }
-      
+    }
+    
+    if (!result) {
       return (
         <div className="p-4 text-center text-gray-500">
           <AlertTriangle className="mx-auto h-8 w-8 text-amber-500 mb-3" />
           <h3 className="text-base font-medium text-gray-800 mb-2">Platform Not Available</h3>
-          <p>Split results for {getPlatformName(platformId)} are not available.</p>
-          <p className="mt-2">Please try a different platform.</p>
+          <p>Split results for {getPlatformName(platformId)} could not be processed.</p>
+          <p className="mt-2">Please try a different platform or strategy.</p>
+          <details className="mt-4 text-left bg-gray-50 p-2 rounded text-xs">
+            <summary>View Technical Details</summary>
+            <pre className="mt-2 whitespace-pre-wrap">
+              {JSON.stringify(strategyResults, null, 2)}
+            </pre>
+          </details>
         </div>
       );
     }
