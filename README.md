@@ -493,6 +493,20 @@ Thread functionality includes:
 - Previewing complete threads
 - Exiting thread mode safely
 
+### Thread Formatting Standard
+
+Thread indicators follow a consistent formatting rule to ensure readability:
+
+- Thread indicators (like "🧵 2 of 3") are always preceded by two newlines
+- This ensures clear visual separation between post content and thread indicators
+- This formatting is applied automatically whether using manual thread creation or AI-based splitting
+- Example of proper thread formatting:
+  ```
+  Blake's 7 featured early representation with diverse casting and strong female characters. Its finale is one of TV's most shocking. Available on streaming platforms—give it three episodes. Fair warning: don't get attached to anyone.
+
+  🧵 2 of 3
+  ```
+
 ## Installation & Setup
 
 ### Prerequisites
