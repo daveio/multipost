@@ -550,12 +550,13 @@ export function AISplitPreview({
             <span className="text-gray-500">Character limit: {characterStats.find(s => s.platform === platformId)?.limit}</span>
           </div>
           <Button
-            variant="outline"
+            variant="default"
             size="sm"
             onClick={() => onApplySplit(activeStrategy, platformId, splitTextArray)}
-            className="text-xs"
+            className="text-sm font-medium"
           >
-            Apply This Split
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-1.5"><polyline points="9 10 4 15 9 20"></polyline><path d="M20 4v7a4 4 0 0 1-4 4H4"></path></svg>
+            Use This Thread Format
           </Button>
         </div>
         
@@ -770,20 +771,6 @@ export function AISplitPreview({
                     >
                       <div className="flex items-center justify-between mb-2">
                         <h3 className="text-sm font-medium">Split Preview by Platform</h3>
-                        
-                        {/* Strategy selection for this platform */}
-                        <div className="flex items-center gap-2">
-                          <span className="text-xs text-gray-500">Strategy:</span>
-                          <select
-                            className="text-xs p-1 border rounded bg-white"
-                            value={activeStrategy}
-                            onChange={(e) => setActiveStrategy(e.target.value as SplittingStrategy)}
-                          >
-                            {selectedStrategies.map(strategy => (
-                              <option key={strategy} value={strategy}>{getStrategyName(strategy)}</option>
-                            ))}
-                          </select>
-                        </div>
                       </div>
                       
                       <TabsList className="mb-4 mt-2">

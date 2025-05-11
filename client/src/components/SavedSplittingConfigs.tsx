@@ -56,11 +56,10 @@ export function SavedSplittingConfigs({
           <Button 
             variant="outline" 
             size="sm" 
-            className="h-7 gap-1"
             disabled={selectedStrategies.length === 0}
           >
-            <UIIcon.Save className="h-3.5 w-3.5" />
-            <span className="text-xs">Save Config</span>
+            <UIIcon.Save className="mr-2 h-4 w-4" />
+            Save Config
           </Button>
         </DialogTrigger>
         <DialogContent className="sm:max-w-md">
@@ -123,11 +122,10 @@ export function SavedSplittingConfigs({
           <Button 
             variant="outline" 
             size="sm" 
-            className="h-7 gap-1"
             disabled={savedConfigs.length === 0}
           >
-            <UIIcon.Refresh className="h-3.5 w-3.5" />
-            <span className="text-xs">Load ({savedConfigs.length})</span>
+            <UIIcon.Refresh className="mr-2 h-4 w-4" />
+            Load ({savedConfigs.length})
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="start" className="w-48">
