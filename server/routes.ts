@@ -144,8 +144,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
     res.json({
       bluesky: 300,
       mastodon: mastodonLimit,
-      threads: 500,
-      nostr: 1000
+      threads: 500
+      // Nostr support removed
     });
   });
   
@@ -192,8 +192,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const platformLimits: Record<string, number> = {
         bluesky: 300,
         mastodon: customMastodonLimit && !isNaN(parseInt(customMastodonLimit)) ? parseInt(customMastodonLimit) : 500,
-        threads: 500,
-        nostr: 1000
+        threads: 500
+        // Nostr support removed
       };
       
       // If specific strategies are provided, only generate those
@@ -342,8 +342,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const platformLimits: Record<string, number> = {
         bluesky: 300,
         mastodon: customMastodonLimit && !isNaN(parseInt(customMastodonLimit)) ? parseInt(customMastodonLimit) : 500,
-        threads: 500,
-        nostr: 1000
+        threads: 500
+        // Nostr support removed
       };
       
       const characterLimit = platformLimits[platform] || 500;

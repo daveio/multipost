@@ -4,8 +4,8 @@ import { Platform, AdvancedOptions } from "../types";
 export const PLATFORM_CHARACTER_LIMITS = {
   bluesky: 300,
   mastodon: 500,
-  threads: 500,
-  nostr: 1000
+  threads: 500
+  // Nostr support removed
 };
 
 /**
@@ -54,14 +54,8 @@ export const PLATFORM_MEDIA_CONSTRAINTS: Record<string, MediaConstraints> = {
     supportsVideo: true,
     maxVideoSize: 15 * 1024 * 1024, // 15MB
     maxVideoDuration: 120 // 2 minutes
-  },
-  nostr: {
-    maxImages: undefined, // Depends on relay
-    maxImageSize: undefined, // Depends on relay
-    allowedImageTypes: ['image/jpeg', 'image/png', 'image/gif', 'image/webp'],
-    supportsVideo: true,
-    maxVideoSize: undefined // Depends on relay
   }
+  // Nostr support removed
 };
 
 export const DEFAULT_PLATFORMS: Platform[] = [
@@ -88,15 +82,8 @@ export const DEFAULT_PLATFORMS: Platform[] = [
     characterLimit: PLATFORM_CHARACTER_LIMITS.threads,
     isSelected: true,
     accounts: []
-  },
-  {
-    id: "nostr",
-    name: "Nostr",
-    icon: "nostr",
-    characterLimit: PLATFORM_CHARACTER_LIMITS.nostr,
-    isSelected: false,
-    accounts: []
   }
+  // Nostr support removed
 ];
 
 // Check if a media file is compatible with a platform
