@@ -16,6 +16,7 @@ import { DEFAULT_PLATFORMS, PLATFORM_CHARACTER_LIMITS, getCharacterLimit } from 
 
 // Load settings from localStorage if available
 const savedShowRawJson = localStorage.getItem('showRawJson');
+const savedShowReasoning = localStorage.getItem('showReasoning');
 const savedSplittingConfigs = localStorage.getItem('savedSplittingConfigs');
 const savedMastodonLimit = localStorage.getItem('customMastodonLimit');
 
@@ -25,6 +26,7 @@ const initialAdvancedOptions: AdvancedOptions = {
   schedulePost: false,
   scheduledTime: undefined,
   showRawJson: savedShowRawJson ? JSON.parse(savedShowRawJson) : false, // Default to false, but load from localStorage if available
+  showReasoning: savedShowReasoning !== null ? JSON.parse(savedShowReasoning) : true, // Default to true, but load from localStorage if available
   savedSplittingConfigs: savedSplittingConfigs ? JSON.parse(savedSplittingConfigs) : [], // Load saved configurations from localStorage
   customMastodonLimit: savedMastodonLimit ? parseInt(savedMastodonLimit) : 500 // Default to 500, but load from localStorage if available
 };

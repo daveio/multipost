@@ -65,6 +65,7 @@ export interface AdvancedOptions {
   schedulePost: boolean;
   scheduledTime?: Date;
   showRawJson: boolean; // Option to show raw JSON from OpenAI API responses
+  showReasoning: boolean; // Option to show OpenAI's reasoning for the split
   savedSplittingConfigs?: SplittingConfig[]; // Saved splitting configurations for quick reuse
   customMastodonLimit?: number; // Custom character limit for Mastodon instance
 }

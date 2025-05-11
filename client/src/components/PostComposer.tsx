@@ -18,6 +18,7 @@ import { DEFAULT_PLATFORMS } from "../lib/platform-config";
 import { Platform, CharacterStat, MediaFile, AdvancedOptions } from "../types";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { SplittingStrategy } from "@/lib/aiService";
+import { useToast } from "@/hooks/use-toast";
 
 interface PostComposerProps {
   content: string;
@@ -62,6 +63,8 @@ export function PostComposer({
   onApplySplit,
   accounts = []
 }: PostComposerProps) {
+  const { toast } = useToast();
+  
   const handleFormSubmit = (e: FormEvent) => {
     e.preventDefault();
     onSubmitPost();
