@@ -11,7 +11,8 @@ import { z } from "zod";
 import { 
   generateSplittingOptions, 
   optimizePost, 
-  SplittingStrategy 
+  SplittingStrategy,
+  splitPost
 } from "./services/openaiService";
 
 export async function registerRoutes(app: Express): Promise<Server> {
@@ -169,6 +170,79 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(201).json(processedFiles);
     } catch (error) {
       res.status(500).json({ message: "Failed to upload files" });
+    }
+  });
+
+  // AI Post Splitting
+  app.post(`${API_PREFIX}/split-post`, async (req: Request, res: Response) => {
+    try {
+      const { content, strategy } = req.body;
+      
+      if (!content || typeof content !== 'string') {
+        return res.status(400).json({ message: "Content is required and must be a string" });
+      }
+      
+      // Get platform character limits
+      const platformLimits: Record<string, number> = {
+        bluesky: 300,
+        mastodon: 500,
+        threads: 500,
+        nostr: 1000
+      };
+      
+      // If specific strategy is provided, only generate that one
+      if (strategy && Object.values(SplittingStrategy).includes(strategy)) {
+        const result = await splitPost(
+          content, 
+          Math.min(...Object.values(platformLimits)), 
+          strategy
+        );
+        return res.json({ [strategy]: result });
+      }
+      
+      // Generate all splitting options
+      const result = await generateSplittingOptions(content, platformLimits);
+      res.json(result);
+    } catch (error: any) {
+      console.error("Error in split-post endpoint:", error);
+      res.status(500).json({ 
+        message: "Failed to split post", 
+        error: error.message || "Unknown error" 
+      });
+    }
+  });
+
+  // AI Post Optimization for specific platform
+  app.post(`${API_PREFIX}/optimize-post`, async (req: Request, res: Response) => {
+    try {
+      const { content, platform } = req.body;
+      
+      if (!content || typeof content !== 'string') {
+        return res.status(400).json({ message: "Content is required and must be a string" });
+      }
+      
+      if (!platform || typeof platform !== 'string') {
+        return res.status(400).json({ message: "Platform is required and must be a string" });
+      }
+      
+      // Get character limit for the platform
+      const platformLimits: Record<string, number> = {
+        bluesky: 300,
+        mastodon: 500,
+        threads: 500,
+        nostr: 1000
+      };
+      
+      const characterLimit = platformLimits[platform] || 500;
+      
+      const optimizedContent = await optimizePost(content, platform, characterLimit);
+      res.json({ optimized: optimizedContent });
+    } catch (error: any) {
+      console.error("Error in optimize-post endpoint:", error);
+      res.status(500).json({ 
+        message: "Failed to optimize post", 
+        error: error.message || "Unknown error" 
+      });
     }
   });
 

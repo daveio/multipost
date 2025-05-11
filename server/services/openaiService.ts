@@ -48,12 +48,13 @@ export async function splitPost(
     });
 
     // Parse the response
-    const result = JSON.parse(response.choices[0].message.content);
+    const responseContent = response.choices[0].message.content || "{}";
+    const result = JSON.parse(responseContent);
     
     return {
-      splitText: result.posts,
+      splitText: result.posts || [content],
       strategy,
-      reasoning: result.reasoning
+      reasoning: result.reasoning || "No reasoning provided"
     };
   } catch (error: any) {
     console.error("Error splitting post:", error);
@@ -164,10 +165,10 @@ export async function optimizePost(
       max_tokens: characterLimit,
     });
     
-    return response.choices[0].message.content.trim();
-  } catch (error) {
+    return response.choices[0].message.content?.trim() || "";
+  } catch (error: any) {
     console.error("Error optimizing post:", error);
-    throw new Error(`Failed to optimize post: ${error.message}`);
+    throw new Error(`Failed to optimize post: ${error.message || "Unknown error"}`);
   }
 }
 
