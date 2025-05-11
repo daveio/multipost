@@ -283,11 +283,18 @@ export function AISplitPreview({
     
     if (!splitResults[strategy]) {
       console.log("Strategy not found in results");
-      return (
-        <div className="p-4 text-center text-gray-500">
-          No split results for this strategy. Try another one.
-        </div>
-      );
+      
+      // Create a fallback manual split
+      const limit = characterStats.find(s => s.platform === platformId)?.limit || 300;
+      
+      // Simple fallback strategy
+      const fallbackResult: SplitPostResult = {
+        splitText: createManualSplit(content, limit),
+        strategy: strategy,
+        reasoning: "Fallback: Manual splitting by character limit"
+      };
+      
+      return renderSplitResult(fallbackResult, platformId);
     }
     
     const result = splitResults[strategy][platformId];
@@ -307,26 +314,68 @@ export function AISplitPreview({
         }
       }
       
-      return (
-        <div className="p-4 text-center text-gray-500">
-          No split result for this platform. Try another platform.
-        </div>
-      );
+      // If still no result, create a manual split
+      const limit = characterStats.find(s => s.platform === platformId)?.limit || 300;
+      
+      // Simple fallback strategy
+      const manualFallbackResult: SplitPostResult = {
+        splitText: createManualSplit(content, limit),
+        strategy: strategy,
+        reasoning: "Fallback: Manual splitting by character limit"
+      };
+      
+      return renderSplitResult(manualFallbackResult, platformId);
     }
     
     return renderSplitResult(result, platformId);
   };
   
+  // Helper function to create manual splits
+  const createManualSplit = (text: string, limit: number): string[] => {
+    const totalLength = text.length;
+    
+    if (totalLength <= limit) {
+      return [text];
+    }
+    
+    // Simple splitting by character limit
+    const numPosts = Math.ceil(totalLength / limit);
+    const splitArray: string[] = [];
+    
+    for (let i = 0; i < numPosts; i++) {
+      const startIdx = i * limit;
+      const endIdx = Math.min(startIdx + limit, totalLength);
+      splitArray.push(text.substring(startIdx, endIdx));
+    }
+    
+    return splitArray;
+  };
+  
   // Helper function to render a split result
   const renderSplitResult = (result: SplitPostResult, platformId: string) => {
     console.log("Rendering split result:", result);
-    console.log("Result splitText type:", typeof result.splitText);
-    console.log("Result splitText value:", result.splitText);
     
-    // Ensure splitText is an array
-    const splitTextArray = Array.isArray(result.splitText) 
-      ? result.splitText 
-      : (typeof result.splitText === 'string' ? [result.splitText] : ['Error: Invalid split text format']);
+    // Ensure we have valid splitText data to render
+    let splitTextArray: string[] = [];
+    
+    // Handle different possible scenarios
+    if (result && result.splitText) {
+      if (Array.isArray(result.splitText) && result.splitText.length > 0) {
+        // Normal case - array of strings
+        splitTextArray = result.splitText;
+      } else if (typeof result.splitText === 'string') {
+        // Single string case
+        splitTextArray = [result.splitText];
+      } else {
+        // Fallback to manual split
+        splitTextArray = createManualSplit(content, 
+          characterStats.find(s => s.platform === platformId)?.limit || 300);
+      }
+    } else {
+      // Complete fallback case
+      splitTextArray = createManualSplit(content, 
+        characterStats.find(s => s.platform === platformId)?.limit || 300);
+    }
     
     return (
       <div className="space-y-4">
