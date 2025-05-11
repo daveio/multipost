@@ -246,58 +246,111 @@ export function AISplitPreview({
   const renderLoading = () => {
     return (
       <div className="space-y-6">
-        <div className="space-y-3 mb-4">
-          <div className="flex items-center justify-between mb-1">
-            <h3 className="text-sm font-medium text-gray-700">{progressStage}</h3>
-            <span className="text-sm font-medium text-blue-600">{progressPercent}%</span>
+        {/* Progress information */}
+        <div className="space-y-3 mb-6 bg-blue-50 p-4 rounded-lg border border-blue-100">
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center gap-2">
+              <div className="h-2 w-2 rounded-full bg-blue-500 animate-ping" />
+              <h3 className="text-sm font-medium text-blue-700">{progressStage}</h3>
+            </div>
+            <span className="text-sm font-medium bg-blue-600 text-white px-2 py-1 rounded-full">
+              {progressPercent}%
+            </span>
           </div>
-          <Progress value={progressPercent} className="h-2 w-full bg-gray-100" />
           
-          <div className="flex items-center gap-2 text-sm text-gray-500">
+          {/* Enhanced progress bar */}
+          <div className="h-3 w-full bg-blue-100 rounded-full overflow-hidden">
+            <div 
+              className="h-full bg-gradient-to-r from-blue-400 to-blue-600 rounded-full transition-all duration-500 ease-out"
+              style={{ width: `${progressPercent}%` }}
+            />
+          </div>
+          
+          {/* Loading message with status icons */}
+          <div className="flex items-center gap-2 text-sm mt-2">
             {progressPercent < 30 && (
-              <span className="animate-pulse text-blue-500">Analyzing content structure...</span>
+              <div className="flex items-center text-blue-700 bg-blue-100 px-3 py-1 rounded-full">
+                <span className="relative flex h-2 w-2 mr-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+                </span>
+                Analyzing content structure...
+              </div>
             )}
             {progressPercent >= 30 && progressPercent < 60 && (
-              <span className="animate-pulse text-blue-500">Optimizing splits using AI...</span>
+              <div className="flex items-center text-indigo-700 bg-indigo-100 px-3 py-1 rounded-full">
+                <span className="relative flex h-2 w-2 mr-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-indigo-500"></span>
+                </span>
+                Optimizing splits using AI...
+              </div>
             )}
             {progressPercent >= 60 && progressPercent < 90 && (
-              <span className="animate-pulse text-blue-500">Generating formatted thread...</span>
+              <div className="flex items-center text-purple-700 bg-purple-100 px-3 py-1 rounded-full">
+                <span className="relative flex h-2 w-2 mr-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-purple-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-purple-500"></span>
+                </span>
+                Generating formatted thread...
+              </div>
             )}
             {progressPercent >= 90 && (
-              <span className="animate-pulse text-blue-500">Finalizing thread notation...</span>
+              <div className="flex items-center text-green-700 bg-green-100 px-3 py-1 rounded-full">
+                <span className="relative flex h-2 w-2 mr-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                </span>
+                Finalizing thread notation...
+              </div>
             )}
           </div>
         </div>
         
-        <div className="space-y-4">
-          <Card className="border border-gray-200 shadow-sm">
+        {/* Animated post preview skeletons */}
+        <div className="space-y-6 relative">
+          {/* Thread connection visualization */}
+          <div className="absolute left-5 top-14 bottom-0 w-0.5 bg-blue-200 z-0" />
+          
+          {/* First post skeleton */}
+          <Card className="border border-blue-100 shadow-sm relative z-10">
             <CardContent className="p-4">
               <div className="flex items-start gap-3">
-                <Skeleton className="h-10 w-10 rounded-full" />
+                <div className="h-10 w-10 rounded-full bg-gradient-to-r from-blue-200 to-blue-300 animate-pulse" />
                 <div className="flex-1 space-y-2">
-                  <Skeleton className="h-4 w-24" />
-                  <Skeleton className="h-4 w-full" />
-                  <Skeleton className="h-4 w-full" />
+                  <div className="flex gap-2">
+                    <Skeleton className="h-4 w-24 bg-blue-100" />
+                    <Skeleton className="h-4 w-16 bg-blue-50" />
+                  </div>
+                  <Skeleton className="h-4 w-full bg-blue-50" />
+                  <Skeleton className="h-4 w-full bg-blue-50" />
                   <div className="flex justify-between mt-3">
-                    <Skeleton className="h-5 w-20" />
-                    <Skeleton className="h-4 w-16" />
+                    <Skeleton className="h-5 w-20 bg-blue-100 rounded-full" />
+                    <Skeleton className="h-4 w-16 bg-blue-50" />
                   </div>
                 </div>
               </div>
             </CardContent>
           </Card>
           
-          <Card className="border border-gray-200 shadow-sm">
+          {/* Connection dot */}
+          <div className="absolute left-[18px] top-44 h-3 w-3 rounded-full bg-blue-400 z-20" />
+          
+          {/* Second post skeleton with refined animation */}
+          <Card className="border border-blue-100 shadow-sm relative z-10">
             <CardContent className="p-4">
               <div className="flex items-start gap-3">
-                <Skeleton className="h-10 w-10 rounded-full" />
+                <div className="h-10 w-10 rounded-full bg-gradient-to-r from-blue-200 to-blue-300 animate-pulse" />
                 <div className="flex-1 space-y-2">
-                  <Skeleton className="h-4 w-24" />
-                  <Skeleton className="h-4 w-full" />
-                  <Skeleton className="h-4 w-3/4" />
+                  <div className="flex gap-2">
+                    <Skeleton className="h-4 w-24 bg-blue-100" />
+                    <Skeleton className="h-4 w-16 bg-blue-50" />
+                  </div>
+                  <Skeleton className="h-4 w-full bg-blue-50" />
+                  <Skeleton className="h-4 w-3/4 bg-blue-50" />
                   <div className="flex justify-between mt-3">
-                    <Skeleton className="h-5 w-20" />
-                    <Skeleton className="h-4 w-16" />
+                    <Skeleton className="h-5 w-20 bg-blue-100 rounded-full" />
+                    <Skeleton className="h-4 w-16 bg-blue-50" />
                   </div>
                 </div>
               </div>
