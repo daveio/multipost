@@ -290,15 +290,22 @@ export function AISplitPreview({
       // Direct array or object with splitText array - format into proper result
       console.log("Converting direct result format");
       
-      const splitTextArray = Array.isArray(strategyResults) 
-        ? strategyResults as string[]
-        : (strategyResults.splitText as string[]);
-        
-      result = {
-        splitText: splitTextArray,
-        strategy: strategy,
-        reasoning: strategyResults.reasoning || `Split optimized for ${getPlatformName(platformId)}`
-      };
+      // Handle different types of responses
+      if (Array.isArray(strategyResults)) {
+        // Direct array of strings
+        result = {
+          splitText: strategyResults as unknown as string[],
+          strategy,
+          reasoning: `Split optimized for ${getPlatformName(platformId)}`
+        };
+      } else if (strategyResults.splitText && Array.isArray(strategyResults.splitText)) {
+        // Object with splitText array
+        result = {
+          splitText: strategyResults.splitText as string[],
+          strategy,
+          reasoning: strategyResults.reasoning || `Split optimized for ${getPlatformName(platformId)}`
+        };
+      }
     } else if (strategyResults.bluesky || strategyResults.mastodon || strategyResults.threads || strategyResults.nostr) {
       // Try to use any available platform
       const availablePlatforms = Object.keys(strategyResults);

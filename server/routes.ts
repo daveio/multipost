@@ -205,25 +205,29 @@ export async function registerRoutes(app: Express): Promise<Server> {
             console.log(`Processing strategy: ${strategy}`);
             results[strategy] = {};
             
-            // Generate platform-specific splits for this strategy
+            // Generate platform-specific splits using all selected strategies
             for (const platform of Object.keys(platformLimits)) {
               const limit = platformLimits[platform];
               
               // Only split if content exceeds platform limit
               if (content.length > limit) {
-                console.log(`Splitting for ${platform} with limit ${limit}`);
+                console.log(`Splitting for ${platform} with limit ${limit} using multiple strategies`);
                 const platformResult = await splitPost(
                   content, 
                   limit, 
-                  strategy as SplittingStrategy
+                  strategies // Pass all selected strategies at once
                 );
                 
-                results[strategy][platform] = platformResult;
+                // Store the result under the current strategy key for compatibility
+                results[strategy][platform] = {
+                  ...platformResult,
+                  strategy: strategy as SplittingStrategy  // Override strategy for consistent structure
+                };
               } else {
                 // No splitting needed
                 results[strategy][platform] = {
                   splitText: [content],
-                  strategy: strategy,
+                  strategy: strategy as SplittingStrategy,
                   reasoning: `Content is within character limit for ${platform} (${limit} chars). No splitting required.`
                 };
               }
@@ -244,17 +248,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
           [singleStrategy]: {}
         };
         
-        // Generate platform-specific splits
+        // Generate platform-specific splits using the default strategy
         for (const platform of Object.keys(platformLimits)) {
           const limit = platformLimits[platform];
           
           // Only split if content exceeds platform limit
           if (content.length > limit) {
-            console.log(`Splitting for ${platform} with limit ${limit}`);
+            console.log(`Splitting for ${platform} with limit ${limit} using default strategy`);
             const platformResult = await splitPost(
               content, 
               limit, 
-              singleStrategy
+              singleStrategy // Using just the single strategy in this case
             );
             
             results[singleStrategy][platform] = platformResult;

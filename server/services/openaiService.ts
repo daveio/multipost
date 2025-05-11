@@ -22,13 +22,34 @@ interface SplitPostResult {
 
 /**
  * Split a long post into multiple posts for specific platform
+ * using multiple strategies simultaneously
  */
 export async function splitPost(
   content: string,
   characterLimit: number,
-  strategy: SplittingStrategy
+  strategies: SplittingStrategy | SplittingStrategy[]
 ): Promise<SplitPostResult> {
-  const systemPrompt = getSystemPromptForStrategy(strategy, characterLimit);
+  // Convert to array if single strategy
+  const strategiesArray = Array.isArray(strategies) ? strategies : [strategies];
+  
+  // Build a comprehensive system prompt that considers all selected strategies
+  const strategiesDescription = strategiesArray
+    .map(strategy => getStrategyDescription(strategy))
+    .join('\n\n');
+  
+  const systemPrompt = `You are an expert in splitting long social media posts into multiple shorter posts for a thread.
+  The character limit per post is ${characterLimit} characters.
+
+  Take the input text and split it into multiple posts that each stays under the character limit.
+  Create a single, optimal split that incorporates ALL of the following strategies:
+  
+  ${strategiesDescription}
+  
+  Return your response as a JSON object with the following format:
+  {
+    "posts": ["post1", "post2", ...],
+    "reasoning": "brief explanation of your splitting approach and how you balanced the different strategies"
+  }`;
   
   try {
     const response = await openai.chat.completions.create({
@@ -76,9 +97,12 @@ export async function splitPost(
         }
       }
       
+      // Use the first strategy as the main one for response structure
+      const mainStrategy = Array.isArray(strategies) ? strategies[0] : strategies;
+      
       return {
         splitText: result.posts,
-        strategy,
+        strategy: mainStrategy,
         reasoning: result.reasoning || "No reasoning provided"
       };
     } catch (parseError: any) {
@@ -200,7 +224,41 @@ export async function optimizePost(
 }
 
 /**
+ * Get description for a specific strategy
+ */
+function getStrategyDescription(strategy: SplittingStrategy): string {
+  switch(strategy) {
+    case SplittingStrategy.SEMANTIC:
+      return `SEMANTIC SPLITTING: Split the text based on semantic units, preserving the meaning of each section.
+      Each split should contain complete thoughts or topics.`;
+      
+    case SplittingStrategy.SENTENCE:
+      return `SENTENCE-BASED SPLITTING: Split the text at sentence boundaries, ensuring no sentence is cut in the middle.
+      Try to keep related sentences together when possible.`;
+      
+    case SplittingStrategy.RETAIN_HASHTAGS:
+      return `HASHTAG PRESERVATION: Ensure all hashtags from the original post are preserved.
+      If there are hashtags in the original, include all of them in the last post.`;
+      
+    case SplittingStrategy.PRESERVE_MENTIONS:
+      return `MENTION PRESERVATION: Ensure all @mentions from the original post are preserved.
+      If a post is split such that it separates an @mention from its context, 
+      include the @mention in both posts where relevant.`;
+      
+    case SplittingStrategy.THREAD_OPTIMIZED:
+      return `THREAD OPTIMIZATION: Format the posts specifically for an optimal thread reading experience.
+      Start each post (except the first) with a clear continuation indicator.
+      End each post (except the last) with a hook or cliffhanger to encourage reading the next post.
+      Mark thread numbering yourself with notation like (1/3), (2/3), (3/3).`;
+      
+    default:
+      return `Split based on semantic units, preserving the meaning of each section.`;
+  }
+}
+
+/**
  * Get the appropriate system prompt based on the splitting strategy
+ * (Legacy method, kept for backwards compatibility)
  */
 function getSystemPromptForStrategy(strategy: SplittingStrategy, characterLimit: number): string {
   const basePrompt = `You are an expert in splitting long social media posts into multiple shorter posts for a thread.
@@ -213,38 +271,5 @@ function getSystemPromptForStrategy(strategy: SplittingStrategy, characterLimit:
     "reasoning": "brief explanation of your splitting approach"
   }`;
   
-  switch(strategy) {
-    case SplittingStrategy.SEMANTIC:
-      return `${basePrompt}
-      Split the text based on semantic units, preserving the meaning of each section.
-      Each split should contain complete thoughts or topics.`;
-      
-    case SplittingStrategy.SENTENCE:
-      return `${basePrompt}
-      Split the text at sentence boundaries, ensuring no sentence is cut in the middle.
-      Try to keep related sentences together when possible.`;
-      
-    case SplittingStrategy.RETAIN_HASHTAGS:
-      return `${basePrompt}
-      Ensure all hashtags from the original post are preserved.
-      If there are hashtags in the original, include all of them in the last post.
-      Split based on semantic units otherwise.`;
-      
-    case SplittingStrategy.PRESERVE_MENTIONS:
-      return `${basePrompt}
-      Ensure all @mentions from the original post are preserved.
-      If a post is split such that it separates an @mention from its context, 
-      include the @mention in both posts where relevant.
-      Split based on semantic units otherwise.`;
-      
-    case SplittingStrategy.THREAD_OPTIMIZED:
-      return `${basePrompt}
-      Format the posts specifically for an optimal thread reading experience.
-      Start each post (except the first) with a clear continuation indicator.
-      End each post (except the last) with a hook or cliffhanger to encourage reading the next post.
-      You should mark thread numbering yourself with notation like (1/3), (2/3), (3/3).`;
-      
-    default:
-      return basePrompt;
-  }
+  return `${basePrompt}\n${getStrategyDescription(strategy)}`;
 }
