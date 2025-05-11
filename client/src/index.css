@@ -37,32 +37,6 @@
   @apply object-cover; 
 }
 
-/* Custom switch color for platforms - using Catppuccin Sapphire color */
-.platform-switch[data-state="checked"] {
-  background-color: var(--Sapphire);
-}
-
-/* Style for platform checkmarks */
-.platform-badge-check {
-  color: var(--Sapphire) !important;
-}
-
-/* Style for platform badge buttons */
-.platform-button-check {
-  color: var(--Sapphire);
-}
-
-/* Target all check icons in buttons */
-button svg.lucide-check,
-button [data-lucide="check"] {
-  color: var(--Sapphire) !important;
-}
-
-/* Target specifically the platform selection buttons */
-[data-platform] svg.lucide-check {
-  color: var(--Sapphire) !important;
-}
-
 .preview-card { 
   @apply max-h-96 overflow-y-auto overflow-x-hidden; 
 }
