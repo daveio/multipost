@@ -61,9 +61,9 @@ export function PlatformPreview({
   return (
     <>
       <Tabs defaultValue={activeTab} value={activeTab} onValueChange={onTabChange} className="w-full">
-        <TabsList className="mb-4 w-full">
+        <TabsList className="mb-4 w-full flex-nowrap overflow-x-auto">
           {["bluesky", "mastodon", "threads"].map((platform) => (
-            <TabsTrigger key={platform} value={platform} className="flex-1">
+            <TabsTrigger key={platform} value={platform} className="flex-1 min-w-fit">
               <SocialIcon platform={platform} className="mr-1" size={14} />
               <span className="ml-1 capitalize">{platform}</span>
             </TabsTrigger>
@@ -74,19 +74,19 @@ export function PlatformPreview({
           <TabsContent key={platform} value={platform} className="mt-0">
             <div className="preview-card p-4 border rounded-lg">
               <div className="flex items-start gap-3">
-                <Avatar className="h-10 w-10">
+                <Avatar className="h-10 w-10 flex-shrink-0">
                   {getAvatarUrl(platform) ? (
                     <AvatarImage src={getAvatarUrl(platform)} alt={getDisplayName(platform)} />
                   ) : (
                     <AvatarFallback>{getAccountInitials(platform)}</AvatarFallback>
                   )}
                 </Avatar>
-                <div className="flex-1">
-                  <div className="flex items-center gap-1">
-                    <span className="font-semibold">{getDisplayName(platform)}</span>
-                    <span className="text-gray-500 text-sm">{getUsername(platform)}</span>
+                <div className="flex-1 min-w-0"> {/* min-w-0 ensures text wrapping works properly */}
+                  <div className="flex flex-wrap items-center gap-1">
+                    <span className="font-semibold truncate">{getDisplayName(platform)}</span>
+                    <span className="text-gray-500 text-sm truncate">{getUsername(platform)}</span>
                   </div>
-                  <p className="mt-2 text-sm">{getFormattedContent(platform)}</p>
+                  <p className="mt-2 text-sm break-words whitespace-pre-wrap">{getFormattedContent(platform)}</p>
                   
                   {/* Media Preview Grid */}
                   {mediaFiles.length > 0 && (
@@ -107,17 +107,17 @@ export function PlatformPreview({
                   )}
                   
                   {/* Action Buttons */}
-                  <div className="flex gap-6 mt-4 text-gray-500">
+                  <div className="flex flex-wrap gap-4 mt-4 text-gray-500">
                     <div className="flex items-center gap-1">
-                      <UIIcon.Reply className="h-4 w-4" />
+                      <UIIcon.Reply className="h-4 w-4 flex-shrink-0" />
                       <span className="text-xs">Reply</span>
                     </div>
                     <div className="flex items-center gap-1">
-                      <UIIcon.Refresh className="h-4 w-4" />
+                      <UIIcon.Refresh className="h-4 w-4 flex-shrink-0" />
                       <span className="text-xs">Repost</span>
                     </div>
                     <div className="flex items-center gap-1">
-                      <UIIcon.Like className="h-4 w-4" />
+                      <UIIcon.Like className="h-4 w-4 flex-shrink-0" />
                       <span className="text-xs">Like</span>
                     </div>
                   </div>

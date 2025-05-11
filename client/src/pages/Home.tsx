@@ -95,9 +95,9 @@ export default function Home() {
       <Header />
       
       <main className="container mx-auto px-4 py-6">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Post Composer Section */}
-          <div className="lg:col-span-2">
+        <div className="grid grid-cols-1 lg:grid-cols-5 gap-6">
+          {/* Post Composer Section - Takes 3/5 of the screen on large displays */}
+          <div className="lg:col-span-3">
             <PostComposer 
               content={formState.content}
               mediaFiles={formState.mediaFiles}
@@ -133,8 +133,8 @@ export default function Home() {
             />
           </div>
           
-          {/* Preview & Character Stats Section */}
-          <div className="lg:col-span-1">
+          {/* Preview & Character Stats Section - Takes 2/5 of the screen on large displays */}
+          <div className="lg:col-span-2">
             <div className="bg-white rounded-xl shadow-sm p-6 mb-6">
               <h2 className="text-lg font-semibold mb-4">Post Preview</h2>
               
