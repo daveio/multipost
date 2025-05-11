@@ -278,7 +278,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.error("Error in split-post endpoint:", error);
       
       // Construct a detailed error response
-      const errorResponse = {
+      const errorResponse: Record<string, any> = {
         message: "Failed to split post",
         error: error.message || "Unknown error",
         code: error.code || "UNKNOWN_ERROR",
@@ -335,10 +335,35 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json({ optimized: optimizedContent });
     } catch (error: any) {
       console.error("Error in optimize-post endpoint:", error);
-      res.status(500).json({ 
-        message: "Failed to optimize post", 
-        error: error.message || "Unknown error" 
-      });
+      
+      // Construct a detailed error response
+      const errorResponse: Record<string, any> = {
+        message: "Failed to optimize post",
+        error: error.message || "Unknown error",
+        code: error.code || "UNKNOWN_ERROR",
+        type: error.type || "SERVER_ERROR",
+        param: error.param || null
+      };
+      
+      // Add specific error handling for common OpenAI API issues
+      if (error.response && error.response.status) {
+        errorResponse.statusCode = error.response.status;
+        
+        if (error.response.status === 401) {
+          errorResponse.message = "OpenAI API authentication error. Please check API key.";
+        } else if (error.response.status === 429) {
+          errorResponse.message = "OpenAI API rate limit exceeded. Please try again later.";
+        } else if (error.response.status === 500) {
+          errorResponse.message = "OpenAI API server error. The service might be experiencing issues.";
+        }
+        
+        // Include any data from the response
+        if (error.response.data) {
+          errorResponse.details = error.response.data;
+        }
+      }
+      
+      res.status(500).json(errorResponse);
     }
   });
 

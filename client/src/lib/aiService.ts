@@ -39,9 +39,27 @@ export async function splitPost(
     const data = await response.json();
     console.log('Split post API response:', data);
     return data;
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error splitting post:', error);
-    throw error;
+    
+    // Check if there's a detailed error response from the server
+    if (error.json) {
+      try {
+        // Try to parse the error response
+        const errorData = await error.json();
+        console.error('Detailed splitting error:', errorData);
+        
+        // Create a more informative error object
+        const enhancedError = new Error(errorData.message || 'Failed to split post');
+        enhancedError.cause = errorData;
+        throw enhancedError;
+      } catch (jsonError) {
+        // If parsing fails, throw the original error
+        throw error;
+      }
+    } else {
+      throw error;
+    }
   }
 }
 
@@ -53,9 +71,27 @@ export async function optimizePost(content: string, platform: string): Promise<s
     const response = await apiRequest('POST', '/api/optimize-post', { content, platform });
     const data = await response.json();
     return data.optimized;
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error optimizing post:', error);
-    throw error;
+    
+    // Check if there's a detailed error response from the server
+    if (error.json) {
+      try {
+        // Try to parse the error response
+        const errorData = await error.json();
+        console.error('Detailed optimization error:', errorData);
+        
+        // Create a more informative error object
+        const enhancedError = new Error(errorData.message || 'Failed to optimize post');
+        enhancedError.cause = errorData;
+        throw enhancedError;
+      } catch (jsonError) {
+        // If parsing fails, throw the original error
+        throw error;
+      }
+    } else {
+      throw error;
+    }
   }
 }
 
