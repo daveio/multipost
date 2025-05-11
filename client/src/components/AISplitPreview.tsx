@@ -214,35 +214,67 @@ export function AISplitPreview({
     );
   }
   
-  // Render loading state 
+  // Render loading state with enhanced animation and visual feedback
   const renderLoading = () => {
     return (
-      <div className="space-y-4">
-        <div className="space-y-2 mb-4">
-          <Progress value={progressPercent} className="h-2 w-full" />
-          <p className="text-sm text-gray-500">{progressStage}</p>
+      <div className="space-y-6">
+        <div className="space-y-3 mb-4">
+          <div className="flex items-center justify-between mb-1">
+            <h3 className="text-sm font-medium text-gray-700">{progressStage}</h3>
+            <span className="text-sm font-medium text-blue-600">{progressPercent}%</span>
+          </div>
+          <Progress value={progressPercent} className="h-2 w-full bg-gray-100" />
+          
+          <div className="flex items-center gap-2 text-sm text-gray-500">
+            {progressPercent < 30 && (
+              <span className="animate-pulse text-blue-500">Analyzing content structure...</span>
+            )}
+            {progressPercent >= 30 && progressPercent < 60 && (
+              <span className="animate-pulse text-blue-500">Optimizing splits using AI...</span>
+            )}
+            {progressPercent >= 60 && progressPercent < 90 && (
+              <span className="animate-pulse text-blue-500">Generating formatted thread...</span>
+            )}
+            {progressPercent >= 90 && (
+              <span className="animate-pulse text-blue-500">Finalizing thread notation...</span>
+            )}
+          </div>
         </div>
         
         <div className="space-y-4">
-          <div className="flex items-start gap-3">
-            <Skeleton className="h-10 w-10 rounded-full" />
-            <div className="flex-1 space-y-2">
-              <Skeleton className="h-4 w-24" />
-              <Skeleton className="h-4 w-full" />
-              <Skeleton className="h-4 w-full" />
-              <Skeleton className="h-4 w-3/4" />
-            </div>
-          </div>
+          <Card className="border border-gray-200 shadow-sm">
+            <CardContent className="p-4">
+              <div className="flex items-start gap-3">
+                <Skeleton className="h-10 w-10 rounded-full" />
+                <div className="flex-1 space-y-2">
+                  <Skeleton className="h-4 w-24" />
+                  <Skeleton className="h-4 w-full" />
+                  <Skeleton className="h-4 w-full" />
+                  <div className="flex justify-between mt-3">
+                    <Skeleton className="h-5 w-20" />
+                    <Skeleton className="h-4 w-16" />
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
           
-          <div className="flex items-start gap-3">
-            <Skeleton className="h-10 w-10 rounded-full" />
-            <div className="flex-1 space-y-2">
-              <Skeleton className="h-4 w-24" />
-              <Skeleton className="h-4 w-full" />
-              <Skeleton className="h-4 w-full" />
-              <Skeleton className="h-4 w-1/2" />
-            </div>
-          </div>
+          <Card className="border border-gray-200 shadow-sm">
+            <CardContent className="p-4">
+              <div className="flex items-start gap-3">
+                <Skeleton className="h-10 w-10 rounded-full" />
+                <div className="flex-1 space-y-2">
+                  <Skeleton className="h-4 w-24" />
+                  <Skeleton className="h-4 w-full" />
+                  <Skeleton className="h-4 w-3/4" />
+                  <div className="flex justify-between mt-3">
+                    <Skeleton className="h-5 w-20" />
+                    <Skeleton className="h-4 w-16" />
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </div>
     );
@@ -697,6 +729,10 @@ export function AISplitPreview({
             e.preventDefault(); // Prevent form submission
             e.stopPropagation(); // Stop event propagation
             if (splitResults?.[activeStrategy]?.[activePlatform]) {
+              toast({
+                title: "Applying split",
+                description: `Applying ${getStrategyName(activeStrategy)} split for ${getPlatformName(activePlatform)}`,
+              });
               onApplySplit(
                 activeStrategy, 
                 activePlatform, 
@@ -707,9 +743,12 @@ export function AISplitPreview({
           type="button" // Explicitly set type to button
           disabled={isLoading || !splitResults}
           size="lg"
-          className="px-6"
+          className="px-6 bg-green-600 hover:bg-green-700"
         >
-          Apply This Split
+          <span className="flex items-center gap-2">
+            <CheckCircle2 className="h-5 w-5" />
+            Apply {getStrategyName(activeStrategy)} Split
+          </span>
         </Button>
       </div>
     </div>
