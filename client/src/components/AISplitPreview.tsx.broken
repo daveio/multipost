@@ -407,18 +407,112 @@ export function AISplitPreview({
   
   // Render split post preview
   const renderSplitPosts = (platformId: string, strategy: SplittingStrategy) => {
-    if (!splitResults) return null;
+    if (!splitResults) {
+      console.log("No split results available");
+      return (
+        <div className="p-4 text-center text-gray-500">
+          No split results available. Try entering a longer post.
+        </div>
+      );
+    }
     
+    console.log("Available strategies:", Object.keys(splitResults));
+    console.log("Looking for strategy:", strategy, "platform:", platformId);
+    
+    if (!splitResults[strategy]) {
+      console.log("Strategy not found in results");
+      return (
+        <div className="p-4 text-center text-gray-500">
+          <AlertTriangle className="mx-auto h-8 w-8 text-amber-500 mb-3" />
+          <h3 className="text-base font-medium text-gray-800 mb-2">Strategy Not Available</h3>
+          <p>The requested splitting strategy could not be generated.</p>
+          <p className="mt-2">Please try another strategy or try again later.</p>
+        </div>
+      );
+    }
+    
+    // Handle different response formats
+    let result: SplitPostResult | null = null;
+    
+    // Check if the strategy exists in results
     const strategyResults = splitResults[strategy];
-    if (!strategyResults) return null;
+    console.log("Strategy results:", strategyResults);
     
-    const result = strategyResults[platformId];
-    if (!result) return null;
+    // Check different formats
+    if (strategyResults[platformId]) {
+      // Standard format with platform keys
+      result = strategyResults[platformId];
+    } else if (Array.isArray(strategyResults) || (strategyResults.splitText && Array.isArray(strategyResults.splitText))) {
+      // Direct array or object with splitText array - format into proper result
+      console.log("Converting direct result format");
+      
+      // Handle different types of responses
+      if (Array.isArray(strategyResults)) {
+        // Direct array of strings
+        result = {
+          splitText: strategyResults as string[],
+          strategy,
+          reasoning: `Split optimized for ${getPlatformName(platformId)}`
+        } as SplitPostResult;
+      } else if (strategyResults.splitText && Array.isArray(strategyResults.splitText)) {
+        // Object with splitText array
+        // Make sure to handle the case when reasoning might not be a string
+        const reasoning = typeof strategyResults.reasoning === 'string' 
+          ? strategyResults.reasoning 
+          : `Split optimized for ${getPlatformName(platformId)}`;
+          
+        result = {
+          splitText: strategyResults.splitText as string[],
+          strategy,
+          reasoning
+        } as SplitPostResult;
+      }
+    } else if (strategyResults.bluesky || strategyResults.mastodon || strategyResults.threads || strategyResults.nostr) {
+      // Try to use any available platform
+      const availablePlatforms = Object.keys(strategyResults);
+      if (availablePlatforms.length > 0) {
+        const alternatePlatform = availablePlatforms[0];
+        result = strategyResults[alternatePlatform];
+        
+        console.log(`Using ${alternatePlatform} results for ${platformId}`);
+        
+        return (
+          <div>
+            <Alert className="mb-4 bg-yellow-50 border-yellow-200">
+              <AlertDescription>
+                No specific split found for {getPlatformName(platformId)}. 
+                Showing split for {getPlatformName(alternatePlatform)} instead.
+              </AlertDescription>
+            </Alert>
+            {result && renderSplitResult(result, platformId)}
+          </div>
+        );
+      }
+    }
+    
+    if (!result) {
+      return (
+        <div className="p-4 text-center text-gray-500">
+          <AlertTriangle className="mx-auto h-8 w-8 text-amber-500 mb-3" />
+          <h3 className="text-base font-medium text-gray-800 mb-2">Platform Not Available</h3>
+          <p>Split results for {getPlatformName(platformId)} could not be processed.</p>
+          <p className="mt-2">Please try a different platform or strategy.</p>
+          <details className="mt-4 text-left bg-gray-50 p-2 rounded text-xs">
+            <summary>View Technical Details</summary>
+            <pre className="mt-2 whitespace-pre-wrap">
+              {JSON.stringify(strategyResults, null, 2)}
+            </pre>
+          </details>
+        </div>
+      );
+    }
     
     return renderSplitResult(result, platformId);
   };
   
-  // Render split result
+
+  
+  // Helper function to render a split result
   const renderSplitResult = (result: SplitPostResult, platformId: string) => {
     console.log("Rendering split result:", result);
     
@@ -527,54 +621,37 @@ export function AISplitPreview({
                 </>
               )}
               
-              {/* Thread connection dot at the top (for all posts except the first) */}
+              {/* Thread connection dot at the top of subsequent posts */}
               {index > 0 && (
                 <div className="absolute left-[18px] top-0 h-2.5 w-2.5 rounded-full bg-gray-400 z-20 transform -translate-y-1/2" />
               )}
               
-              {/* Post card */}
-              <Card className="border-gray-200 shadow-sm mb-6 relative z-10">
+              <Card key={`post-${index}`} className="border relative z-10 mb-4">
                 <CardContent className="p-4">
                   <div className="flex items-start gap-3">
-                    {/* Account avatar */}
-                    <Avatar className="h-10 w-10 border border-gray-200">
+                    <Avatar className="h-10 w-10 ring-2 ring-background">
                       {getAvatarUrl(platformId) ? (
                         <AvatarImage src={getAvatarUrl(platformId)} alt={getDisplayName(platformId)} />
                       ) : (
                         <AvatarFallback>{getAccountInitials(platformId)}</AvatarFallback>
                       )}
                     </Avatar>
-                    
-                    {/* Post content */}
                     <div className="flex-1">
-                      <div className="flex flex-col">
-                        <div className="flex items-center gap-1 mb-0.5">
-                          <span className="font-medium text-sm">{getDisplayName(platformId)}</span>
-                          <span className="text-gray-500 text-sm">{getUsername(platformId)}</span>
-                        </div>
-                        <div className="text-sm whitespace-pre-wrap">
-                          {post}
-                        </div>
+                      <div className="flex items-center gap-1">
+                        <span className="font-semibold">{getDisplayName(platformId)}</span>
+                        <span className="text-gray-500 text-sm">{getUsername(platformId)}</span>
+                      </div>
+                      <p className="mt-2 text-sm whitespace-pre-wrap">{typeof post === 'string' ? post : JSON.stringify(post)}</p>
+                      
+                      <div className="flex justify-between items-center mt-3">
+                        {/* Thread numbering */}
+                        <Badge variant="outline" className="font-mono">
+                          🧵 {index + 1} of {splitTextArray.length}
+                        </Badge>
                         
-                        {/* Post meta */}
-                        <div className="flex justify-between mt-3">
-                          <div className="flex items-center gap-3 text-gray-500">
-                            <div className="flex items-center gap-1">
-                              <UIIcon.Reply className="h-3.5 w-3.5" />
-                              <span className="text-xs">5</span>
-                            </div>
-                            <div className="flex items-center gap-1">
-                              <UIIcon.Like className="h-3.5 w-3.5" />
-                              <span className="text-xs">12</span>
-                            </div>
-                          </div>
-                          
-                          {/* Post number in thread */}
-                          {splitTextArray.length > 1 && (
-                            <Badge variant="outline" className="text-xs">
-                              {index + 1} of {splitTextArray.length}
-                            </Badge>
-                          )}
+                        {/* Character count */}
+                        <div className="text-xs text-gray-500">
+                          {typeof post === 'string' ? post.length : '?'} / {characterStats.find(s => s.platform === platformId)?.limit || 500} chars
                         </div>
                       </div>
                     </div>
@@ -585,282 +662,304 @@ export function AISplitPreview({
           ))}
         </div>
         
-        {/* Apply Split Button */}
-        <div className="flex justify-between mt-6">
-          <Button
-            variant="outline"
-            size="sm"
-            className="gap-1.5"
-            onClick={() => {
-              // Reset results
-              setSplitResults(null);
-              // Generate new options
-              generateSplitOptions();
-            }}
-          >
-            <UIIcon.Refresh className="h-3.5 w-3.5" />
-            <span>Regenerate</span>
-          </Button>
-          
-          <div className="flex gap-2">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={onClose}
-            >
-              Cancel
-            </Button>
-            <Button
-              size="sm"
-              className="gap-1.5"
-              onClick={() => {
-                onApplySplit(result.strategy, platformId, splitTextArray);
-                onClose();
-              }}
-            >
-              <UIIcon.Check className="h-3.5 w-3.5" />
-              <span>Apply Split</span>
-            </Button>
-          </div>
-        </div>
+        {/* Reasoning */}
+        <Alert className="bg-gray-50">
+          <AlertDescription className="text-xs text-gray-600">
+            <strong>Reasoning:</strong> {result.reasoning || "Split based on platform character limits"}
+          </AlertDescription>
+        </Alert>
       </div>
     );
   };
   
   return (
-    <div className="bg-white rounded-xl shadow-sm p-6 mb-6">
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle>Split Content with AI</CardTitle>
-          <CardDescription>
-            Your post exceeds character limits for one or more platforms. Use AI to optimize the split.
-          </CardDescription>
-        </CardHeader>
-        
-        <CardContent>
-          {/* Loading state */}
-          {isLoading ? renderLoading() : (
-            <div className="space-y-6">
-              {/* Strategy Selection */}
-              <div className="space-y-2">
-                <div className="flex items-center justify-between mb-2">
-                  <div>
-                    <h3 className="text-sm font-medium mb-1">Splitting Strategies</h3>
-                    <p className="text-xs text-gray-500">Select one or more strategies to generate splits</p>
-                  </div>
-                  
-                  <div className="flex gap-1.5">
-                    <Button 
-                      variant="ghost" 
-                      size="xs"
-                      onClick={resetToDefault}
-                      className="h-7 text-xs"
+    <div className="bg-white rounded-xl shadow-sm p-6 mb-6 fixed top-10 left-10 right-10 bottom-10 z-50 overflow-auto">
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-xl font-semibold">AI Post Splitting Preview</h2>
+        <Button 
+          variant="ghost" 
+          onClick={(e) => {
+            e.preventDefault(); // Prevent form submission
+            e.stopPropagation(); // Stop event propagation
+            onClose();
+          }}
+          type="button" // Explicitly set type to button
+        >
+          <UIIcon.Close className="h-5 w-5" />
+        </Button>
+      </div>
+      
+      {/* Select Platform Tabs */}
+      <div className="mb-6">
+        <h3 className="text-base font-medium mb-3">Platform Requiring Split:</h3>
+        <div className="flex flex-wrap gap-3">
+          {platformsNeedingSplit.map(platformId => (
+            <Button
+              key={platformId}
+              variant={activePlatform === platformId ? "default" : "outline"}
+              size="default"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setActivePlatform(platformId);
+              }}
+              type="button"
+              className="flex items-center gap-2 px-4 py-2"
+            >
+              <SocialIcon platform={platformId} size={18} />
+              <span className="font-medium">{getPlatformName(platformId)}</span>
+            </Button>
+          ))}
+        </div>
+      </div>
+      
+      {/* Select Strategy Tabs */}
+      <div className="mb-6">
+        <div className="flex justify-between items-center mb-3">
+          <h3 className="text-base font-medium">Choose Splitting Strategies:</h3>
+          <div className="flex gap-2">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={selectAllStrategies}
+              className="text-xs"
+            >
+              Select All
+            </Button>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={resetToDefault}
+              className="text-xs"
+            >
+              Reset
+            </Button>
+          </div>
+        </div>
+        <div>
+          <div className="flex flex-wrap gap-3 mb-3">
+            {Object.values(SplittingStrategy).map(strategy => (
+              <TooltipProvider key={strategy}>
+                <Tooltip delayDuration={300}>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant={selectedStrategies.includes(strategy) ? "default" : "outline"}
+                      size="default"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        toggleStrategy(strategy as SplittingStrategy);
+                      }}
+                      type="button"
+                      className="px-4 py-2"
                     >
-                      Reset
+                      <span className="flex items-center gap-1">
+                        {getStrategyName(strategy as SplittingStrategy)}
+                        <Info className="h-4 w-4 text-gray-500" />
+                      </span>
                     </Button>
-                    <Button 
-                      variant="ghost" 
-                      size="xs"
-                      onClick={selectAllStrategies}
-                      className="h-7 text-xs"
-                    >
-                      Select All
-                    </Button>
-                  </div>
-                </div>
+                  </TooltipTrigger>
+                  <TooltipContent side="top" className="max-w-sm p-4">
+                    <p className="font-medium">{getStrategyName(strategy as SplittingStrategy)}</p>
+                    <p className="text-sm mt-1">{getStrategyTooltip(strategy as SplittingStrategy)}</p>
+                    <p className="text-xs text-gray-500 mt-2">{getStrategyDescription(strategy as SplittingStrategy)}</p>
+                    <div className="text-xs bg-blue-50 p-2 rounded mt-2 text-blue-700">
+                      <p className="font-medium">Thread Optimization</p>
+                      <p>All splits include thread optimization with thread numbering using "🧵 x of y" notation.</p>
+                    </div>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            ))}
+          </div>
+          
+          {/* Generate Button */}
+          <Button 
+            variant="secondary"
+            className="w-full mb-3" 
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              generateSplitOptions();
+            }}
+            disabled={isLoading || selectedStrategies.length === 0}
+            type="button"
+          >
+            {isLoading ? 'Generating...' : 'Generate Split Options'}
+          </Button>
+          
+          {/* Error Display */}
+          {error && (
+            <Alert variant="destructive" className="mb-3">
+              <AlertTriangle className="h-4 w-4" />
+              <AlertDescription className="ml-2">
+                <div className="font-medium">{error}</div>
                 
-                <div className="flex flex-wrap gap-2">
-                  {Object.values(SplittingStrategy).map((strategy) => (
-                    <TooltipProvider key={strategy}>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <div>
-                            <Badge 
-                              variant={selectedStrategies.includes(strategy) ? "default" : "outline"}
-                              className={`
-                                cursor-pointer transition-all duration-200 select-none
-                                ${selectedStrategies.includes(strategy) ? 'bg-primary hover:bg-primary/90' : 'bg-transparent hover:bg-gray-100'}
-                              `}
-                              onClick={() => toggleStrategy(strategy)}
-                            >
-                              {selectedStrategies.includes(strategy) && (
-                                <UIIcon.Check className="mr-1 h-3 w-3" />
-                              )}
-                              {getStrategyName(strategy)}
-                            </Badge>
+                {errorDetails && (
+                  <div className="mt-2">
+                    {advancedOptions.showRawJson ? (
+                      // Developer mode error display (always expanded)
+                      <div className="text-xs bg-gray-900 text-gray-200 p-3 rounded-md border border-gray-700">
+                        <h4 className="text-gray-300 font-mono flex items-center mb-2">
+                          <span className="inline-block mr-2 p-1 bg-red-800 text-red-200 rounded">Error</span>
+                          Developer Mode Error Data
+                        </h4>
+                        
+                        {/* Tips based on error type */}
+                        {errorDetails.includes('rate_limit_exceeded') && (
+                          <div className="p-2 bg-amber-950 border border-amber-800 rounded text-amber-200 mb-3">
+                            <p className="font-medium mb-1">Rate Limit Exceeded</p>
+                            <p>OpenAI's rate limit was reached. Please wait a few moments and try again.</p>
                           </div>
-                        </TooltipTrigger>
-                        <TooltipContent side="bottom" className="max-w-xs">
-                          <p className="text-sm font-medium">{getStrategyName(strategy)}</p>
-                          <p className="text-xs mt-1">{getStrategyTooltip(strategy)}</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                  ))}
-                </div>
-              </div>
-              
-              {/* Error Display */}
-              {error && (
-                <Alert variant="destructive" className="mb-3">
-                  <AlertTriangle className="h-4 w-4" />
-                  <AlertDescription className="ml-2">
-                    <div className="font-medium">{error}</div>
-                    
-                    {errorDetails && (
-                      <div className="mt-2">
-                        {advancedOptions.showRawJson ? (
-                          // Developer mode error display (always expanded)
-                          <div className="text-xs bg-gray-900 text-gray-200 p-3 rounded-md border border-gray-700">
-                            <h4 className="text-gray-300 font-mono flex items-center mb-2">
-                              <span className="inline-block mr-2 p-1 bg-red-800 text-red-200 rounded">Error</span>
-                              Developer Mode Error Data
-                            </h4>
-                            
-                            {/* Tips based on error type */}
-                            {errorDetails.includes('rate_limit_exceeded') && (
-                              <div className="p-2 bg-amber-950 border border-amber-800 rounded text-amber-200 mb-3">
-                                <p className="font-medium mb-1">Rate Limit Exceeded</p>
-                                <p>OpenAI's rate limit was reached. Please wait a few moments and try again.</p>
-                              </div>
-                            )}
-                            
-                            {errorDetails.includes('invalid_api_key') && (
-                              <div className="p-2 bg-red-950 border border-red-800 rounded text-red-200 mb-3">
-                                <p className="font-medium mb-1">API Authentication Error</p>
-                                <p>There might be an issue with the OpenAI API key. Please check that it's correctly configured.</p>
-                              </div>
-                            )}
-                            
-                            {/* Raw error details with syntax highlighting */}
-                            <pre className="overflow-auto p-2 bg-gray-950 font-mono text-green-400 rounded max-h-80">
+                        )}
+                        
+                        {errorDetails.includes('invalid_api_key') && (
+                          <div className="p-2 bg-red-950 border border-red-800 rounded text-red-200 mb-3">
+                            <p className="font-medium mb-1">API Authentication Error</p>
+                            <p>There might be an issue with the OpenAI API key. Please check that it's correctly configured.</p>
+                          </div>
+                        )}
+                        
+                        {/* Raw error details with syntax highlighting */}
+                        <pre className="overflow-auto p-2 bg-gray-950 font-mono text-green-400 rounded max-h-80">
+                          {errorDetails}
+                        </pre>
+                      </div>
+                    ) : (
+                      // Normal user error display
+                      <details className="text-xs bg-red-50 p-3 rounded-md border border-red-200">
+                        <summary className="font-medium cursor-pointer">View Technical Details</summary>
+                        <div className="mt-2 space-y-2">
+                          {/* Tips based on error type */}
+                          {errorDetails.includes('rate_limit_exceeded') && (
+                            <div className="p-2 bg-amber-50 border border-amber-200 rounded">
+                              <p className="font-medium">Rate Limit Exceeded</p>
+                              <p>OpenAI's rate limit was reached. Please wait a few moments and try again.</p>
+                            </div>
+                          )}
+                          
+                          {errorDetails.includes('invalid_api_key') && (
+                            <div className="p-2 bg-amber-50 border border-amber-200 rounded">
+                              <p className="font-medium">API Authentication Error</p>
+                              <p>There might be an issue with the OpenAI API key. Please check that it's correctly configured.</p>
+                            </div>
+                          )}
+                          
+                          {/* Raw error details */}
+                          <div className="p-2 bg-gray-900 text-gray-100 rounded overflow-x-auto">
+                            <pre className="text-xs whitespace-pre-wrap">
                               {errorDetails}
                             </pre>
                           </div>
-                        ) : (
-                          // Normal user error display
-                          <details className="text-xs bg-red-50 p-3 rounded-md border border-red-200">
-                            <summary className="font-medium cursor-pointer">View Technical Details</summary>
-                            <div className="mt-2 space-y-2">
-                              {/* Tips based on error type */}
-                              {errorDetails.includes('rate_limit_exceeded') && (
-                                <div className="p-2 bg-amber-50 border border-amber-200 rounded">
-                                  <p className="font-medium">Rate Limit Exceeded</p>
-                                  <p>OpenAI's rate limit was reached. Please wait a few moments and try again.</p>
-                                </div>
-                              )}
-                              
-                              {errorDetails.includes('invalid_api_key') && (
-                                <div className="p-2 bg-amber-50 border border-amber-200 rounded">
-                                  <p className="font-medium">API Authentication Error</p>
-                                  <p>There might be an issue with the OpenAI API key. Please check that it's correctly configured.</p>
-                                </div>
-                              )}
-                              
-                              {/* Raw error details */}
-                              <div className="p-2 bg-gray-900 text-gray-100 rounded overflow-x-auto">
-                                <pre className="text-xs whitespace-pre-wrap">
-                                  {errorDetails}
-                                </pre>
-                              </div>
-                            </div>
-                          </details>
-                        )}
-                      </div>
-                    )}
-                  </AlertDescription>
-                </Alert>
-              )}
-              
-              {/* Strategy active indicator */}
-              {/* UI design for strategy info and platform selection */}
-              <div className="space-y-4">
-                {splitResults && (
-                  <>
-                    {/* Platform tabs */}
-                    <Tabs 
-                      defaultValue={activePlatform} 
-                      onValueChange={setActivePlatform}
-                      className="w-full"
-                    >
-                      <div className="flex items-center justify-between mb-2">
-                        <h3 className="text-sm font-medium">Split Preview by Platform</h3>
-                        
-                        {/* Strategy selection for this platform */}
-                        <div className="flex items-center gap-2">
-                          <span className="text-xs text-gray-500">Strategy:</span>
-                          <select
-                            className="text-xs p-1 border rounded bg-white"
-                            value={activeStrategy}
-                            onChange={(e) => setActiveStrategy(e.target.value as SplittingStrategy)}
-                          >
-                            {selectedStrategies.map(strategy => (
-                              <option key={strategy} value={strategy}>{getStrategyName(strategy)}</option>
-                            ))}
-                          </select>
                         </div>
-                      </div>
-                      
-                      <TabsList className="mb-4 mt-2">
-                        {platformsNeedingSplit.map(platformId => (
-                          <TabsTrigger 
-                            key={platformId}
-                            value={platformId}
-                            className="inline-flex items-center gap-1.5"
-                          >
-                            <SocialIcon platform={platformId} className="h-3.5 w-3.5" />
-                            <span>{getPlatformName(platformId)}</span>
-                          </TabsTrigger>
-                        ))}
-                      </TabsList>
-                      
-                      {/* Results for each platform */}
-                      {platformsNeedingSplit.map(platformId => (
-                        <TabsContent key={platformId} value={platformId} className="mt-0">
-                          {renderSplitPosts(platformId, activeStrategy)}
-                        </TabsContent>
-                      ))}
-                    </Tabs>
-                  </>
-                )}
-                
-                {/* Generate button (only visible when results are not available yet) */}
-                {!splitResults && !isLoading && !error && (
-                  <div className="flex justify-end">
-                    <Button 
-                      onClick={generateSplitOptions}
-                      className="gap-1.5"
-                    >
-                      <Info className="h-3.5 w-3.5" />
-                      <span>Generate Split Options</span>
-                    </Button>
+                      </details>
+                    )}
                   </div>
                 )}
-                
-                {/* Generate button (visible when there's an error) */}
-                {!splitResults && !isLoading && error && (
-                  <div className="flex justify-between mt-6">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={onClose}
-                    >
-                      Cancel
-                    </Button>
-                    <Button 
-                      onClick={generateSplitOptions}
-                      className="gap-1.5"
-                    >
-                      <UIIcon.Refresh className="h-3.5 w-3.5" />
-                      <span>Try Again</span>
-                    </Button>
+              </AlertDescription>
+            </Alert>
+          )}
+          
+          {/* Strategy active indicator */}
+          <div className="text-sm flex items-center gap-2 bg-blue-50 p-3 rounded-lg border border-blue-100">
+            <div className="w-2 h-2 rounded-full bg-blue-500"></div>
+            <span className="font-medium text-blue-700">Active strategy: {getStrategyName(activeStrategy)}</span>
+          </div>
+        </div>
+      </div>
+      
+      <div className="flex flex-col lg:flex-row gap-6">
+        {/* Left side: Split Preview */}
+        <div className="w-full lg:w-2/3">
+          <Card className="mb-6">
+            <CardHeader className="p-5 border-b">
+              <CardTitle className="text-lg">Split Preview</CardTitle>
+              <CardDescription className="text-base">
+                How your post will be split for {getPlatformName(activePlatform)}
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="p-5">
+              <div className="h-[400px] overflow-auto pr-3">
+                {isLoading ? (
+                  renderLoading()
+                ) : error ? (
+                  <Alert variant="destructive" className="mb-4">
+                    <AlertDescription className="text-base">{error}</AlertDescription>
+                  </Alert>
+                ) : splitResults ? (
+                  renderSplitPosts(activePlatform, activeStrategy)
+                ) : (
+                  <div className="text-center py-8 text-gray-500">
+                    <AlertTriangle className="mx-auto h-12 w-12 text-amber-500 mb-4" />
+                    <p className="text-lg font-medium">No splitting options available.</p>
+                    <p className="mt-2">Try entering a longer post.</p>
                   </div>
                 )}
               </div>
-            </div>
-          )}
-        </CardContent>
-      </Card>
+            </CardContent>
+          </Card>
+        </div>
+        
+        {/* Right side: Original Post */}
+        <div className="w-full lg:w-1/3">
+          <Card className="mb-6">
+            <CardHeader className="p-5 border-b">
+              <CardTitle className="text-lg">Original Post</CardTitle>
+              <CardDescription className="text-base">
+                {content.length} characters ({characterStats.find(s => s.platform === activePlatform)?.limit || 0} character limit)
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="p-5">
+              <div className="max-h-[200px] overflow-auto">
+                <p className="text-base whitespace-pre-wrap">{content}</p>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+      
+      {/* Action Buttons */}
+      <div className="flex justify-between mt-6">
+        <Button 
+          variant="outline" 
+          onClick={(e) => {
+            e.preventDefault(); // Prevent form submission
+            e.stopPropagation(); // Stop event propagation
+            onClose();
+          }}
+          type="button" // Explicitly set type to button
+          size="lg"
+          className="px-6"
+        >
+          Cancel
+        </Button>
+        <Button 
+          onClick={(e) => {
+            e.preventDefault(); // Prevent form submission
+            e.stopPropagation(); // Stop event propagation
+            if (splitResults?.[activeStrategy]?.[activePlatform]) {
+              toast({
+                title: "Applying split",
+                description: `Applying ${getStrategyName(activeStrategy)} split for ${getPlatformName(activePlatform)}`,
+              });
+              onApplySplit(
+                activeStrategy, 
+                activePlatform, 
+                splitResults[activeStrategy][activePlatform].splitText
+              );
+            }
+          }}
+          type="button" // Explicitly set type to button
+          disabled={isLoading || !splitResults}
+          size="lg"
+          className="px-6 bg-green-600 hover:bg-green-700"
+        >
+          <span className="flex items-center gap-2">
+            <CheckCircle2 className="h-5 w-5" />
+            Apply {getStrategyName(activeStrategy)} Split
+          </span>
+        </Button>
+      </div>
     </div>
   );
 }
