@@ -1,6 +1,6 @@
 import { Switch, Route } from "wouter";
-import { ThemeProvider } from "next-themes";
 import { TooltipProvider } from "@/components/ui/tooltip";
+import { CatppuccinThemeProvider } from "@/components/theme";
 import Home from "@/pages/Home";
 import NotFound from "@/pages/not-found";
 
@@ -14,18 +14,19 @@ function Router() {
 }
 
 function App() {
-  // Check localStorage for saved theme preference
+  // Check localStorage for saved Catppuccin theme preference
   const getInitialTheme = () => {
-    const savedTheme = localStorage.getItem("theme");
-    return savedTheme || "dark"; // Default to dark if no preference is saved
+    const savedTheme = localStorage.getItem("catppuccin-theme");
+    // Default to mocha (dark theme) if no preference is saved
+    return (savedTheme as "latte" | "frappe" | "macchiato" | "mocha") || "mocha";
   };
 
   return (
-    <ThemeProvider attribute="class" defaultTheme={getInitialTheme()}>
+    <CatppuccinThemeProvider defaultTheme={getInitialTheme()}>
       <TooltipProvider>
         <Router />
       </TooltipProvider>
-    </ThemeProvider>
+    </CatppuccinThemeProvider>
   );
 }
 
