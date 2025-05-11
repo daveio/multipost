@@ -153,11 +153,12 @@ export function AISplitPreview({
       } else if (error.message) {
         // Regular error with message
         errorMessage = error.message;
-        technicalDetails = error.stack || '';
+        technicalDetails = error.stack || JSON.stringify(error, null, 2);
       }
       
       // Display a detailed error message with helpful debugging info
       setError(`Error: ${errorMessage}`);
+      setErrorDetails(technicalDetails);
       console.error('Split generation error details:', technicalDetails);
       
       toast({
@@ -433,40 +434,50 @@ export function AISplitPreview({
     
     return (
       <div className="space-y-4">
-        {splitTextArray.map((post, index) => (
-          <Card key={index} className="border">
-            <CardContent className="p-4">
-              <div className="flex items-start gap-3">
-                <Avatar className="h-10 w-10">
-                  {getAvatarUrl(platformId) ? (
-                    <AvatarImage src={getAvatarUrl(platformId)} alt={getDisplayName(platformId)} />
-                  ) : (
-                    <AvatarFallback>{getAccountInitials(platformId)}</AvatarFallback>
-                  )}
-                </Avatar>
-                <div className="flex-1">
-                  <div className="flex items-center gap-1">
-                    <span className="font-semibold">{getDisplayName(platformId)}</span>
-                    <span className="text-gray-500 text-sm">{getUsername(platformId)}</span>
+        {/* Thread visualization with connecting lines */}
+        <div className="relative">
+          {splitTextArray.map((post, index) => (
+            <div key={index} className="relative">
+              {/* Vertical thread line */}
+              {index < splitTextArray.length - 1 && (
+                <div className="absolute left-5 top-16 bottom-0 w-0.5 bg-gray-200 z-0" />
+              )}
+              
+              <Card key={`post-${index}`} className="border relative z-10 mb-4">
+                <CardContent className="p-4">
+                  <div className="flex items-start gap-3">
+                    <Avatar className="h-10 w-10 ring-2 ring-background">
+                      {getAvatarUrl(platformId) ? (
+                        <AvatarImage src={getAvatarUrl(platformId)} alt={getDisplayName(platformId)} />
+                      ) : (
+                        <AvatarFallback>{getAccountInitials(platformId)}</AvatarFallback>
+                      )}
+                    </Avatar>
+                    <div className="flex-1">
+                      <div className="flex items-center gap-1">
+                        <span className="font-semibold">{getDisplayName(platformId)}</span>
+                        <span className="text-gray-500 text-sm">{getUsername(platformId)}</span>
+                      </div>
+                      <p className="mt-2 text-sm whitespace-pre-wrap">{typeof post === 'string' ? post : JSON.stringify(post)}</p>
+                      
+                      <div className="flex justify-between items-center mt-3">
+                        {/* Thread numbering */}
+                        <Badge variant="outline" className="font-mono">
+                          🧵 {index + 1} of {splitTextArray.length}
+                        </Badge>
+                        
+                        {/* Character count */}
+                        <div className="text-xs text-gray-500">
+                          {typeof post === 'string' ? post.length : '?'} / {characterStats.find(s => s.platform === platformId)?.limit || 500} chars
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                  <p className="mt-2 text-sm">{typeof post === 'string' ? post : JSON.stringify(post)}</p>
-                  
-                  {/* Thread numbering */}
-                  <div className="mt-2">
-                    <Badge variant="outline" className="font-mono">
-                      🧵 {index + 1} of {splitTextArray.length}
-                    </Badge>
-                  </div>
-                  
-                  {/* Character count */}
-                  <div className="mt-2 text-xs text-gray-500">
-                    {typeof post === 'string' ? post.length : '?'} / {characterStats.find(s => s.platform === platformId)?.limit || 500} characters
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+                </CardContent>
+              </Card>
+            </div>
+          ))}
+        </div>
         
         {/* Reasoning */}
         <Alert className="bg-gray-50">
@@ -595,14 +606,16 @@ export function AISplitPreview({
               <AlertTriangle className="h-4 w-4" />
               <AlertDescription className="ml-2">
                 {error}
-                <details className="mt-2 text-xs">
-                  <summary className="cursor-pointer">View Technical Details</summary>
-                  <div className="mt-2 p-2 bg-gray-900 text-gray-100 rounded overflow-x-auto">
-                    <pre className="text-xs whitespace-pre-wrap">
-                      {error}
-                    </pre>
-                  </div>
-                </details>
+                {errorDetails && (
+                  <details className="mt-2 text-xs">
+                    <summary className="cursor-pointer">View Technical Details</summary>
+                    <div className="mt-2 p-2 bg-gray-900 text-gray-100 rounded overflow-x-auto">
+                      <pre className="text-xs whitespace-pre-wrap">
+                        {errorDetails}
+                      </pre>
+                    </div>
+                  </details>
+                )}
               </AlertDescription>
             </Alert>
           )}
