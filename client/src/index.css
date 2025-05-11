@@ -42,6 +42,16 @@
   background-color: var(--Sapphire);
 }
 
+/* Style for platform checkmarks */
+.platform-badge-check {
+  color: var(--Sapphire) !important;
+}
+
+/* Style for platform badge buttons */
+.platform-button-check {
+  color: var(--Sapphire);
+}
+
 .preview-card { 
   @apply max-h-96 overflow-y-auto overflow-x-hidden; 
 }
