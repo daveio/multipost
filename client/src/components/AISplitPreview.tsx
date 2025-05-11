@@ -307,10 +307,15 @@ export function AISplitPreview({
         } as SplitPostResult;
       } else if (strategyResults.splitText && Array.isArray(strategyResults.splitText)) {
         // Object with splitText array
+        // Make sure to handle the case when reasoning might not be a string
+        const reasoning = typeof strategyResults.reasoning === 'string' 
+          ? strategyResults.reasoning 
+          : `Split optimized for ${getPlatformName(platformId)}`;
+          
         result = {
           splitText: strategyResults.splitText as string[],
           strategy,
-          reasoning: strategyResults.reasoning || `Split optimized for ${getPlatformName(platformId)}`
+          reasoning
         } as SplitPostResult;
       }
     } else if (strategyResults.bluesky || strategyResults.mastodon || strategyResults.threads || strategyResults.nostr) {
@@ -429,8 +434,8 @@ export function AISplitPreview({
                   
                   {/* Thread numbering */}
                   <div className="mt-2">
-                    <Badge variant="outline">
-                      Post {index + 1} of {splitTextArray.length}
+                    <Badge variant="outline" className="font-mono">
+                      🧵 {index + 1} of {splitTextArray.length}
                     </Badge>
                   </div>
                   
