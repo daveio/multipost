@@ -1,13 +1,10 @@
-import { describe, it, expect, vi } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { screen, fireEvent } from '@testing-library/react';
 import { PlatformCard } from './PlatformCard';
+import { renderWithProviders, mockPlatforms } from '../../test/test-utils';
 
 describe('PlatformCard component', () => {
-  const mockPlatform = {
-    id: 'bluesky',
-    isSelected: true
-  };
-  
+  const mockPlatform = mockPlatforms[0]; // Using the Bluesky platform from test utils
   const mockToggle = vi.fn();
   
   beforeEach(() => {
@@ -15,7 +12,7 @@ describe('PlatformCard component', () => {
   });
   
   it('should render the platform card', () => {
-    render(
+    renderWithProviders(
       <PlatformCard 
         platform={mockPlatform} 
         charCount={100} 
@@ -32,7 +29,7 @@ describe('PlatformCard component', () => {
   });
   
   it('should call onToggle when clicked', () => {
-    render(
+    renderWithProviders(
       <PlatformCard 
         platform={mockPlatform} 
         charCount={100} 
@@ -51,7 +48,7 @@ describe('PlatformCard component', () => {
   
   it('should display different styles based on active state', () => {
     // Render active card
-    const { rerender } = render(
+    const { rerender } = renderWithProviders(
       <PlatformCard 
         platform={mockPlatform} 
         charCount={100} 
@@ -78,24 +75,21 @@ describe('PlatformCard component', () => {
   });
   
   it('should display a warning when character count exceeds the limit', () => {
-    // Mock a platform with a character limit
-    const platformWithLimit = {
-      ...mockPlatform,
-      characterLimit: 50
-    };
+    // Create a platform with its character limit exceeded
+    const charCount = mockPlatform.characterLimit + 50;
     
     // Render with character count exceeding the limit
-    render(
+    renderWithProviders(
       <PlatformCard 
-        platform={platformWithLimit} 
-        charCount={100} 
+        platform={mockPlatform} 
+        charCount={charCount} 
         active={true} 
         onToggle={mockToggle} 
       />
     );
     
     // Should display a warning
-    const characterCount = screen.getByText('100');
+    const characterCount = screen.getByText(charCount.toString());
     expect(characterCount).toHaveClass('text-red-500');
   });
 });
