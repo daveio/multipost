@@ -57,9 +57,8 @@ export default function Home() {
       return;
     }
     
-    // For multiple posts, we need to save them as drafts
-    // First, save the current post as a draft if needed
-    const originalPost = formState.content;
+    // Set up a thread with the split posts
+    setupThread(splitText);
     
     // Make a copy of selected platforms and ensure the target platform is selected
     const platforms = formState.selectedPlatforms.map(p => {
@@ -69,23 +68,9 @@ export default function Home() {
       return p;
     });
     
-    // Start with the first post
-    updateContent(splitText[0]);
-    
-    // Save remaining posts as drafts
-    for (let i = 1; i < splitText.length; i++) {
-      // Create a temporary draft with the split content
-      // Here we'd ideally call saveAsDraft with specific content
-      // Since we can't do that directly with the current API, we'll show a message instead
-      toast({
-        title: `Thread Part ${i+1}/${splitText.length}`,
-        description: "Additional posts in this thread will be saved as drafts.",
-      });
-    }
-    
     toast({
-      title: "AI Split Applied",
-      description: `Created a thread with ${splitText.length} posts using ${strategy} strategy.`,
+      title: "Thread Created",
+      description: `Created a thread with ${splitText.length} posts using ${strategy} strategy. Use the thread controls to navigate between posts.`,
     });
   };
 
