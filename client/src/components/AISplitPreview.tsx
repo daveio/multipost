@@ -301,17 +301,17 @@ export function AISplitPreview({
       if (Array.isArray(strategyResults)) {
         // Direct array of strings
         result = {
-          splitText: strategyResults as unknown as string[],
+          splitText: strategyResults as string[],
           strategy,
           reasoning: `Split optimized for ${getPlatformName(platformId)}`
-        };
+        } as SplitPostResult;
       } else if (strategyResults.splitText && Array.isArray(strategyResults.splitText)) {
         // Object with splitText array
         result = {
           splitText: strategyResults.splitText as string[],
           strategy,
           reasoning: strategyResults.reasoning || `Split optimized for ${getPlatformName(platformId)}`
-        };
+        } as SplitPostResult;
       }
     } else if (strategyResults.bluesky || strategyResults.mastodon || strategyResults.threads || strategyResults.nostr) {
       // Try to use any available platform
