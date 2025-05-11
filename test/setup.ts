@@ -1,5 +1,5 @@
 import '@testing-library/jest-dom';
-import { expect, afterEach, vi } from 'vitest';
+import { expect, afterEach, vi, beforeAll } from 'vitest';
 import { cleanup } from '@testing-library/react';
 import * as matchers from '@testing-library/jest-dom/matchers';
 
@@ -9,6 +9,24 @@ expect.extend(matchers);
 // Run cleanup after each test
 afterEach(() => {
   cleanup();
+});
+
+// Mock window.matchMedia for theme detection
+beforeAll(() => {
+  // Mock window.matchMedia - JSDOM doesn't implement this
+  Object.defineProperty(window, 'matchMedia', {
+    writable: true,
+    value: vi.fn().mockImplementation(query => ({
+      matches: query.includes('dark') ? true : false, // Default to dark mode for tests
+      media: query,
+      onchange: null,
+      addListener: vi.fn(),
+      removeListener: vi.fn(),
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+      dispatchEvent: vi.fn(),
+    })),
+  });
 });
 
 // Mock localStorage

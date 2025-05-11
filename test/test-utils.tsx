@@ -1,6 +1,7 @@
 import React, { ReactElement } from 'react';
 import { render, RenderOptions } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { CatppuccinThemeProvider } from '../client/src/components/theme/catppuccin-theme-provider';
 
 // Create a custom render function that includes the QueryClientProvider
 const createTestQueryClient = () => new QueryClient({
@@ -14,19 +15,23 @@ const createTestQueryClient = () => new QueryClient({
 
 interface CustomRenderOptions extends Omit<RenderOptions, 'wrapper'> {
   queryClient?: QueryClient;
+  theme?: 'latte' | 'frappe' | 'macchiato' | 'mocha';
 }
 
 export function renderWithProviders(
   ui: ReactElement,
   { 
     queryClient = createTestQueryClient(),
+    theme = 'frappe', // Default to frappe theme for testing
     ...renderOptions 
   }: CustomRenderOptions = {}
 ) {
   function Wrapper({ children }: { children: React.ReactNode }) {
     return (
       <QueryClientProvider client={queryClient}>
-        {children}
+        <CatppuccinThemeProvider defaultTheme={theme}>
+          {children}
+        </CatppuccinThemeProvider>
       </QueryClientProvider>
     );
   }
