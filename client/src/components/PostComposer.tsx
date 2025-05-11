@@ -391,6 +391,50 @@ export function PostComposer({
                       </p>
                     </div>
                   </div>
+                  
+                  {/* Show Reasoning Option */}
+                  <div className={`flex items-start space-x-2 p-2 mt-2 ${localStorage.getItem('showReasoning') !== null ? 'local-storage-setting' : ''}`}>
+                    <Checkbox 
+                      id="showReasoning"
+                      checked={advancedOptions.showReasoning}
+                      onCheckedChange={(checked) => {
+                        // Get the parent container for the animation
+                        const container = document.getElementById('showReasoningContainer');
+                        
+                        // Save to localStorage
+                        if (checked !== undefined) {
+                          localStorage.setItem('showReasoning', JSON.stringify(checked));
+                          // Add flash effect for saving
+                          container?.classList.remove('flash-reset');
+                          container?.classList.add('flash-save');
+                        } else {
+                          localStorage.removeItem('showReasoning');
+                          // Add flash effect for resetting
+                          container?.classList.remove('flash-save');
+                          container?.classList.add('flash-reset');
+                        }
+                        
+                        // Update state
+                        onAdvancedOptionsChange({ showReasoning: checked as boolean });
+                        
+                        // Remove animation classes after completion
+                        setTimeout(() => {
+                          container?.classList.remove('flash-save', 'flash-reset');
+                        }, 800);
+                      }}
+                    />
+                    <div id="showReasoningContainer" className="grid gap-1.5 leading-none">
+                      <label
+                        htmlFor="showReasoning"
+                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                      >
+                        Show AI reasoning for splits
+                      </label>
+                      <p className="text-xs text-gray-500 mt-1">
+                        Displays the reasoning OpenAI used for splitting the content.
+                      </p>
+                    </div>
+                  </div>
                 </div>
               </div>
               
@@ -408,6 +452,7 @@ export function PostComposer({
                     // Get all containers for localStorage settings
                     const mastodonLimitContainer = document.getElementById('mastodonLimitContainer');
                     const showRawJsonContainer = document.getElementById('showRawJsonContainer');
+                    const showReasoningContainer = document.getElementById('showReasoningContainer');
                     
                     // Reset input value for Mastodon
                     const mastodonInputEl = document.getElementById('mastodonCharLimit') as HTMLInputElement;
@@ -416,7 +461,7 @@ export function PostComposer({
                     }
                     
                     // Apply flash reset effect to all localStorage settings
-                    [mastodonLimitContainer, showRawJsonContainer].forEach(container => {
+                    [mastodonLimitContainer, showRawJsonContainer, showReasoningContainer].forEach(container => {
                       if (container) {
                         container.classList.remove('flash-save');
                         container.classList.add('flash-reset');
@@ -431,12 +476,14 @@ export function PostComposer({
                     // Clear localStorage settings
                     localStorage.removeItem('customMastodonLimit');
                     localStorage.removeItem('showRawJson');
+                    localStorage.removeItem('showReasoning');
                     localStorage.removeItem('savedSplittingConfigs');
                     
                     // Reset state
                     onAdvancedOptionsChange({
                       customMastodonLimit: 500,
                       showRawJson: false,
+                      showReasoning: true, // Default to true for showing reasoning
                       useThreadNotation: true,
                       threadNotationFormat: "(x/y)",
                       schedulePost: false,
