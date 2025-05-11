@@ -12,9 +12,9 @@ interface MediaStatsProps {
 export function MediaStats({ mediaFiles }: MediaStatsProps) {
   if (mediaFiles.length === 0) {
     return (
-      <div className="bg-white rounded-xl shadow-sm p-6">
-        <h2 className="text-lg font-semibold mb-4">Media Status</h2>
-        <p className="text-sm text-gray-500">No media files attached to this post.</p>
+      <div className="bg-card rounded-xl shadow-sm p-6 border border-border">
+        <h2 className="text-lg font-semibold mb-4 text-foreground">Media Status</h2>
+        <p className="text-sm text-muted-foreground">No media files attached to this post.</p>
       </div>
     );
   }
@@ -23,8 +23,8 @@ export function MediaStats({ mediaFiles }: MediaStatsProps) {
   const platforms = ["bluesky", "mastodon", "threads"];
 
   return (
-    <div className="bg-white rounded-xl shadow-sm p-6">
-      <h2 className="text-lg font-semibold mb-4">Media Status</h2>
+    <div className="bg-card rounded-xl shadow-sm p-6 border border-border">
+      <h2 className="text-lg font-semibold mb-4 text-foreground">Media Status</h2>
       <div className="space-y-4">
         {mediaFiles.map((file) => (
           <Card key={file.id} className="border">

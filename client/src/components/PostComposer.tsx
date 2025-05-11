@@ -88,8 +88,8 @@ export function PostComposer({
   const isContentTooLong = characterStats.some(stat => stat.current > stat.limit);
 
   return (
-    <div className="bg-white rounded-xl shadow-sm p-6 mb-6">
-      <h2 className="text-lg font-semibold mb-4">Create Post</h2>
+    <div className="bg-card rounded-xl shadow-sm p-6 mb-6 border border-border">
+      <h2 className="text-lg font-semibold mb-4 text-foreground">Create Post</h2>
       
       <form onSubmit={handleFormSubmit}>
         {/* Text Area for Post */}

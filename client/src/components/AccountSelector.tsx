@@ -52,8 +52,8 @@ export function AccountSelector({
   };
   
   return (
-    <div className="bg-white rounded-xl shadow-sm p-6 mb-6">
-      <h2 className="text-lg font-semibold mb-4">Account Selection</h2>
+    <div className="bg-card rounded-xl shadow-sm p-6 mb-6 border border-border">
+      <h2 className="text-lg font-semibold mb-4 text-foreground">Account Selection</h2>
       
       <div className="space-y-4">
         {Object.keys(groupedAccounts).map((platformId) => (
@@ -82,7 +82,7 @@ export function AccountSelector({
               <AccordionContent className="px-4 pb-4">
                 <div className="space-y-2">
                   {groupedAccounts[platformId].map((account) => (
-                    <div key={account.id} className="flex items-center gap-2 p-2 bg-gray-50 rounded-md">
+                    <div key={account.id} className="flex items-center gap-2 p-2 bg-muted rounded-md">
                       <Checkbox 
                         id={`account-${account.id}`}
                         checked={isAccountSelected(platformId, account.id)}
@@ -95,13 +95,13 @@ export function AccountSelector({
                           <AvatarFallback>{account.username.substring(0, 2).toUpperCase()}</AvatarFallback>
                         )}
                       </Avatar>
-                      <span className="text-sm font-medium">
+                      <span className="text-sm font-medium text-foreground">
                         {platformId === 'mastodon' && account.instanceUrl
                           ? `@${account.username}@${account.instanceUrl}`
                           : `@${account.username}`
                         }
                       </span>
-                      <span className="text-xs text-gray-500">
+                      <span className="text-xs text-muted-foreground">
                         {platformId === 'mastodon' && account.instanceUrl
                           ? account.instanceUrl
                           : 'Main Account'
@@ -113,16 +113,18 @@ export function AccountSelector({
                 <div className="mt-2 flex gap-2">
                   <Button 
                     variant="ghost" 
-                    size="xs"
+                    size="sm"
                     onClick={() => handleAddAccount(platformId)}
+                    className="h-8 text-xs"
                   >
                     <UIIcon.Add className="h-3 w-3 mr-1" /> Add Account
                   </Button>
                   {platformId === 'mastodon' && (
                     <Button 
                       variant="ghost" 
-                      size="xs"
+                      size="sm"
                       onClick={() => handleAddInstance(platformId)}
+                      className="h-8 text-xs"
                     >
                       <UIIcon.Server className="h-3 w-3 mr-1" /> Add Instance
                     </Button>

@@ -12,33 +12,33 @@ interface DraftsListProps {
 export function DraftsList({ drafts, onLoadDraft, onDeleteDraft }: DraftsListProps) {
   if (drafts.length === 0) {
     return (
-      <div className="bg-white rounded-xl shadow-sm p-6">
-        <h2 className="text-lg font-semibold mb-4">Recent Drafts</h2>
-        <p className="text-sm text-gray-500">No drafts available. Save a draft to see it here.</p>
+      <div className="bg-card rounded-xl shadow-sm p-6 border border-border">
+        <h2 className="text-lg font-semibold mb-4 text-foreground">Recent Drafts</h2>
+        <p className="text-sm text-muted-foreground">No drafts available. Save a draft to see it here.</p>
       </div>
     );
   }
 
   return (
-    <div className="bg-white rounded-xl shadow-sm p-6">
-      <h2 className="text-lg font-semibold mb-4">Recent Drafts</h2>
+    <div className="bg-card rounded-xl shadow-sm p-6 border border-border">
+      <h2 className="text-lg font-semibold mb-4 text-foreground">Recent Drafts</h2>
       <div className="space-y-3">
         {drafts.map((draft) => (
           <div 
             key={draft.id}
-            className="p-3 border rounded-lg flex justify-between items-center hover:bg-gray-50 cursor-pointer"
+            className="p-3 border border-border rounded-lg flex justify-between items-center hover:bg-muted/50 cursor-pointer"
             onClick={() => onLoadDraft(draft.id)}
           >
             <div>
-              <p className="line-clamp-1 text-sm">{draft.content}</p>
+              <p className="line-clamp-1 text-sm text-foreground">{draft.content}</p>
               <div className="flex gap-2 mt-1">
-                <span className="text-xs text-gray-500">
+                <span className="text-xs text-muted-foreground">
                   {draft.platforms.filter(p => p.isSelected).length} platforms
                 </span>
-                <span className="text-xs text-gray-500">
+                <span className="text-xs text-muted-foreground">
                   {draft.mediaFiles ? draft.mediaFiles.length : 0} media files
                 </span>
-                <span className="text-xs text-gray-500">
+                <span className="text-xs text-muted-foreground">
                   {formatRelativeTime(new Date(draft.updatedAt))}
                 </span>
               </div>
@@ -52,7 +52,7 @@ export function DraftsList({ drafts, onLoadDraft, onDeleteDraft }: DraftsListPro
                 onDeleteDraft(draft.id);
               }}
             >
-              <UIIcon.Delete className="h-4 w-4 text-gray-400" />
+              <UIIcon.Delete className="h-4 w-4 text-muted-foreground hover:text-destructive" />
             </Button>
           </div>
         ))}
