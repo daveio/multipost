@@ -87,7 +87,7 @@ export function PostComposer({
           
           {/* Start/Continue Thread Button - Only appears when content exceeds character limit */}
           {isContentTooLong && (
-            <div className="absolute bottom-3 right-3">
+            <div className="absolute bottom-3 right-3 z-10">
               <Button
                 variant="secondary"
                 size="sm"
@@ -126,11 +126,11 @@ export function PostComposer({
           
           {/* Character Count */}
           <div className="mt-2 flex justify-between text-sm">
-            <div className={
-              isContentTooLong ? "char-counter-danger" : 
+            <div className={`
+              ${isContentTooLong ? "text-red-500 font-medium" : 
               content.length > 0.8 * Math.min(...characterStats.map(s => s.limit)) ? 
-                "char-counter-warning" : "text-gray-500"
-            }>
+                "text-amber-500" : "text-gray-500"}
+            `}>
               {content.length} characters
             </div>
             

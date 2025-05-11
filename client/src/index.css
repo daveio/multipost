@@ -84,5 +84,26 @@
 }
 
 .preview-card { 
-  @apply max-h-96 overflow-y-auto; 
+  @apply max-h-96 overflow-y-auto overflow-x-hidden; 
+}
+
+/* Handle text overflow and wrapping better across the app */
+.text-wrap-anywhere {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+/* Ensure preview content stays within bounds */
+.preview-content {
+  @apply break-words overflow-hidden text-wrap-anywhere;
+  max-width: 100%;
+}
+
+/* Improve platform tabs responsiveness */
+@media (max-width: 640px) {
+  .platform-tabs-container {
+    overflow-x: auto;
+    flex-wrap: nowrap;
+    -webkit-overflow-scrolling: touch;
+  }
 }

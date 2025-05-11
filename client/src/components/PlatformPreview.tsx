@@ -61,7 +61,7 @@ export function PlatformPreview({
   return (
     <>
       <Tabs defaultValue={activeTab} value={activeTab} onValueChange={onTabChange} className="w-full">
-        <TabsList className="mb-4 w-full flex-nowrap overflow-x-auto">
+        <TabsList className="mb-4 w-full flex-nowrap overflow-x-auto platform-tabs-container">
           {["bluesky", "mastodon", "threads"].map((platform) => (
             <TabsTrigger key={platform} value={platform} className="flex-1 min-w-fit">
               <SocialIcon platform={platform} className="mr-1" size={14} />
@@ -81,12 +81,12 @@ export function PlatformPreview({
                     <AvatarFallback>{getAccountInitials(platform)}</AvatarFallback>
                   )}
                 </Avatar>
-                <div className="flex-1 min-w-0"> {/* min-w-0 ensures text wrapping works properly */}
-                  <div className="flex flex-wrap items-center gap-1">
-                    <span className="font-semibold truncate">{getDisplayName(platform)}</span>
-                    <span className="text-gray-500 text-sm truncate">{getUsername(platform)}</span>
+                <div className="flex-1 min-w-0 overflow-hidden"> {/* Added overflow-hidden */}
+                  <div className="flex flex-wrap items-center gap-1 w-full">
+                    <span className="font-semibold truncate max-w-[40%]">{getDisplayName(platform)}</span>
+                    <span className="text-gray-500 text-sm truncate max-w-[55%]">{getUsername(platform)}</span>
                   </div>
-                  <p className="mt-2 text-sm break-words whitespace-pre-wrap">{getFormattedContent(platform)}</p>
+                  <p className="mt-2 text-sm preview-content">{getFormattedContent(platform)}</p>
                   
                   {/* Media Preview Grid */}
                   {mediaFiles.length > 0 && (
