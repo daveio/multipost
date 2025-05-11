@@ -45,6 +45,12 @@ export async function splitPost(
   
   ${strategiesDescription}
   
+  IMPORTANT: Always optimize for thread reading experience:
+  - Start each post (except the first) with a clear continuation indicator
+  - End each post (except the last) with a hook or cliffhanger to encourage reading the next post
+  - Mark thread numbering with notation like "🧵 1 of 3", "🧵 2 of 3", "🧵 3 of 3" at the end of each post
+  - Add two newlines before the thread notation
+  
   Return your response as a JSON object with the following format:
   {
     "posts": ["post1", "post2", ...],
@@ -129,7 +135,6 @@ export async function generateSplittingOptions(
     [SplittingStrategy.SENTENCE]: {},
     [SplittingStrategy.RETAIN_HASHTAGS]: {},
     [SplittingStrategy.PRESERVE_MENTIONS]: {},
-    [SplittingStrategy.THREAD_OPTIMIZED]: {},
   };
   
   // For each platform and strategy, generate splitting options
@@ -245,11 +250,7 @@ function getStrategyDescription(strategy: SplittingStrategy): string {
       If a post is split such that it separates an @mention from its context, 
       include the @mention in both posts where relevant.`;
       
-    case SplittingStrategy.THREAD_OPTIMIZED:
-      return `THREAD OPTIMIZATION: Format the posts specifically for an optimal thread reading experience.
-      Start each post (except the first) with a clear continuation indicator.
-      End each post (except the last) with a hook or cliffhanger to encourage reading the next post.
-      Mark thread numbering yourself with notation like (1/3), (2/3), (3/3).`;
+    // Thread optimization is now applied to all strategies automatically
       
     default:
       return `Split based on semantic units, preserving the meaning of each section.`;

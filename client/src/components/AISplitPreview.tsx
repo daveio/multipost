@@ -9,17 +9,24 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useToast } from "@/hooks/use-toast";
 import { SocialIcon, UIIcon } from "./SocialIcons";
-import { AlertTriangle, CheckCircle2 } from "lucide-react";
+import { AlertTriangle, CheckCircle2, HelpCircle, Info } from "lucide-react";
 import { 
   SplittingStrategy, 
   SplitPostResult,
   splitPost,
   getStrategyName,
-  getStrategyDescription
+  getStrategyDescription,
+  getStrategyTooltip
 } from "@/lib/aiService";
 import { Account, CharacterStat } from "../types";
 import { getPlatformName } from '@/lib/platform-config';
 import { Progress } from "@/components/ui/progress";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface AISplitPreviewProps {
   content: string;
@@ -514,20 +521,32 @@ export function AISplitPreview({
         <div>
           <div className="flex flex-wrap gap-3 mb-3">
             {Object.values(SplittingStrategy).map(strategy => (
-              <Button
-                key={strategy}
-                variant={selectedStrategies.includes(strategy) ? "default" : "outline"}
-                size="default"
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  toggleStrategy(strategy as SplittingStrategy);
-                }}
-                type="button"
-                className="px-4 py-2"
-              >
-                {getStrategyName(strategy as SplittingStrategy)}
-              </Button>
+              <TooltipProvider key={strategy}>
+                <Tooltip delayDuration={300}>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant={selectedStrategies.includes(strategy) ? "default" : "outline"}
+                      size="default"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        toggleStrategy(strategy as SplittingStrategy);
+                      }}
+                      type="button"
+                      className="px-4 py-2"
+                    >
+                      <span className="flex items-center gap-1">
+                        {getStrategyName(strategy as SplittingStrategy)}
+                        <Info className="h-4 w-4 text-gray-500" />
+                      </span>
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent side="top" className="max-w-sm p-4">
+                    <p className="font-medium">{getStrategyName(strategy as SplittingStrategy)}</p>
+                    <p className="text-sm mt-1">{getStrategyTooltip(strategy as SplittingStrategy)}</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             ))}
           </div>
           
