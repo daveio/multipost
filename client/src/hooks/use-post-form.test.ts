@@ -5,7 +5,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import { usePostForm } from './use-post-form';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { type JSX } from 'react';
+import React from 'react';
 
 // Mock queryClient module
 vi.mock('../lib/queryClient', () => ({
@@ -42,7 +42,8 @@ vi.mock('./use-toast', () => ({
 }));
 
 // Create a custom wrapper with QueryClientProvider
-const createWrapper = () => {
+const createTestWrapper = () => {
+  // Create a new QueryClient for each test
   const queryClient = new QueryClient({
     defaultOptions: {
       queries: {
@@ -51,15 +52,17 @@ const createWrapper = () => {
     }
   });
   
-  // @ts-ignore
-  return function TestWrapper({ children }) {
-    return (
-      // @ts-ignore - JSX errors with testing library are common, but the tests run fine
-      <QueryClientProvider client={queryClient}>
-        {children}
-      </QueryClientProvider>
+  // @ts-ignore - We need to use @ts-ignore here because the JSX in test files causes type errors
+  const Wrapper = ({ children }) => {
+    // @ts-ignore
+    return React.createElement(
+      QueryClientProvider,
+      { client: queryClient },
+      children
     );
   };
+  
+  return Wrapper;
 };
 
 describe('usePostForm hook', () => {
@@ -71,7 +74,7 @@ describe('usePostForm hook', () => {
 
   it('should initialize with default values', () => {
     const { result } = renderHook(() => usePostForm(), {
-      wrapper: createWrapper()
+      wrapper: createTestWrapper()
     });
     
     expect(result.current.formState.content).toBe('');
@@ -81,7 +84,7 @@ describe('usePostForm hook', () => {
 
   it('should update content correctly', () => {
     const { result } = renderHook(() => usePostForm(), {
-      wrapper: createWrapper()
+      wrapper: createTestWrapper()
     });
     
     // Set content
