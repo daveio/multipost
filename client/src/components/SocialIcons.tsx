@@ -36,8 +36,6 @@ export const SocialIcon = ({ platform, className = "", size = 16 }: SocialIconPr
       return <Cloud className={className} size={size} />;
     case 'threads':
       return <AtSign className={className} size={size} />;
-    case 'nostr':
-      return <Zap className={className} size={size} />;
     case 'mastodon':
       // Using a custom icon for Mastodon
       return (

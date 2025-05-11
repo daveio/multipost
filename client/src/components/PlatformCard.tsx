@@ -23,7 +23,6 @@ export function PlatformCard({ platform, charCount, active, onToggle }: Platform
       case 'bluesky': return 'bg-sky-100';
       case 'mastodon': return 'bg-purple-100';
       case 'threads': return 'bg-gray-100';
-      case 'nostr': return 'bg-yellow-100';
       default: return 'bg-blue-100';
     }
   };
@@ -34,7 +33,6 @@ export function PlatformCard({ platform, charCount, active, onToggle }: Platform
       case 'bluesky': return 'text-sky-500';
       case 'mastodon': return 'text-purple-500';
       case 'threads': return 'text-gray-700';
-      case 'nostr': return 'text-yellow-500';
       default: return 'text-blue-500';
     }
   };

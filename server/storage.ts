@@ -70,8 +70,8 @@ export class MemStorage implements IStorage {
   }
   
   private createDemoAccounts(userId: number) {
-    const platforms = ["bluesky", "mastodon", "threads", "nostr"];
-    const instances = ["", "mastodon.social", "", ""];
+    const platforms = ["bluesky", "mastodon", "threads"];
+    const instances = ["", "mastodon.social", ""];
     
     platforms.forEach((platform, index) => {
       const account: Account = {
