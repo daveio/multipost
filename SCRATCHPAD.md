@@ -6,48 +6,69 @@
 
 ## Future Features
 
-- Add a 'Connection Health' widget showing real-time API integration status
-- Add a playful 'Character Count Mood Indicator' that changes emoji based on remaining characters
-- Add a playful 'Content Chameleon' feature that suggests platform-specific emoji and tone adjustments
-- Add a secret 'Synthwave Mode' with everything visually ridiculous
-- Add animated thread navigation indicators
-- Add emoji-based thread mood tagging system
-- Add media transcoding for different platform requirements
-- Add playful loading animations with platform-specific mascots
-- Add subtle micro-interactions for improved user engagement
-- Add subtle micro-interactions for thread navigation
-- Build account management system for multiple accounts per platform
-- Create a 'Copy Formatting' button with smart clipboard integration
-- Create a configurable notification system for post sharing status
-- Create a mood-based content recommendation system
-- Create a personalized thread recommendation engine
-- Create a thread complexity score visualization
-- Create an elegant onboarding tutorial with interactive walkthrough
-- Create an intuitive 'Platform Compatibility Wizard' with step-by-step UI guidance
-- Create an optional progressive webapp with an interface adjusted for mobile devices
-  - Don't change the normal desktop interface
-- Design a subtle toast notification system for API connection events
-- Develop a 'Cross-Platform Preview' modal showing how the post will look on different social networks
-- Develop a 'Social Media Energy Meter' showing content engagement potential
-- Develop a collaborative thread editing mode
-- Develop a color-coded platform compatibility indicator
-- Develop a real-time 'Connection Health' widget with animated status indicators
-- Develop a shareable config export/import feature
-- Develop an accessibility-focused keyboard navigation mode
-- Gamify the platform with achievement badges for successful cross-platform posts
-- Implement a 'Copy Thread Preview' feature
-- Implement a 'Preview Across Platforms' visual simulator
-- Implement a dynamic platform icon animation when hovering over platform switches
-- Implement a personalized platform recommendation engine based on content type
-- Implement a playful 'thread mood' color-coding system
-- Implement a thread preview sharing widget with one-click social share
-- Implement an AI-powered 'Post Optimization Suggestions' tooltip with real-time feedback
-- Implement an intelligent content preview optimization tool
-- Implement responsive design breakpoints for better mobile and tablet UI
-- Implement a 'Social Media Energy Dashboard' with animated engagement visualizations
-- Integrate with actual social media APIs (Bluesky, Mastodon, Threads, Nostr)
+### API & Integration Health
 
-## Review Pass
+- Integrate with social media APIs (Bluesky, Mastodon, Threads, Nostr)
+- Connection Health widget (real-time API status, animated indicators)
+- Social Media Sync Health dashboard (posting status & compatibility)
+- Toast notifications for API connection events
+
+### Platform Compatibility & Preview
+
+- Cross-Platform Preview modal (post rendering across networks)
+- Preview Across Platforms visual simulator
+- Color-coded platform-compatibility indicator
+- Platform Compatibility Wizard (step-by-step guidance)
+- Media transcoding for platform requirements
+- Dynamic platform-icon hover animation
+- Responsive-design breakpoints (mobile / tablet)
+
+### Content Optimization & AI-Assist
+
+- AI-powered Post Optimization Suggestions tooltip
+- Intelligent content-preview optimization tool
+- Personalized platform-recommendation engine (by content type)
+- Thread complexity-score visualization
+- Social Media Energy Meter / Energy Dashboard (engagement potential)
+- Mood-based content-recommendation system
+- Character Count Mood Indicator (emoji changes with remaining chars)
+- Content Chameleon (emoji & tone tweaks per platform)
+- Playful thread-mood color-coding system
+
+### UI/UX Polish (Animations, Micro-Interactions, A11y)
+
+- Subtle micro-interactions (engagement & thread navigation)
+- Playful loading animations with platform mascots
+- Animated thread-navigation indicators
+- Accessibility-focused keyboard-navigation mode
+
+### Collaboration, Sharing & Export
+
+- Collaborative thread-editing mode
+- Thread preview-sharing widget (one-click social share)
+- Copy Thread Preview feature
+- Shareable config export/import
+- Configurable notification system for post-sharing status
+
+### Account & Session Management
+
+- Multi-account management per platform
+
+### Onboarding & Help
+
+- Elegant onboarding tutorial with interactive walkthrough
+
+### Gamification / Fun Stuff
+
+- Achievement badges for successful cross-platform posts
+- Secret Synthwave Mode (over-the-top visuals)
+
+### Utilities
+
+- Copy Formatting button with smart clipboard
+- Optional progressive web-app (mobile-only UI; desktop unchanged)
+
+## Review and Tests
 
 - Run a review pass over the whole codebase.
   - Look for bugs.
@@ -60,10 +81,7 @@
       - It should only need to read the `README.md` - not have to look at any code.
       - Assume API keys are still provided externally.
       - Do not assume that you will be the model reading it.
-
-## Tests
-
-- Update the Vitest tests for the app.
+- Then, update the Vitest tests for the app.
   - Integrate them with Vite, which we are using already.
   - Run the tests.
   - Refine the tests until they pass.
@@ -71,28 +89,3 @@
   - Keep the tests updated as we make changes and add features.
   - Document everything you do in `README.md`.
     - Also include how to run the tests.
-
-## Theming
-
-- Use the `catppuccin` theme framework for the look and feel of the site.
-- Implementation details can be found in:
-  - The `@catppuccin/palette` `npm` package.
-  - Elsewhere in the [`catppuccin`](https://github.com/catppuccin) GitHub organisation.
-  - Feel free to install the `@catppuccin/palette` package from `npm` and reference it directly or indirectly for the colours.
-- Implement the four theme options:
-  - Light theme:
-    - `latte`
-  - Dark theme:
-    - `frappé`
-    - `macchiato`
-    - `mocha`
-- Create a switcher utility in the top right which will let us switch between the four of them.
-  - Categorise the list by light or dark theme.
-  - Ensure the theme switcher works properly.
-- Make sure that we are left with a visually appealing result in all four theme modes.
-  - Previous attempts to implement a dark theme looked extremely unattractive and were almost unusable.
-- Default to dark mode.
-  - Use `Catppuccin Frappé` as the default dark mode.
-  - Take a screenshot and ensure everything looks right.
-- Update any appropriate tests and ensure they pass.
-- Document all theme-related work, config, and changes extensively in the `README.md`.
