@@ -82,4 +82,52 @@ describe('OpenAI Service', () => {
       expect(parsed).toHaveProperty('reasoning');
     });
   });
+
+  describe('validateThreadIndicatorFormatting function', () => {
+    it('should add two newlines before thread indicator when missing', () => {
+      const post = 'This is a post without proper newlines before thread indicator 🧵 2 of 3';
+      const result = validateThreadIndicatorFormatting(post, 1, 3);
+      
+      // Should add two newlines before thread indicator
+      expect(result).toEqual('This is a post without proper newlines before thread indicator\n\n🧵 2 of 3');
+    });
+
+    it('should not modify posts that already have two newlines before the thread indicator', () => {
+      const post = 'This is a post with proper newlines before thread indicator\n\n🧵 2 of 3';
+      const result = validateThreadIndicatorFormatting(post, 1, 3);
+      
+      // Should not modify the content
+      expect(result).toEqual(post);
+    });
+
+    it('should not modify posts without thread indicators', () => {
+      const post = 'This is a post without any thread indicator';
+      const result = validateThreadIndicatorFormatting(post, 0, 1);
+      
+      // Should not modify the content
+      expect(result).toEqual(post);
+    });
+
+    it('should handle empty posts', () => {
+      const post = '';
+      const result = validateThreadIndicatorFormatting(post, 0, 1);
+      
+      // Should not modify empty content
+      expect(result).toEqual('');
+    });
+
+    it('should handle various thread indicator formats', () => {
+      const postWithSlash = 'This is a post with thread indicator 🧵 2/3';
+      const resultWithSlash = validateThreadIndicatorFormatting(postWithSlash, 1, 3);
+      expect(resultWithSlash).toEqual('This is a post with thread indicator\n\n🧵 2/3');
+      
+      const postWithOf = 'This is a post with thread indicator 🧵 2 of 3';
+      const resultWithOf = validateThreadIndicatorFormatting(postWithOf, 1, 3);
+      expect(resultWithOf).toEqual('This is a post with thread indicator\n\n🧵 2 of 3');
+      
+      const postWithSpaces = 'This is a post with thread indicator 🧵  2  of  3';
+      const resultWithSpaces = validateThreadIndicatorFormatting(postWithSpaces, 1, 3);
+      expect(resultWithSpaces).toEqual('This is a post with thread indicator\n\n🧵  2  of  3');
+    });
+  });
 });
