@@ -141,9 +141,13 @@ export function SavedSplittingConfigs({
                 variant="ghost"
                 size="icon"
                 className="h-5 w-5 rounded-full ml-2 hover:bg-destructive/10 hover:text-destructive"
-                onClick={(e) => {
+                onMouseDown={(e) => {
                   e.preventDefault(); // Prevent default action
                   e.stopPropagation(); // Prevent parent click
+                }}
+                onClick={(e) => {
+                  e.preventDefault(); 
+                  e.stopPropagation();
                   console.log('Deleting config:', config.name);
                   onDeleteConfig(config.name);
                 }}
