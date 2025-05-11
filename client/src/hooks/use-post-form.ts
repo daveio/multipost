@@ -399,32 +399,68 @@ export function usePostForm({
   const switchThreadPost = (index: number) => {
     if (index < 0 || index >= formState.threadPosts.length) return;
     
-    // Update the active status
-    const updatedPosts = formState.threadPosts.map((post, i) => ({
-      ...post,
-      isActive: i === index
-    }));
+    // First, save the current content to the current thread post
+    const currentIndex = formState.activeThreadIndex;
+    const updatedPosts = [...formState.threadPosts];
+    
+    // Save current content to current post
+    if (currentIndex >= 0 && currentIndex < updatedPosts.length) {
+      updatedPosts[currentIndex] = {
+        ...updatedPosts[currentIndex],
+        content: formState.content,
+        isActive: false
+      };
+    }
+    
+    // Set the new post as active
+    updatedPosts[index] = {
+      ...updatedPosts[index],
+      isActive: true
+    };
     
     // Update the form state
     setFormState(prev => ({
       ...prev,
-      content: formState.threadPosts[index].content,
+      content: updatedPosts[index].content,
       threadPosts: updatedPosts,
-      activeThreadIndex: index
+      activeThreadIndex: index,
+      isThreadMode: true // Ensure we stay in thread mode
     }));
   };
   
   // Add a new post to the thread
   const addThreadPost = (content: string = '') => {
+    // First, save the current content to the current thread post
+    const currentIndex = formState.activeThreadIndex;
+    const updatedPosts = [...formState.threadPosts];
+    
+    // Save current content to current post if we're in thread mode
+    if (formState.isThreadMode && currentIndex >= 0 && currentIndex < updatedPosts.length) {
+      updatedPosts[currentIndex] = {
+        ...updatedPosts[currentIndex],
+        content: formState.content,
+        isActive: false
+      };
+    }
+    
+    // Create a new post
     const newPost: ThreadPost = {
       content: content || '',
-      order: formState.threadPosts.length,
-      isActive: false
+      order: updatedPosts.length,
+      isActive: true
     };
     
+    // Add the new post to the thread
+    updatedPosts.push(newPost);
+    const newIndex = updatedPosts.length - 1;
+    
+    // Update the form state
     setFormState(prev => ({
       ...prev,
-      threadPosts: [...prev.threadPosts, newPost]
+      content: newPost.content,
+      threadPosts: updatedPosts,
+      activeThreadIndex: newIndex,
+      isThreadMode: true
     }));
     
     toast({
@@ -436,52 +472,85 @@ export function usePostForm({
   // Remove a post from the thread
   const removeThreadPost = (index: number) => {
     if (formState.threadPosts.length <= 1) {
-      // If this is the only post, exit thread mode
+      // If this is the only post, exit thread mode but keep the content
+      const content = formState.threadPosts[0]?.content || formState.content;
       setFormState(prev => ({
         ...prev,
+        content,
         isThreadMode: false,
-        threadPosts: []
+        threadPosts: [],
+        activeThreadIndex: 0
       }));
+      
+      toast({
+        title: "Thread Mode Exited",
+        description: "Returned to single post mode",
+      });
       return;
     }
     
-    // Remove the post and reorder
-    const updatedPosts = formState.threadPosts
+    // First, save the current content to the current thread post if it's not the one being removed
+    const currentIndex = formState.activeThreadIndex;
+    let updatedPosts = [...formState.threadPosts];
+    
+    if (currentIndex !== index && currentIndex >= 0 && currentIndex < updatedPosts.length) {
+      updatedPosts[currentIndex] = {
+        ...updatedPosts[currentIndex],
+        content: formState.content
+      };
+    }
+    
+    // Now remove the post and reorder
+    updatedPosts = updatedPosts
       .filter((_, i) => i !== index)
       .map((post, i) => ({
         ...post,
         order: i,
-        isActive: i === (index === 0 ? 0 : Math.min(formState.activeThreadIndex, formState.threadPosts.length - 2))
+        isActive: false // We'll set the active post below
       }));
     
-    // If we removed the active post, set a new active post
-    const newActiveIndex = index === formState.activeThreadIndex 
-      ? Math.min(index, updatedPosts.length - 1)
-      : index < formState.activeThreadIndex 
-        ? formState.activeThreadIndex - 1 
-        : formState.activeThreadIndex;
+    // Determine the new active index
+    const newActiveIndex = index === currentIndex 
+      ? Math.min(index, updatedPosts.length - 1) // If removing active post, move to same position or last
+      : index < currentIndex 
+        ? currentIndex - 1  // If removing post before active, adjust index down
+        : currentIndex;     // If removing post after active, keep same index
+    
+    // Set the new active post
+    updatedPosts[newActiveIndex].isActive = true;
         
     setFormState(prev => ({
       ...prev,
       content: updatedPosts[newActiveIndex].content,
       threadPosts: updatedPosts,
-      activeThreadIndex: newActiveIndex
+      activeThreadIndex: newActiveIndex,
+      isThreadMode: true
     }));
     
     toast({
       title: "Post Removed",
-      description: "Removed post from thread",
+      description: `Removed post ${index + 1} from thread`,
     });
   };
   
   // Exit thread mode
   const exitThreadMode = () => {
+    // When exiting thread mode, keep the content of the current active post
+    const activePost = formState.threadPosts[formState.activeThreadIndex];
+    const content = activePost?.content || formState.content;
+    
     setFormState(prev => ({
       ...prev,
+      content,
       isThreadMode: false,
       threadPosts: [],
       activeThreadIndex: 0
     }));
+    
+    toast({
+      title: "Exited Thread Mode",
+      description: "Returned to single post mode with the content from the active post.",
+    });
   };
   
   return {
