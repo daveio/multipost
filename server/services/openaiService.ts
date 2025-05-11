@@ -1,5 +1,10 @@
 import OpenAI from "openai";
 
+// Verify the presence of OpenAI API key
+if (!process.env.OPENAI_API_KEY) {
+  console.error("OpenAI API key is missing. Please add OPENAI_API_KEY to environment variables.");
+}
+
 // Initialize OpenAI client
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,

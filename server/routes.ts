@@ -182,6 +182,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // AI Post Splitting
   app.post(`${API_PREFIX}/split-post`, async (req: Request, res: Response) => {
     try {
+      // Verify the OpenAI API key is configured
+      if (!process.env.OPENAI_API_KEY) {
+        return res.status(500).json({
+          message: "OpenAI API key is missing",
+          error: "The OpenAI API key is not configured. Add OPENAI_API_KEY to your environment variables.",
+          code: "missing_api_key"
+        });
+      }
+      
       const { content, strategies, customMastodonLimit } = req.body;
       
       if (!content || typeof content !== 'string') {
