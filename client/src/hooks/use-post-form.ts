@@ -40,8 +40,8 @@ export function usePostForm({
   const { toast } = useToast();
   const queryClient = useQueryClient();
   
-  // State for form
-  const [formState, setFormState] = useState<PostFormState>({
+  // Define the initial form state as a template for resetting
+  const createInitialFormState = (): PostFormState => ({
     content: initialContent,
     mediaFiles: initialMediaFiles,
     selectedPlatforms: initialPlatforms,
@@ -52,6 +52,9 @@ export function usePostForm({
     isThreadMode: false,
     activeThreadIndex: 0
   });
+  
+  // State for form
+  const [formState, setFormState] = useState<PostFormState>(createInitialFormState());
   
   // Fetch platform character limits
   const { data: platformLimits } = useQuery({
@@ -373,100 +376,143 @@ export function usePostForm({
   const setupThread = (posts: string[]) => {
     if (!posts || posts.length === 0) return;
     
-    // Create thread posts from the array of content strings
-    const threadPosts = posts.map((postContent, index) => ({
-      content: postContent,
-      order: index,
-      isActive: index === 0 // First post is active by default
-    }));
-    
-    // Update content with the first post
-    setFormState(prev => ({
-      ...prev,
-      content: posts[0],
-      threadPosts,
-      isThreadMode: true,
-      activeThreadIndex: 0
-    }));
-    
-    toast({
-      title: "Thread Created",
-      description: `Created a thread with ${posts.length} posts`,
-    });
+    try {
+      // Create thread posts from the array of content strings
+      const threadPosts = posts.map((postContent, index) => ({
+        content: postContent || '',  // Ensure we never have null content
+        order: index,
+        isActive: index === 0 // First post is active by default
+      }));
+      
+      // Deep clone to avoid reference issues
+      const clonedThreadPosts = JSON.parse(JSON.stringify(threadPosts));
+      
+      // Create a fresh initial state
+      const freshState = createInitialFormState();
+      
+      // Make a clean state update with all new objects
+      setFormState({
+        ...freshState,  // Start fresh to avoid stale state
+        content: posts[0] || '',
+        threadPosts: clonedThreadPosts,
+        isThreadMode: true,
+        activeThreadIndex: 0,
+        // Maintain other important state
+        mediaFiles: formState.mediaFiles,
+        selectedPlatforms: formState.selectedPlatforms,
+        advancedOptions: formState.advancedOptions,
+        characterStats: formState.characterStats,
+        activePreviewTab: formState.activePreviewTab
+      });
+      
+      toast({
+        title: "Thread Created", 
+        description: `Created a thread with ${posts.length} posts`,
+      });
+    } catch (error) {
+      console.error("Error setting up thread:", error);
+      toast({
+        title: "Error Creating Thread",
+        description: "There was an error creating the thread. Please try again.",
+        variant: "destructive"
+      });
+    }
   };
   
   // Switch to a different post in the thread
   const switchThreadPost = (index: number) => {
     if (index < 0 || index >= formState.threadPosts.length) return;
     
-    // First, save the current content to the current thread post
-    const currentIndex = formState.activeThreadIndex;
-    const updatedPosts = [...formState.threadPosts];
-    
-    // Save current content to current post
-    if (currentIndex >= 0 && currentIndex < updatedPosts.length) {
-      updatedPosts[currentIndex] = {
-        ...updatedPosts[currentIndex],
-        content: formState.content,
-        isActive: false
-      };
+    try {
+      // Create a completely fresh copy of thread posts
+      const updatedPosts = JSON.parse(JSON.stringify(formState.threadPosts));
+      
+      // Save current content to current post
+      const currentIndex = formState.activeThreadIndex;
+      if (currentIndex >= 0 && currentIndex < updatedPosts.length) {
+        updatedPosts[currentIndex] = {
+          ...updatedPosts[currentIndex],
+          content: formState.content,
+          isActive: false
+        };
+      }
+      
+      // Mark target post as active
+      for (let i = 0; i < updatedPosts.length; i++) {
+        updatedPosts[i].isActive = (i === index);
+      }
+      
+      // Get content from the target post
+      const newContent = updatedPosts[index].content || '';
+      
+      // Create a completely fresh state update
+      setFormState({
+        ...formState,
+        content: newContent,
+        threadPosts: updatedPosts,
+        activeThreadIndex: index,
+        isThreadMode: true
+      });
+    } catch (error) {
+      console.error("Error switching thread post:", error);
+      toast({
+        title: "Error Switching Post",
+        description: "There was an error switching to the selected post.",
+        variant: "destructive"
+      });
     }
-    
-    // Set the new post as active
-    updatedPosts[index] = {
-      ...updatedPosts[index],
-      isActive: true
-    };
-    
-    // Update the form state
-    setFormState(prev => ({
-      ...prev,
-      content: updatedPosts[index].content,
-      threadPosts: updatedPosts,
-      activeThreadIndex: index,
-      isThreadMode: true // Ensure we stay in thread mode
-    }));
   };
   
   // Add a new post to the thread
   const addThreadPost = (content: string = '') => {
-    // First, save the current content to the current thread post
-    const currentIndex = formState.activeThreadIndex;
-    const updatedPosts = [...formState.threadPosts];
-    
-    // Save current content to current post if we're in thread mode
-    if (formState.isThreadMode && currentIndex >= 0 && currentIndex < updatedPosts.length) {
-      updatedPosts[currentIndex] = {
-        ...updatedPosts[currentIndex],
-        content: formState.content,
-        isActive: false
+    try {
+      // First, save the current content to the current thread post
+      const currentIndex = formState.activeThreadIndex;
+      
+      // Create a fresh copy of thread posts to avoid reference issues
+      const updatedPosts = JSON.parse(JSON.stringify(formState.threadPosts));
+      
+      // Save current content to current post if we're in thread mode
+      if (formState.isThreadMode && currentIndex >= 0 && currentIndex < updatedPosts.length) {
+        updatedPosts[currentIndex] = {
+          ...updatedPosts[currentIndex],
+          content: formState.content,
+          isActive: false
+        };
+      }
+      
+      // Create a new post
+      const newPost: ThreadPost = {
+        content: content || '',
+        order: updatedPosts.length,
+        isActive: true
       };
+      
+      // Add the new post to the thread
+      updatedPosts.push(newPost);
+      const newIndex = updatedPosts.length - 1;
+      
+      // Update the form state with a clean state update
+      setFormState({
+        ...formState,
+        content: newPost.content,
+        threadPosts: updatedPosts,
+        activeThreadIndex: newIndex,
+        isThreadMode: true
+      });
+      
+      toast({
+        title: "Post Added",
+        description: "Added a new post to the thread",
+      });
+    } catch (error) {
+      console.error("Error adding thread post:", error);
+      toast({
+        title: "Error Adding Post",
+        description: "There was an error adding a new post to the thread.",
+        variant: "destructive"
+      });
     }
-    
-    // Create a new post
-    const newPost: ThreadPost = {
-      content: content || '',
-      order: updatedPosts.length,
-      isActive: true
-    };
-    
-    // Add the new post to the thread
-    updatedPosts.push(newPost);
-    const newIndex = updatedPosts.length - 1;
-    
-    // Update the form state
-    setFormState(prev => ({
-      ...prev,
-      content: newPost.content,
-      threadPosts: updatedPosts,
-      activeThreadIndex: newIndex,
-      isThreadMode: true
-    }));
-    
-    toast({
-      title: "Post Added",
-      description: "Added a new post to the thread",
-    });
   };
   
   // Remove a post from the thread
@@ -535,22 +581,47 @@ export function usePostForm({
   
   // Exit thread mode
   const exitThreadMode = () => {
-    // When exiting thread mode, keep the content of the current active post
-    const activePost = formState.threadPosts[formState.activeThreadIndex];
-    const content = activePost?.content || formState.content;
-    
-    setFormState(prev => ({
-      ...prev,
-      content,
-      isThreadMode: false,
-      threadPosts: [],
-      activeThreadIndex: 0
-    }));
-    
-    toast({
-      title: "Exited Thread Mode",
-      description: "Returned to single post mode with the content from the active post.",
-    });
+    try {
+      // When exiting thread mode, keep the content of the current active post
+      let content = formState.content;
+      
+      // Find the active post if any
+      if (formState.threadPosts.length > 0 && 
+          formState.activeThreadIndex >= 0 && 
+          formState.activeThreadIndex < formState.threadPosts.length) {
+        const activePost = formState.threadPosts[formState.activeThreadIndex];
+        if (activePost && activePost.content) {
+          content = activePost.content;
+        }
+      }
+      
+      // Create a fresh state with content preserved
+      const freshState = createInitialFormState();
+      setFormState({
+        ...freshState,
+        content,
+        mediaFiles: formState.mediaFiles,
+        selectedPlatforms: formState.selectedPlatforms,
+        advancedOptions: formState.advancedOptions,
+        characterStats: formState.characterStats,
+        activePreviewTab: formState.activePreviewTab,
+        isThreadMode: false,
+        threadPosts: [],
+        activeThreadIndex: 0
+      });
+      
+      toast({
+        title: "Exited Thread Mode",
+        description: "Returned to single post mode with the content from the active post.",
+      });
+    } catch (error) {
+      console.error("Error exiting thread mode:", error);
+      toast({
+        title: "Error Exiting Thread Mode",
+        description: "There was an error exiting thread mode.",
+        variant: "destructive"
+      });
+    }
   };
   
   return {
