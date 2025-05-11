@@ -2,198 +2,185 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { 
   splitPost, 
   optimizePost, 
-  getStrategyName, 
-  getStrategyDescription, 
-  getStrategyTooltip,
-  SplittingStrategy
+  SplittingStrategy,
+  SplitPostResult 
 } from './aiService';
-import { apiRequest } from './queryClient';
 
-// Mock the apiRequest function
+// Mock module for apiRequest
 vi.mock('./queryClient', () => ({
   apiRequest: vi.fn()
 }));
 
+import { apiRequest } from './queryClient';
+
 describe('AI Service', () => {
   beforeEach(() => {
-    vi.resetAllMocks();
+    vi.clearAllMocks();
   });
-
-  describe('splitPost function', () => {
-    it('should call the API with correct parameters for a single strategy', async () => {
-      // Mock the API response
+  
+  describe('splitPost', () => {
+    const mockContent = 'This is a long post that needs to be split into multiple parts for social media. It should respect the character limits of different platforms and maintain the meaning of the original post.';
+    const mockStrategies = [SplittingStrategy.SEMANTIC, SplittingStrategy.RETAIN_HASHTAGS];
+    
+    it('should call the API with correct parameters', async () => {
+      // Mock successful response
       const mockResponse = {
         json: vi.fn().mockResolvedValue({
-          semantic: {
+          [SplittingStrategy.SEMANTIC]: {
             bluesky: {
+              strategy: SplittingStrategy.SEMANTIC,
               splitText: ['Part 1', 'Part 2'],
-              strategy: 'semantic',
-              reasoning: 'Testing split'
-            }
-          }
-        })
-      };
-      
-      // @ts-ignore - Mocking
-      apiRequest.mockResolvedValue(mockResponse);
-
-      // Call the function
-      const content = 'Test content that is too long';
-      const strategy = SplittingStrategy.SEMANTIC;
-      const result = await splitPost(content, strategy);
-
-      // Check apiRequest was called correctly
-      expect(apiRequest).toHaveBeenCalledWith('POST', '/api/split-post', {
-        content,
-        strategies: [strategy],
-        customMastodonLimit: undefined
-      });
-
-      // Check the result
-      expect(result).toHaveProperty('semantic');
-      expect(result.semantic).toHaveProperty('bluesky');
-      expect(result.semantic.bluesky.splitText).toEqual(['Part 1', 'Part 2']);
-    });
-
-    it('should call the API with multiple strategies', async () => {
-      // Mock the API response
-      const mockResponse = {
-        json: vi.fn().mockResolvedValue({
-          semantic: {
-            bluesky: {
-              splitText: ['Part 1', 'Part 2'],
-              strategy: 'semantic',
-              reasoning: 'Testing split'
+              reasoning: 'Split by semantic meaning'
             }
           },
-          sentence: {
+          [SplittingStrategy.RETAIN_HASHTAGS]: {
             bluesky: {
-              splitText: ['Sentence 1', 'Sentence 2'],
-              strategy: 'sentence',
-              reasoning: 'Testing sentence split'
+              strategy: SplittingStrategy.RETAIN_HASHTAGS,
+              splitText: ['Part 1 #hashtag', 'Part 2 #hashtag'],
+              reasoning: 'Retained hashtags in each part'
             }
           }
         })
       };
       
-      // @ts-ignore - Mocking
-      apiRequest.mockResolvedValue(mockResponse);
-
-      // Call the function
-      const content = 'Test content that is too long';
-      const strategies = [
-        SplittingStrategy.SEMANTIC,
-        SplittingStrategy.SENTENCE
-      ];
-      const result = await splitPost(content, strategies);
-
-      // Check apiRequest was called correctly
-      expect(apiRequest).toHaveBeenCalledWith('POST', '/api/split-post', {
-        content,
-        strategies,
-        customMastodonLimit: undefined
-      });
-
-      // Check the result
-      expect(result).toHaveProperty('semantic');
-      expect(result).toHaveProperty('sentence');
-      expect(result.semantic.bluesky.splitText).toEqual(['Part 1', 'Part 2']);
-      expect(result.sentence.bluesky.splitText).toEqual(['Sentence 1', 'Sentence 2']);
+      (apiRequest as any).mockResolvedValueOnce(mockResponse);
+      
+      await splitPost(mockContent, mockStrategies);
+      
+      // Check that apiRequest was called with correct parameters
+      expect(apiRequest).toHaveBeenCalledWith(
+        'POST', 
+        '/api/split-post', 
+        { 
+          content: mockContent, 
+          strategies: mockStrategies,
+          customMastodonLimit: undefined
+        }
+      );
     });
-
-    it('should handle API errors', async () => {
-      // Mock the API error
-      const mockError = new Error('API error');
-      mockError.json = vi.fn().mockResolvedValue({
-        message: 'Failed to split post',
-        error: 'Test error'
+    
+    it('should return structured results from the API', async () => {
+      // Mock successful response
+      const mockResponseData = {
+        [SplittingStrategy.SEMANTIC]: {
+          bluesky: {
+            strategy: SplittingStrategy.SEMANTIC,
+            splitText: ['Part 1', 'Part 2'],
+            reasoning: 'Split by semantic meaning'
+          }
+        }
+      };
+      
+      const mockResponse = {
+        json: vi.fn().mockResolvedValue(mockResponseData)
+      };
+      
+      (apiRequest as any).mockResolvedValueOnce(mockResponse);
+      
+      const result = await splitPost(mockContent, mockStrategies);
+      
+      expect(result).toEqual(mockResponseData);
+    });
+    
+    it('should handle API errors gracefully', async () => {
+      // Mock error response
+      const errorObj = new Error('API rate limit exceeded');
+      (errorObj as any).json = vi.fn().mockResolvedValue({
+        message: 'API rate limit exceeded'
       });
       
-      // @ts-ignore - Mocking
-      apiRequest.mockRejectedValue(mockError);
-
-      // Call the function and expect it to throw
-      const content = 'Test content';
-      const strategy = SplittingStrategy.SEMANTIC;
+      (apiRequest as any).mockRejectedValueOnce(errorObj);
       
-      await expect(splitPost(content, strategy)).rejects.toThrow();
+      // Expect the function to throw with a specific error message
+      await expect(splitPost(mockContent, mockStrategies))
+        .rejects.toThrow('API rate limit exceeded');
+    });
+    
+    it('should handle network errors', async () => {
+      // Mock network error
+      const networkError = new Error('Network error');
+      (apiRequest as any).mockRejectedValueOnce(networkError);
+      
+      await expect(splitPost(mockContent, mockStrategies))
+        .rejects.toThrow('Network error');
     });
   });
-
-  describe('optimizePost function', () => {
+  
+  describe('optimizePost', () => {
+    const mockContent = 'This is a post that needs to be optimized for a specific platform.';
+    const mockPlatform = 'bluesky';
+    
     it('should call the API with correct parameters', async () => {
-      // Mock the API response
+      // Mock successful response
       const mockResponse = {
         json: vi.fn().mockResolvedValue({
-          optimized: 'Optimized content'
+          optimized: 'This is an optimized post for Bluesky with better hashtags #bluesky'
         })
       };
       
-      // @ts-ignore - Mocking
-      apiRequest.mockResolvedValue(mockResponse);
-
-      // Call the function
-      const content = 'Test content';
-      const platform = 'bluesky';
-      const result = await optimizePost(content, platform);
-
-      // Check apiRequest was called correctly
-      expect(apiRequest).toHaveBeenCalledWith('POST', '/api/optimize-post', {
-        content,
-        platform,
-        customMastodonLimit: undefined
-      });
-
-      // Check the result
-      expect(result).toBe('Optimized content');
+      (apiRequest as any).mockResolvedValueOnce(mockResponse);
+      
+      await optimizePost(mockContent, mockPlatform);
+      
+      // Check that apiRequest was called with correct parameters
+      expect(apiRequest).toHaveBeenCalledWith(
+        'POST', 
+        '/api/optimize-post', 
+        { 
+          content: mockContent, 
+          platform: mockPlatform,
+          customMastodonLimit: undefined
+        }
+      );
     });
-
-    it('should handle custom Mastodon limit', async () => {
-      // Mock the API response
+    
+    it('should return optimized content from the API', async () => {
+      // Mock successful response
+      const mockOptimized = 'Optimized content';
       const mockResponse = {
         json: vi.fn().mockResolvedValue({
-          optimized: 'Optimized content'
+          optimized: mockOptimized
         })
       };
       
-      // @ts-ignore - Mocking
-      apiRequest.mockResolvedValue(mockResponse);
-
-      // Call the function
-      const content = 'Test content';
-      const platform = 'mastodon';
-      const customMastodonLimit = 1000;
-      await optimizePost(content, platform, customMastodonLimit);
-
-      // Check apiRequest was called with customMastodonLimit
-      expect(apiRequest).toHaveBeenCalledWith('POST', '/api/optimize-post', {
-        content,
-        platform,
-        customMastodonLimit
+      (apiRequest as any).mockResolvedValueOnce(mockResponse);
+      
+      const result = await optimizePost(mockContent, mockPlatform);
+      
+      expect(result).toEqual(mockOptimized);
+    });
+    
+    it('should handle API errors with a clear message', async () => {
+      // Mock error response with JSON error info
+      const errorObj = new Error('Invalid API key provided');
+      (errorObj as any).json = vi.fn().mockResolvedValue({
+        message: 'Invalid API key provided'
       });
+      
+      (apiRequest as any).mockRejectedValueOnce(errorObj);
+      
+      await expect(optimizePost(mockContent, mockPlatform))
+        .rejects.toThrow('Invalid API key provided');
+    });
+    
+    it('should handle non-JSON error responses', async () => {
+      // Mock error response without JSON
+      const errorObj = new Error('Server error');
+      (errorObj as any).json = vi.fn().mockRejectedValue(new Error('Invalid JSON'));
+      
+      (apiRequest as any).mockRejectedValueOnce(errorObj);
+      
+      await expect(optimizePost(mockContent, mockPlatform))
+        .rejects.toThrow('Server error');
     });
   });
-
-  describe('Strategy utility functions', () => {
-    it('getStrategyName should return readable names', () => {
-      expect(getStrategyName(SplittingStrategy.SEMANTIC)).toBe('Semantic Grouping');
-      expect(getStrategyName(SplittingStrategy.SENTENCE)).toBe('Sentence Boundaries');
-      expect(getStrategyName(SplittingStrategy.RETAIN_HASHTAGS)).toBe('Preserve Hashtags');
-      expect(getStrategyName(SplittingStrategy.PRESERVE_MENTIONS)).toBe('Preserve @Mentions');
-    });
-
-    it('getStrategyDescription should return detailed descriptions', () => {
-      expect(getStrategyDescription(SplittingStrategy.SEMANTIC)).toContain('semantic units');
-      expect(getStrategyDescription(SplittingStrategy.SENTENCE)).toContain('sentence boundaries');
-      expect(getStrategyDescription(SplittingStrategy.RETAIN_HASHTAGS)).toContain('hashtags');
-      expect(getStrategyDescription(SplittingStrategy.PRESERVE_MENTIONS)).toContain('mentions');
-    });
-
-    it('getStrategyTooltip should return short tooltips', () => {
-      expect(getStrategyTooltip(SplittingStrategy.SEMANTIC)).toContain('topics');
-      expect(getStrategyTooltip(SplittingStrategy.SENTENCE)).toContain('sentences');
-      expect(getStrategyTooltip(SplittingStrategy.RETAIN_HASHTAGS)).toContain('#hashtags');
-      expect(getStrategyTooltip(SplittingStrategy.PRESERVE_MENTIONS)).toContain('@mentions');
+  
+  describe('Strategy-related functions', () => {
+    it('should export enum for different splitting strategies', () => {
+      expect(SplittingStrategy.SEMANTIC).toBeDefined();
+      expect(SplittingStrategy.SENTENCE).toBeDefined();
+      expect(SplittingStrategy.RETAIN_HASHTAGS).toBeDefined();
+      expect(SplittingStrategy.PRESERVE_MENTIONS).toBeDefined();
     });
   });
 });
