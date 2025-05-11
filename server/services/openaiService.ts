@@ -11,7 +11,7 @@ export enum SplittingStrategy {
   SENTENCE = "sentence", // Split by sentences
   RETAIN_HASHTAGS = "retain_hashtags", // Ensure hashtags are preserved
   PRESERVE_MENTIONS = "preserve_mentions", // Make sure @mentions stay intact
-  THREAD_OPTIMIZED = "thread_optimized", // Optimize for thread reading experience
+  // Thread optimization is now included in all strategies
 }
 
 interface SplitPostResult {

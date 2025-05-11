@@ -5,6 +5,7 @@ export enum SplittingStrategy {
   SENTENCE = "sentence", 
   RETAIN_HASHTAGS = "retain_hashtags", 
   PRESERVE_MENTIONS = "preserve_mentions",
+  // Thread optimization is now applied to all strategies automatically
 }
 
 export interface SplitPostResult {
@@ -64,36 +65,50 @@ export async function optimizePost(content: string, platform: string): Promise<s
 export function getStrategyName(strategy: SplittingStrategy): string {
   switch (strategy) {
     case SplittingStrategy.SEMANTIC:
-      return 'Semantic (By Topic)';
+      return 'Semantic Grouping';
     case SplittingStrategy.SENTENCE:
-      return 'Sentence-Based';
+      return 'Sentence Boundaries';
     case SplittingStrategy.RETAIN_HASHTAGS:
       return 'Preserve Hashtags';
     case SplittingStrategy.PRESERVE_MENTIONS:
       return 'Preserve @Mentions';
-    case SplittingStrategy.THREAD_OPTIMIZED:
-      return 'Thread Optimized';
     default:
-      return strategy;
+      return String(strategy);
   }
 }
 
 /**
- * Returns a description for each strategy
+ * Returns a detailed description for each strategy
  */
 export function getStrategyDescription(strategy: SplittingStrategy): string {
   switch (strategy) {
     case SplittingStrategy.SEMANTIC:
-      return 'Splits by semantic units, preserving complete thoughts and topics.';
+      return 'Creates splits based on meaningful semantic units, preserving complete thoughts and topics. Each split will contain related ideas and maintain the logical flow of your content.';
     case SplittingStrategy.SENTENCE:
-      return 'Splits at sentence boundaries, ensuring no sentence is cut in the middle.';
+      return 'Divides content at sentence boundaries, ensuring no sentence is cut in the middle. This provides a more natural reading experience without breaking the grammatical structure of your sentences.';
     case SplittingStrategy.RETAIN_HASHTAGS:
-      return 'Ensures all hashtags are preserved, especially in the final post.';
+      return 'Ensures all hashtags from your original post are preserved. If hashtags are present, they will be strategically distributed across posts with priority on including them where contextually relevant.';
     case SplittingStrategy.PRESERVE_MENTIONS:
-      return 'Preserves @mentions, repeating them in multiple posts if needed for context.';
-    case SplittingStrategy.THREAD_OPTIMIZED:
-      return 'Creates an engaging thread with clear continuity and hooks between posts.';
+      return 'Maintains @mentions in their proper context. If a split would separate a mention from its relevant context, the mention will be included in both related posts for clarity and proper attribution.';
     default:
       return 'Custom splitting strategy';
+  }
+}
+
+/**
+ * Returns a short tooltip for each strategy
+ */
+export function getStrategyTooltip(strategy: SplittingStrategy): string {
+  switch (strategy) {
+    case SplittingStrategy.SEMANTIC:
+      return 'Groups similar topics together in each post';
+    case SplittingStrategy.SENTENCE:
+      return 'Splits only at the end of complete sentences';
+    case SplittingStrategy.RETAIN_HASHTAGS:
+      return 'Ensures all #hashtags are preserved in appropriate context';
+    case SplittingStrategy.PRESERVE_MENTIONS:
+      return 'Keeps @mentions with their relevant context';
+    default:
+      return '';
   }
 }
