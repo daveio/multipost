@@ -51,7 +51,7 @@ export function MediaStats({ mediaFiles }: MediaStatsProps) {
                 <div className="flex flex-wrap gap-2">
                   {platforms.map((platform) => (
                     <Badge key={platform} variant="success" className="gap-1 text-xs">
-                      <UIIcon.Check className="h-3 w-3" />
+                      <UIIcon.Check className="h-3 w-3 platform-badge-check" />
                       <span className="capitalize">{platform}</span>
                     </Badge>
                   ))}
