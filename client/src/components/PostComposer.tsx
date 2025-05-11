@@ -262,32 +262,68 @@ export function PostComposer({
                         Override the default character limit for your Mastodon instance
                       </p>
                       <div className="flex items-center mt-2 gap-2">
-                        <Input 
-                          id="mastodonCharLimit" 
-                          type="number" 
-                          min="100"
-                          max="10000"
-                          className="w-28" 
-                          placeholder="500"
-                          defaultValue={advancedOptions.customMastodonLimit || 500}
-                          onChange={(e) => {
-                            const value = parseInt(e.target.value);
-                            if (value && !isNaN(value) && value >= 100) {
-                              // Save to localStorage
-                              localStorage.setItem('customMastodonLimit', value.toString());
-                              // Update state
-                              onAdvancedOptionsChange({ customMastodonLimit: value });
-                            }
-                          }}
-                        />
+                        <div className="relative">
+                          <Input 
+                            id="mastodonCharLimit" 
+                            type="number" 
+                            min="100"
+                            max="10000"
+                            className="w-28" 
+                            placeholder="500"
+                            defaultValue={advancedOptions.customMastodonLimit || 500}
+                            onChange={(e) => {
+                              const value = parseInt(e.target.value);
+                              if (value && !isNaN(value) && value >= 100) {
+                                // Create a ref to the input element to animate
+                                const inputEl = e.target;
+                                
+                                // Save to localStorage
+                                localStorage.setItem('customMastodonLimit', value.toString());
+                                
+                                // Update state
+                                onAdvancedOptionsChange({ customMastodonLimit: value });
+                                
+                                // Add a subtle flash effect to indicate saving
+                                inputEl.style.transition = 'background-color 0.5s ease';
+                                inputEl.style.backgroundColor = 'rgba(132, 204, 22, 0.2)'; // Light green
+                                
+                                setTimeout(() => {
+                                  inputEl.style.backgroundColor = '';
+                                }, 800);
+                              }
+                            }}
+                          />
+                          <div className="absolute right-2 top-1/2 transform -translate-y-1/2 pointer-events-none opacity-0 transition-opacity" 
+                            id="savedIndicator">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-green-500" viewBox="0 0 20 20" fill="currentColor">
+                              <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                            </svg>
+                          </div>
+                        </div>
                         <Button
                           variant="outline"
                           size="sm"
                           onClick={() => {
-                            // Remove from localStorage
-                            localStorage.removeItem('customMastodonLimit');
-                            // Reset to default
-                            onAdvancedOptionsChange({ customMastodonLimit: 500 });
+                            // Get the input element
+                            const inputEl = document.getElementById('mastodonCharLimit') as HTMLInputElement;
+                            if (inputEl) {
+                              // Add a subtle flash effect to indicate resetting
+                              inputEl.style.transition = 'background-color 0.5s ease';
+                              inputEl.style.backgroundColor = 'rgba(239, 68, 68, 0.2)'; // Light red
+                              
+                              setTimeout(() => {
+                                inputEl.style.backgroundColor = '';
+                                
+                                // Reset input value
+                                inputEl.value = '500';
+                                
+                                // Remove from localStorage
+                                localStorage.removeItem('customMastodonLimit');
+                                
+                                // Reset to default
+                                onAdvancedOptionsChange({ customMastodonLimit: 500 });
+                              }, 300);
+                            }
                           }}
                         >
                           Reset to Default

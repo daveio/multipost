@@ -53,9 +53,9 @@ export function usePostForm({
     queryFn: async ({ queryKey }) => {
       const [path, customMastodonLimit] = queryKey;
       // Add customMastodonLimit as a query parameter if defined
-      const url = customMastodonLimit 
+      const url = typeof customMastodonLimit === 'number'
         ? `${path}?customMastodonLimit=${customMastodonLimit}`
-        : path;
+        : String(path);
       const response = await fetch(url);
       return response.json();
     },
