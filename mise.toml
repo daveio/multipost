@@ -8,4 +8,4 @@ env_file = '.env'
 ruby = '3.4.3'
 
 [tasks]
-build = ['bundle install', 'bundle exec rake build']
+dev = ['bin/dev']
