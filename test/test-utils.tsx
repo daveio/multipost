@@ -81,6 +81,6 @@ export const mockMediaFiles = [
 ];
 
 export const mockThreadPosts = [
-  { content: 'First thread post', index: 0 },
-  { content: 'Second thread post', index: 1 }
+  { content: 'First thread post', order: 0, isActive: true },
+  { content: 'Second thread post', order: 1, isActive: false }
 ];

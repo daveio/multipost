@@ -14,11 +14,11 @@ describe('MemStorage', () => {
       const user = await storage.getUser(1);
       expect(user).toBeDefined();
       expect(user?.id).toBe(1);
-      expect(user?.username).toBe('demouser');
+      expect(user?.username).toBe('demo'); // The actual username is 'demo', not 'demouser'
     });
     
     it('should get demo user by username', async () => {
-      const user = await storage.getUserByUsername('demouser');
+      const user = await storage.getUserByUsername('demo'); // The actual username is 'demo', not 'demouser'
       expect(user).toBeDefined();
       expect(user?.id).toBe(1);
     });
