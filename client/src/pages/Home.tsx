@@ -132,8 +132,8 @@ export default function Home() {
           
           {/* Preview & Character Stats Section - Takes 2/5 of the screen on large displays */}
           <div className="lg:col-span-2">
-            <div className="bg-white rounded-xl shadow-sm p-6 mb-6">
-              <h2 className="text-lg font-semibold mb-4">Post Preview</h2>
+            <div className="bg-card rounded-xl shadow-sm p-6 mb-6 border border-border">
+              <h2 className="text-lg font-semibold mb-4 text-foreground">Post Preview</h2>
               
               <PlatformPreview 
                 content={formState.content}

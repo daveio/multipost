@@ -15,46 +15,49 @@ export const createTheme = (flavor: CatppuccinTheme): Record<string, string> => 
   const flavorData = flavors[flavor];
   const themeVars: Record<string, string> = {};
   
-  // Base colors
-  themeVars["--background"] = hslToVar(flavorData.colors.base.hsl);
+  // Base colors - use crust for backgrounds to get better contrast
+  themeVars["--background"] = hslToVar(flavorData.colors.crust.hsl);
   themeVars["--foreground"] = hslToVar(flavorData.colors.text.hsl);
   
-  // Primary colors
+  // Primary colors - use blue for primary actions
   themeVars["--primary"] = hslToVar(flavorData.colors.blue.hsl);
   themeVars["--primary-foreground"] = flavor === "latte" 
     ? hslToVar(flavorData.colors.crust.hsl) 
-    : hslToVar(flavorData.colors.surface0.hsl);
+    : hslToVar(flavorData.colors.mantle.hsl);
   
-  // Secondary colors
+  // Secondary colors - use mauve for secondary elements
   themeVars["--secondary"] = hslToVar(flavorData.colors.mauve.hsl);
   themeVars["--secondary-foreground"] = flavor === "latte" 
     ? hslToVar(flavorData.colors.crust.hsl) 
-    : hslToVar(flavorData.colors.surface0.hsl);
+    : hslToVar(flavorData.colors.mantle.hsl);
   
-  // Accent colors
+  // Accent colors - use pink for accent elements
   themeVars["--accent"] = hslToVar(flavorData.colors.pink.hsl);
   themeVars["--accent-foreground"] = flavor === "latte" 
     ? hslToVar(flavorData.colors.crust.hsl) 
-    : hslToVar(flavorData.colors.surface0.hsl);
+    : hslToVar(flavorData.colors.mantle.hsl);
   
-  // UI colors
+  // UI colors - use mantle (slightly lighter than crust) for cards
   themeVars["--card"] = hslToVar(flavorData.colors.mantle.hsl);
   themeVars["--card-foreground"] = hslToVar(flavorData.colors.text.hsl);
   
-  themeVars["--popover"] = hslToVar(flavorData.colors.surface0.hsl);
+  // Popover is even lighter than card
+  themeVars["--popover"] = hslToVar(flavorData.colors.base.hsl);
   themeVars["--popover-foreground"] = hslToVar(flavorData.colors.text.hsl);
   
-  themeVars["--muted"] = hslToVar(flavorData.colors.surface1.hsl);
-  themeVars["--muted-foreground"] = hslToVar(flavorData.colors.subtext1.hsl);
+  // Muted tones
+  themeVars["--muted"] = hslToVar(flavorData.colors.surface0.hsl);
+  themeVars["--muted-foreground"] = hslToVar(flavorData.colors.subtext0.hsl);
   
+  // Form controls
   themeVars["--border"] = hslToVar(flavorData.colors.surface1.hsl);
-  themeVars["--input"] = hslToVar(flavorData.colors.surface1.hsl);
+  themeVars["--input"] = hslToVar(flavorData.colors.surface0.hsl);
   
   // Destructive/error colors
   themeVars["--destructive"] = hslToVar(flavorData.colors.red.hsl);
   themeVars["--destructive-foreground"] = flavor === "latte" 
     ? hslToVar(flavorData.colors.crust.hsl) 
-    : hslToVar(flavorData.colors.surface0.hsl);
+    : hslToVar(flavorData.colors.mantle.hsl);
   
   // Ring/focus colors
   themeVars["--ring"] = hslToVar(flavorData.colors.blue.hsl);
