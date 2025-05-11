@@ -1,8 +1,8 @@
-import { Switch, Route } from "wouter";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { CatppuccinThemeProvider } from "@/components/theme";
-import Home from "@/pages/Home";
-import NotFound from "@/pages/not-found";
+import { CatppuccinThemeProvider } from '@/components/theme'
+import { TooltipProvider } from '@/components/ui/tooltip'
+import Home from '@/pages/Home'
+import NotFound from '@/pages/not-found'
+import { Route, Switch } from 'wouter'
 
 function Router() {
   return (
@@ -10,16 +10,16 @@ function Router() {
       <Route path="/" component={Home} />
       <Route component={NotFound} />
     </Switch>
-  );
+  )
 }
 
 function App() {
   // Check localStorage for saved Catppuccin theme preference
   const getInitialTheme = () => {
-    const savedTheme = localStorage.getItem("catppuccin-theme");
+    const savedTheme = localStorage.getItem('catppuccin-theme')
     // Default to frappe (dark theme) if no preference is saved
-    return (savedTheme as "latte" | "frappe" | "macchiato" | "mocha") || "frappe";
-  };
+    return (savedTheme as 'latte' | 'frappe' | 'macchiato' | 'mocha') || 'frappe'
+  }
 
   return (
     <CatppuccinThemeProvider defaultTheme={getInitialTheme()}>
@@ -27,7 +27,7 @@ function App() {
         <Router />
       </TooltipProvider>
     </CatppuccinThemeProvider>
-  );
+  )
 }
 
-export default App;
+export default App

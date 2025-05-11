@@ -1,17 +1,17 @@
-import { CharacterStat } from "../types";
-import { Progress } from "@/components/ui/progress";
-import { cn } from "@/lib/utils";
+import { Progress } from '@/components/ui/progress'
+import { cn } from '@/lib/utils'
+import type { CharacterStat } from '../types'
 
 interface CharacterStatsProps {
-  stats: CharacterStat[];
+  stats: CharacterStat[]
 }
 
 export function CharacterStats({ stats }: CharacterStatsProps) {
   const getProgressColor = (percentage: number) => {
-    if (percentage > 100) return "bg-destructive";
-    if (percentage > 80) return "bg-amber-500";
-    return "bg-primary";
-  };
+    if (percentage > 100) return 'bg-destructive'
+    if (percentage > 80) return 'bg-amber-500'
+    return 'bg-primary'
+  }
 
   return (
     <div className="mt-6">
@@ -25,9 +25,9 @@ export function CharacterStats({ stats }: CharacterStatsProps) {
               <span className="text-muted-foreground text-sm">/{stat.limit}</span>
             </div>
             <div className="stat-desc mt-1">
-              <Progress 
-                value={stat.percentage} 
-                max={100} 
+              <Progress
+                value={stat.percentage}
+                max={100}
                 className="h-2"
                 indicatorClassName={getProgressColor(stat.percentage)}
               />
@@ -36,5 +36,5 @@ export function CharacterStats({ stats }: CharacterStatsProps) {
         ))}
       </div>
     </div>
-  );
+  )
 }

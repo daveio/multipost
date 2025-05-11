@@ -1,32 +1,27 @@
-import { useState } from 'react';
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { 
-  Dialog, 
-  DialogContent, 
-  DialogDescription, 
-  DialogFooter, 
-  DialogHeader, 
-  DialogTitle, 
-  DialogTrigger
-} from "@/components/ui/dialog";
+import { Button } from '@/components/ui/button'
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { SplittingConfig } from '../types';
-import { SplittingStrategy } from '@/lib/aiService';
-import { UIIcon } from './SocialIcons';
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger
+} from '@/components/ui/dialog'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import type { SplittingStrategy } from '@/lib/aiService'
+import { useState } from 'react'
+import type { SplittingConfig } from '../types'
+import { UIIcon } from './SocialIcons'
 
 interface SavedSplittingConfigsProps {
-  selectedStrategies: SplittingStrategy[];
-  savedConfigs: SplittingConfig[];
-  onSaveConfig: (name: string) => void;
-  onLoadConfig: (config: SplittingConfig) => void;
-  onDeleteConfig: (configName: string) => void;
+  selectedStrategies: SplittingStrategy[]
+  savedConfigs: SplittingConfig[]
+  onSaveConfig: (name: string) => void
+  onLoadConfig: (config: SplittingConfig) => void
+  onDeleteConfig: (configName: string) => void
 }
 
 export function SavedSplittingConfigs({
@@ -36,28 +31,24 @@ export function SavedSplittingConfigs({
   onLoadConfig,
   onDeleteConfig
 }: SavedSplittingConfigsProps) {
-  const [configName, setConfigName] = useState('');
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  
+  const [configName, setConfigName] = useState('')
+  const [isDialogOpen, setIsDialogOpen] = useState(false)
+
   const handleSaveConfig = () => {
     // Don't save if name is empty or only whitespace
-    if (!configName.trim()) return;
-    
-    onSaveConfig(configName);
-    setConfigName('');
-    setIsDialogOpen(false);
-  };
+    if (!configName.trim()) return
+
+    onSaveConfig(configName)
+    setConfigName('')
+    setIsDialogOpen(false)
+  }
 
   return (
     <div className="flex gap-2">
       {/* Save Dialog */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogTrigger asChild>
-          <Button 
-            variant="outline" 
-            size="sm" 
-            disabled={selectedStrategies.length === 0}
-          >
+          <Button variant="outline" size="sm" disabled={selectedStrategies.length === 0}>
             <UIIcon.Save className="mr-2 h-4 w-4" />
             Save Config
           </Button>
@@ -65,9 +56,7 @@ export function SavedSplittingConfigs({
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
             <DialogTitle>Save Configuration</DialogTitle>
-            <DialogDescription>
-              Save your current splitting strategy selection for future use.
-            </DialogDescription>
+            <DialogDescription>Save your current splitting strategy selection for future use.</DialogDescription>
           </DialogHeader>
           <div className="space-y-3 py-4">
             <div className="space-y-1">
@@ -80,17 +69,14 @@ export function SavedSplittingConfigs({
                 className="w-full"
               />
             </div>
-            
+
             <div>
               <Label className="text-xs text-muted-foreground mb-2 block">
                 Selected Strategies: {selectedStrategies.length}
               </Label>
               <div className="flex flex-wrap gap-1">
-                {selectedStrategies.map(strategy => (
-                  <span 
-                    key={strategy} 
-                    className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded"
-                  >
+                {selectedStrategies.map((strategy) => (
+                  <span key={strategy} className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded">
                     {strategy}
                   </span>
                 ))}
@@ -98,39 +84,27 @@ export function SavedSplittingConfigs({
             </div>
           </div>
           <DialogFooter>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setIsDialogOpen(false)}
-            >
+            <Button variant="outline" size="sm" onClick={() => setIsDialogOpen(false)}>
               Cancel
             </Button>
-            <Button 
-              size="sm" 
-              onClick={handleSaveConfig}
-              disabled={!configName.trim()}
-            >
+            <Button size="sm" onClick={handleSaveConfig} disabled={!configName.trim()}>
               Save Configuration
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
-      
+
       {/* Load Dropdown */}
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button 
-            variant="outline" 
-            size="sm" 
-            disabled={savedConfigs.length === 0}
-          >
+          <Button variant="outline" size="sm" disabled={savedConfigs.length === 0}>
             <UIIcon.Refresh className="mr-2 h-4 w-4" />
             Load ({savedConfigs.length})
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="start" className="w-48">
           {savedConfigs.map((config) => (
-            <DropdownMenuItem 
+            <DropdownMenuItem
               key={config.name}
               className="flex items-center justify-between"
               onClick={() => onLoadConfig(config)}
@@ -142,14 +116,14 @@ export function SavedSplittingConfigs({
                 size="icon"
                 className="h-5 w-5 rounded-full ml-2 hover:bg-destructive/10 hover:text-destructive"
                 onMouseDown={(e) => {
-                  e.preventDefault(); // Prevent default action
-                  e.stopPropagation(); // Prevent parent click
+                  e.preventDefault() // Prevent default action
+                  e.stopPropagation() // Prevent parent click
                 }}
                 onClick={(e) => {
-                  e.preventDefault(); 
-                  e.stopPropagation();
-                  console.log('Deleting config:', config.name);
-                  onDeleteConfig(config.name);
+                  e.preventDefault()
+                  e.stopPropagation()
+                  console.log('Deleting config:', config.name)
+                  onDeleteConfig(config.name)
                 }}
               >
                 <UIIcon.Delete className="h-3.5 w-3.5" />
@@ -160,5 +134,5 @@ export function SavedSplittingConfigs({
         </DropdownMenuContent>
       </DropdownMenu>
     </div>
-  );
+  )
 }

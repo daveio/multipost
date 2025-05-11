@@ -21,24 +21,24 @@
 }
 
 /* Additional styles for specific components */
-.platform-card.active { 
-  @apply border-primary bg-primary/5; 
+.platform-card.active {
+  @apply border-primary bg-primary/5;
 }
 
-.char-counter-warning { 
+.char-counter-warning {
   @apply text-amber-500;
 }
 
-.char-counter-danger { 
+.char-counter-danger {
   @apply text-destructive;
 }
 
-.media-preview img { 
-  @apply object-cover; 
+.media-preview img {
+  @apply object-cover;
 }
 
-.preview-card { 
-  @apply max-h-96 overflow-y-auto overflow-x-hidden; 
+.preview-card {
+  @apply max-h-96 overflow-y-auto overflow-x-hidden;
 }
 
 /* Handle text overflow and wrapping better across the app */
@@ -69,13 +69,23 @@
 }
 
 @keyframes flashGreen {
-  0%, 100% { background-color: transparent; }
-  50% { background-color: rgba(var(--primary)/0.2); }
+  0%,
+  100% {
+    background-color: transparent;
+  }
+  50% {
+    background-color: rgba(var(--primary) / 0.2);
+  }
 }
 
 @keyframes flashRed {
-  0%, 100% { background-color: transparent; }
-  50% { background-color: rgba(var(--destructive)/0.2); }
+  0%,
+  100% {
+    background-color: transparent;
+  }
+  50% {
+    background-color: rgba(var(--destructive) / 0.2);
+  }
 }
 
 /* Improve platform tabs responsiveness */

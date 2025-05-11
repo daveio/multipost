@@ -1,45 +1,40 @@
-import { useCatppuccinTheme } from "./catppuccin-theme-provider";
-import type { CatppuccinTheme } from "@/lib/theme-utils";
-import { 
+import { Button } from '@/components/ui/button'
+import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Button } from "@/components/ui/button";
-import { Check, Coffee, Moon, Palette, Sun } from "lucide-react";
-import { cn } from "@/lib/utils";
+  DropdownMenuTrigger
+} from '@/components/ui/dropdown-menu'
+import type { CatppuccinTheme } from '@/lib/theme-utils'
+import { cn } from '@/lib/utils'
+import { Check, Coffee, Moon, Palette, Sun } from 'lucide-react'
+import { useCatppuccinTheme } from './catppuccin-theme-provider'
 
 interface ThemeSelectorProps {
-  className?: string;
+  className?: string
 }
 
 export function ThemeSelector({ className }: ThemeSelectorProps) {
-  const { theme, setTheme, allThemes, lightThemes, darkThemes } = useCatppuccinTheme();
+  const { theme, setTheme, allThemes, lightThemes, darkThemes } = useCatppuccinTheme()
 
   // Get friendly display name for theme
   const getThemeDisplayName = (themeName: string) => {
-    return themeName.charAt(0).toUpperCase() + themeName.slice(1);
-  };
+    return themeName.charAt(0).toUpperCase() + themeName.slice(1)
+  }
 
   // Get icon based on theme category
   const getThemeIcon = (themeName: string) => {
-    if (themeName === "latte") return <Sun className="h-4 w-4" />;
-    if (themeName === "mocha") return <Moon className="h-4 w-4" />;
-    return <Coffee className="h-4 w-4" />;
-  };
+    if (themeName === 'latte') return <Sun className="h-4 w-4" />
+    if (themeName === 'mocha') return <Moon className="h-4 w-4" />
+    return <Coffee className="h-4 w-4" />
+  }
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button
-          variant="outline"
-          size="icon"
-          className={cn("w-8 h-8 rounded-full", className)}
-          title="Change theme"
-        >
+        <Button variant="outline" size="icon" className={cn('w-8 h-8 rounded-full', className)} title="Change theme">
           <Palette className="h-4 w-4" />
           <span className="sr-only">Change theme</span>
         </Button>
@@ -47,13 +42,11 @@ export function ThemeSelector({ className }: ThemeSelectorProps) {
       <DropdownMenuContent align="end">
         <DropdownMenuLabel>Catppuccin Themes</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        
+
         {/* Light Themes */}
-        <DropdownMenuLabel className="text-xs font-normal text-muted-foreground">
-          Light Theme
-        </DropdownMenuLabel>
+        <DropdownMenuLabel className="text-xs font-normal text-muted-foreground">Light Theme</DropdownMenuLabel>
         {lightThemes.map((themeName) => (
-          <DropdownMenuItem 
+          <DropdownMenuItem
             key={themeName}
             onClick={() => setTheme(themeName)}
             className="flex items-center justify-between cursor-pointer"
@@ -65,15 +58,13 @@ export function ThemeSelector({ className }: ThemeSelectorProps) {
             {theme === themeName && <Check className="h-4 w-4" />}
           </DropdownMenuItem>
         ))}
-        
+
         <DropdownMenuSeparator />
-        
+
         {/* Dark Themes */}
-        <DropdownMenuLabel className="text-xs font-normal text-muted-foreground">
-          Dark Themes
-        </DropdownMenuLabel>
+        <DropdownMenuLabel className="text-xs font-normal text-muted-foreground">Dark Themes</DropdownMenuLabel>
         {darkThemes.map((themeName) => (
-          <DropdownMenuItem 
+          <DropdownMenuItem
             key={themeName}
             onClick={() => setTheme(themeName)}
             className="flex items-center justify-between cursor-pointer"
@@ -87,5 +78,5 @@ export function ThemeSelector({ className }: ThemeSelectorProps) {
         ))}
       </DropdownMenuContent>
     </DropdownMenu>
-  );
+  )
 }

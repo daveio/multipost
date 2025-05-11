@@ -1,28 +1,28 @@
-import { SocialIcon, UIIcon } from "./SocialIcons";
-import { Button } from "@/components/ui/button";
-import { Moon, Palette, Sun } from "lucide-react";
-import { Switch } from "@/components/ui/switch";
-import { useCatppuccinTheme } from "./theme/catppuccin-theme-provider";
-import { ThemeSelector } from "./theme/theme-selector";
-import { 
+import { Button } from '@/components/ui/button'
+import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+  DropdownMenuTrigger
+} from '@/components/ui/dropdown-menu'
+import { Switch } from '@/components/ui/switch'
+import { Moon, Palette, Sun } from 'lucide-react'
+import { SocialIcon, UIIcon } from './SocialIcons'
+import { useCatppuccinTheme } from './theme/catppuccin-theme-provider'
+import { ThemeSelector } from './theme/theme-selector'
 
 export default function Header() {
-  const { theme, setTheme, mode, lightThemes, darkThemes } = useCatppuccinTheme();
+  const { theme, setTheme, mode, lightThemes, darkThemes } = useCatppuccinTheme()
 
   // Toggle between light and dark mode
   const toggleDarkMode = () => {
     // If in light mode, switch to dark (mocha)
     // If in dark mode, switch to light (latte)
-    const newTheme = mode === "light" ? "mocha" : "latte";
-    setTheme(newTheme);
-  };
+    const newTheme = mode === 'light' ? 'mocha' : 'latte'
+    setTheme(newTheme)
+  }
 
   return (
     <header className="bg-card shadow-sm border-b border-border">
@@ -33,18 +33,14 @@ export default function Header() {
         </div>
         <div className="flex items-center gap-3">
           {/* Dark Mode Toggle Button */}
-          <Button 
-            variant="ghost" 
+          <Button
+            variant="ghost"
             size="icon"
             onClick={toggleDarkMode}
             className="rounded-full"
-            title={mode === "light" ? "Switch to dark mode" : "Switch to light mode"}
+            title={mode === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}
           >
-            {mode === "light" ? (
-              <Moon className="h-[1.2rem] w-[1.2rem]" />
-            ) : (
-              <Sun className="h-[1.2rem] w-[1.2rem]" />
-            )}
+            {mode === 'light' ? <Moon className="h-[1.2rem] w-[1.2rem]" /> : <Sun className="h-[1.2rem] w-[1.2rem]" />}
             <span className="sr-only">Toggle dark mode</span>
           </Button>
 
@@ -64,13 +60,10 @@ export default function Header() {
               <DropdownMenuSeparator />
               <DropdownMenuItem className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  {mode === "dark" ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
+                  {mode === 'dark' ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
                   <span>Dark Mode</span>
                 </div>
-                <Switch 
-                  checked={mode === "dark"} 
-                  onCheckedChange={toggleDarkMode} 
-                />
+                <Switch checked={mode === 'dark'} onCheckedChange={toggleDarkMode} />
               </DropdownMenuItem>
               <DropdownMenuItem className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
@@ -84,5 +77,5 @@ export default function Header() {
         </div>
       </div>
     </header>
-  );
+  )
 }

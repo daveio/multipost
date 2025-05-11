@@ -1,4 +1,4 @@
-import { Platform, AdvancedOptions } from "../types";
+import type { AdvancedOptions, Platform } from '../types'
 
 // Character limits for each platform
 export const PLATFORM_CHARACTER_LIMITS = {
@@ -6,7 +6,7 @@ export const PLATFORM_CHARACTER_LIMITS = {
   mastodon: 500,
   threads: 500
   // Nostr support removed
-};
+}
 
 /**
  * Get the character limit for a platform, taking into account any custom limits
@@ -16,20 +16,20 @@ export const PLATFORM_CHARACTER_LIMITS = {
  */
 export function getCharacterLimit(platformId: string, advancedOptions?: AdvancedOptions): number {
   if (platformId === 'mastodon' && advancedOptions?.customMastodonLimit) {
-    return advancedOptions.customMastodonLimit;
+    return advancedOptions.customMastodonLimit
   }
-  
-  return PLATFORM_CHARACTER_LIMITS[platformId as keyof typeof PLATFORM_CHARACTER_LIMITS] || 280; // Default to Twitter's limit as fallback
-};
+
+  return PLATFORM_CHARACTER_LIMITS[platformId as keyof typeof PLATFORM_CHARACTER_LIMITS] || 280 // Default to Twitter's limit as fallback
+}
 
 // Define a type for media constraints
 interface MediaConstraints {
-  maxImages: number | undefined;
-  maxImageSize: number | undefined;
-  allowedImageTypes: string[];
-  supportsVideo: boolean;
-  maxVideoSize?: number | undefined;
-  maxVideoDuration?: number;
+  maxImages: number | undefined
+  maxImageSize: number | undefined
+  allowedImageTypes: string[]
+  supportsVideo: boolean
+  maxVideoSize?: number | undefined
+  maxVideoDuration?: number
 }
 
 // Media constraints for each platform
@@ -56,96 +56,99 @@ export const PLATFORM_MEDIA_CONSTRAINTS: Record<string, MediaConstraints> = {
     maxVideoDuration: 120 // 2 minutes
   }
   // Nostr support removed
-};
+}
 
 export const DEFAULT_PLATFORMS: Platform[] = [
   {
-    id: "bluesky",
-    name: "Bluesky",
-    icon: "bluesky",
+    id: 'bluesky',
+    name: 'Bluesky',
+    icon: 'bluesky',
     characterLimit: PLATFORM_CHARACTER_LIMITS.bluesky,
     isSelected: true,
     accounts: []
   },
   {
-    id: "mastodon",
-    name: "Mastodon",
-    icon: "mastodon",
+    id: 'mastodon',
+    name: 'Mastodon',
+    icon: 'mastodon',
     characterLimit: PLATFORM_CHARACTER_LIMITS.mastodon,
     isSelected: true,
     accounts: []
   },
   {
-    id: "threads",
-    name: "Threads",
-    icon: "threads",
+    id: 'threads',
+    name: 'Threads',
+    icon: 'threads',
     characterLimit: PLATFORM_CHARACTER_LIMITS.threads,
     isSelected: true,
     accounts: []
   }
   // Nostr support removed
-];
+]
 
 // Check if a media file is compatible with a platform
 export function isMediaCompatible(file: File, platformId: string): boolean {
-  const constraints = PLATFORM_MEDIA_CONSTRAINTS[platformId];
-  
-  if (!constraints) return false;
-  
-  const isImage = file.type.startsWith('image/');
-  const isVideo = file.type.startsWith('video/');
-  
+  const constraints = PLATFORM_MEDIA_CONSTRAINTS[platformId]
+
+  if (!constraints) return false
+
+  const isImage = file.type.startsWith('image/')
+  const isVideo = file.type.startsWith('video/')
+
   if (isImage) {
-    return constraints.allowedImageTypes.includes(file.type) && 
-           (constraints.maxImageSize === undefined || file.size <= constraints.maxImageSize);
+    return (
+      constraints.allowedImageTypes.includes(file.type) &&
+      (constraints.maxImageSize === undefined || file.size <= constraints.maxImageSize)
+    )
   }
-  
+
   if (isVideo) {
-    return constraints.supportsVideo && 
-           (constraints.maxVideoSize === undefined || file.size <= constraints.maxVideoSize);
+    return (
+      constraints.supportsVideo && (constraints.maxVideoSize === undefined || file.size <= constraints.maxVideoSize)
+    )
   }
-  
-  return false;
+
+  return false
 }
 
 // Get the platform name from ID
 export function getPlatformName(platformId: string): string {
-  const platform = DEFAULT_PLATFORMS.find(p => p.id === platformId);
-  return platform ? platform.name : platformId;
+  const platform = DEFAULT_PLATFORMS.find((p) => p.id === platformId)
+  return platform ? platform.name : platformId
 }
 
 // Format relative time for display
 export function formatRelativeTime(date: Date): string {
-  const now = new Date();
-  const diffInHours = (now.getTime() - date.getTime()) / (1000 * 60 * 60);
-  
+  const now = new Date()
+  const diffInHours = (now.getTime() - date.getTime()) / (1000 * 60 * 60)
+
   if (diffInHours < 1) {
-    const minutes = Math.floor(diffInHours * 60);
-    return `${minutes} minute${minutes !== 1 ? 's' : ''} ago`;
+    const minutes = Math.floor(diffInHours * 60)
+    return `${minutes} minute${minutes !== 1 ? 's' : ''} ago`
   }
-  
+
   if (diffInHours < 24) {
-    const hours = Math.floor(diffInHours);
-    return `${hours} hour${hours !== 1 ? 's' : ''} ago`;
+    const hours = Math.floor(diffInHours)
+    return `${hours} hour${hours !== 1 ? 's' : ''} ago`
   }
-  
+
   if (diffInHours < 48) {
-    return 'Yesterday';
+    return 'Yesterday'
   }
-  
-  const days = Math.floor(diffInHours / 24);
-  return `${days} day${days !== 1 ? 's' : ''} ago`;
+
+  const days = Math.floor(diffInHours / 24)
+  return `${days} day${days !== 1 ? 's' : ''} ago`
 }
 
 // Format file size for display
 export function formatFileSize(bytes: number): string {
   if (bytes < 1024) {
-    return `${bytes} B`;
+    return `${bytes} B`
   }
-  
+
   if (bytes < 1024 * 1024) {
-    return `${(bytes / 1024).toFixed(1)} KB`;
+    return `${(bytes / 1024).toFixed(1)} KB`
   }
-  
-  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+
+  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
 }
