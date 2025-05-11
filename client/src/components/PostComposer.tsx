@@ -247,6 +247,56 @@ export function PostComposer({
                   </div>
                 </div>
                 
+                {/* Platform Customization */}
+                <div className="border-t border-gray-200 pt-4 mt-4">
+                  <h4 className="text-sm font-medium mb-3">Platform Settings</h4>
+                  <div className="flex items-center space-x-4 mb-4">
+                    <div className="grid gap-1.5 leading-none flex-1">
+                      <label
+                        htmlFor="mastodonCharLimit"
+                        className="text-sm font-medium leading-none"
+                      >
+                        Mastodon Character Limit
+                      </label>
+                      <p className="text-xs text-gray-500 mt-1">
+                        Override the default character limit for your Mastodon instance
+                      </p>
+                      <div className="flex items-center mt-2 gap-2">
+                        <Input 
+                          id="mastodonCharLimit" 
+                          type="number" 
+                          min="100"
+                          max="10000"
+                          className="w-28" 
+                          placeholder="500"
+                          defaultValue={advancedOptions.customMastodonLimit || 500}
+                          onChange={(e) => {
+                            const value = parseInt(e.target.value);
+                            if (value && !isNaN(value) && value >= 100) {
+                              // Save to localStorage
+                              localStorage.setItem('customMastodonLimit', value.toString());
+                              // Update state
+                              onAdvancedOptionsChange({ customMastodonLimit: value });
+                            }
+                          }}
+                        />
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => {
+                            // Remove from localStorage
+                            localStorage.removeItem('customMastodonLimit');
+                            // Reset to default
+                            onAdvancedOptionsChange({ customMastodonLimit: 500 });
+                          }}
+                        >
+                          Reset to Default
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
                 {/* Developer Options */}
                 <div className="border-t border-gray-200 pt-4 mt-4">
                   <h4 className="text-sm font-medium mb-3">Developer Options</h4>
@@ -274,6 +324,36 @@ export function PostComposer({
                     </div>
                   </div>
                 </div>
+              </div>
+              
+              {/* Reset All Settings Button */}
+              <div className="border-t border-gray-200 pt-4 mt-4 flex justify-end">
+                <Button
+                  variant="destructive"
+                  size="sm"
+                  onClick={() => {
+                    // Clear localStorage settings
+                    localStorage.removeItem('customMastodonLimit');
+                    localStorage.removeItem('showRawJson');
+                    localStorage.removeItem('savedSplittingConfigs');
+                    
+                    // Reset state
+                    onAdvancedOptionsChange({
+                      customMastodonLimit: 500,
+                      showRawJson: false,
+                      useThreadNotation: true,
+                      threadNotationFormat: "(x/y)",
+                      schedulePost: false,
+                      scheduledTime: undefined
+                    });
+                    
+                    // Show confirmation toast
+                    // If there's a toast mechanism, use it here
+                    alert('All settings have been reset to default values');
+                  }}
+                >
+                  Reset All Settings
+                </Button>
               </div>
             </AccordionContent>
           </AccordionItem>

@@ -66,6 +66,7 @@ export interface AdvancedOptions {
   scheduledTime?: Date;
   showRawJson: boolean; // Option to show raw JSON from OpenAI API responses
   savedSplittingConfigs?: SplittingConfig[]; // Saved splitting configurations for quick reuse
+  customMastodonLimit?: number; // Custom character limit for Mastodon instance
 }
 
 export interface PostFormState {

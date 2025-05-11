@@ -17,6 +17,7 @@ import { DEFAULT_PLATFORMS, PLATFORM_CHARACTER_LIMITS } from '../lib/platform-co
 // Load settings from localStorage if available
 const savedShowRawJson = localStorage.getItem('showRawJson');
 const savedSplittingConfigs = localStorage.getItem('savedSplittingConfigs');
+const savedMastodonLimit = localStorage.getItem('customMastodonLimit');
 
 const initialAdvancedOptions: AdvancedOptions = {
   useThreadNotation: false,
@@ -24,7 +25,8 @@ const initialAdvancedOptions: AdvancedOptions = {
   schedulePost: false,
   scheduledTime: undefined,
   showRawJson: savedShowRawJson ? JSON.parse(savedShowRawJson) : false, // Default to false, but load from localStorage if available
-  savedSplittingConfigs: savedSplittingConfigs ? JSON.parse(savedSplittingConfigs) : [] // Load saved configurations from localStorage
+  savedSplittingConfigs: savedSplittingConfigs ? JSON.parse(savedSplittingConfigs) : [], // Load saved configurations from localStorage
+  customMastodonLimit: savedMastodonLimit ? parseInt(savedMastodonLimit) : 500 // Default to 500, but load from localStorage if available
 };
 
 export function usePostForm({ 
