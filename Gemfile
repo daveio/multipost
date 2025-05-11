@@ -76,3 +76,5 @@ gem "mysql2"
 gem "haml-rails"
 
 gem "html2haml"
+
+gem "sqlite3", "~> 2.6"
