@@ -1,3 +1,322 @@
+# Multipost: Cross-Platform Social Media Publisher
+
+Multipost is a comprehensive web application for intelligent content sharing across multiple social media platforms. It provides AI-powered post optimization, thread creation, and content splitting capabilities to help users create the perfect content for different social platforms.
+
+> **Modern Cross-Platform Publishing Solution**: Multipost bridges the gap between fragmented social networks, allowing content creators to maintain a consistent presence across multiple platforms without the tedious work of manual adaptation.
+
+This document serves as a complete guide to the Multipost application, covering everything from high-level architecture to specific implementation details. Whether you're trying to understand the application's capabilities, looking to deploy it, or planning to extend its functionality, you'll find all the necessary information within this README.
+
+## Table of Contents
+
+### I. Introduction & Overview
+
+1. [Overview](#overview)
+2. [Project Philosophy](#project-philosophy)
+3. [Features](#features)
+
+### II. Architecture & Technical Design
+
+4. [Architecture](#architecture)
+5. [Directory Structure](#directory-structure)
+6. [Data Models](#data-models)
+7. [Frontend Components](#frontend-components)
+8. [Backend Services](#backend-services)
+9. [State Management](#state-management)
+
+### III. Key Features Implementation
+
+10. [AI Integration](#ai-integration)
+11. [Thread Management](#thread-management)
+12. [Theming](#theming)
+13. [Design Decisions](#design-decisions)
+
+### IV. Performance & Quality
+
+14. [Performance Considerations](#performance-considerations)
+15. [Testing & Quality Assurance](#testing--quality-assurance)
+16. [Error Handling](#error-handling)
+
+### V. Setup & Configuration
+
+17. [Installation & Setup](#installation--setup)
+18. [Configuration](#configuration)
+19. [Workflow States](#workflow-states)
+20. [API Reference](#api-reference)
+
+### VI. Operational Guidance
+
+21. [Deployment](#deployment)
+22. [Troubleshooting](#troubleshooting)
+23. [Contributing](#contributing)
+
+### VII. Appendix
+
+24. [Screenshots & UI Components](#screenshots--ui-components)
+
+## Overview
+
+Multipost enables users to compose and publish content simultaneously to multiple social platforms, including Bluesky, Mastodon, and Threads. The application handles different character limits for each platform, provides real-time previews, and offers AI-powered post splitting using OpenAI GPT-4o to optimize content for each network's requirements.
+
+### Application Structure Overview
+
+```mermaid
+graph TD
+    User(User) -->|Interacts with| UI[Web Interface]
+    UI -->|Composes Content in| PostComposer[Post Composer]
+    PostComposer -->|Updates| CharacterStats[Character Stats]
+    PostComposer -->|Generates| Previews[Platform Previews]
+    PostComposer -->|Manages| MediaUploader[Media Files]
+
+    PostComposer -->|If too long| SplitAI[AI Splitting]
+    PostComposer -->|Creates| ThreadManager[Thread Posts]
+
+    SplitAI -->|Suggests| SplitStrategies[Multiple Splitting Strategies]
+    SplitStrategies -->|Apply to| ThreadManager
+
+    UI -->|Submits via| API[API Layer]
+    API -->|Processes with| OpenAI[OpenAI Service]
+    API -->|Stores in| Storage[Memory Storage]
+
+    Storage -->|Manages| Accounts[User Accounts]
+    Storage -->|Saves| Drafts[Post Drafts]
+    Storage -->|Records| Posts[Published Posts]
+
+    style UI fill:#f9f,stroke:#333,stroke-width:2px
+    style OpenAI fill:#bbf,stroke:#333,stroke-width:2px
+    style SplitAI fill:#bbf,stroke:#333,stroke-width:2px
+```
+
+The application uses a modern stack with React, TypeScript, and Express, emphasizing a clean separation between frontend and backend. The system prioritizes user experience with real-time character counting, platform-specific previews, and AI assistance only when needed.
+
+## Project Philosophy
+
+Multipost was designed with several core principles in mind:
+
+### Why We Built Multipost
+
+The social media landscape has become increasingly fragmented, with users needing to maintain presence across multiple platforms with different technical constraints. Multipost aims to solve this fragmentation problem by providing a unified interface for content creation and publishing.
+
+```mermaid
+graph TD
+    A[Problem: Content Fragmentation] -->|Solution| B[Unified Publishing Interface]
+    B --> C[Multi-Platform Support]
+    B --> D[AI-Powered Content Adaptation]
+    B --> E[Preview Before Publishing]
+    C --> F[Bluesky]
+    C --> G[Mastodon]
+    C --> H[Threads]
+    D --> I[Character Limit Handling]
+    D --> J[Content Optimization]
+    D --> K[Thread Creation]
+```
+
+### Design Principles
+
+1. **User-Centric Experience**: The design prioritizes intuitive workflows that minimize the cognitive load required to manage cross-platform posting.
+
+2. **Platform Awareness**: Rather than forcing a one-size-fits-all approach, the application respects the unique characteristics and limitations of each platform.
+
+3. **Intelligent Assistance**: AI features are designed to augment human creativity, not replace it. The AI assists by suggesting optimizations rather than making decisions.
+
+4. **Visual Clarity**: The UI employs the Catppuccin color palette and clear visual hierarchies to create a pleasant, distraction-free environment for content creation.
+
+5. **Adaptive Design**: The application's theme system and responsive layout ensure a consistent experience across different devices and user preferences.
+
+### Technical Considerations
+
+- **Why React and TypeScript?** These technologies were chosen for their strong type safety, component reusability, and extensive ecosystem, allowing for rapid development while maintaining code quality.
+
+- **Why In-Memory Storage?** For this version, an in-memory storage solution was selected to simplify deployment and focus on the core functionality. This approach eliminates database configuration complexity while still demonstrating the application's capabilities.
+
+- **Why OpenAI GPT-4o?** The latest GPT model was selected for its superior understanding of context and nuance in language, which is critical for intelligent content splitting and optimization.
+
+## Features
+
+- **Multi-Platform Publishing**: Post to Bluesky, Mastodon, and Threads with a single click
+- **Real-Time Character Counting**: Visualize character limits for each platform
+- **Platform-Specific Previews**: See how posts will appear on each platform
+- **AI-Powered Content Splitting**: Uses OpenAI GPT-4o to intelligently split long posts
+- **Multiple Splitting Strategies**:
+  - Semantic splitting (by meaning/context)
+  - Sentence-based splitting
+  - Hashtag retention
+  - Mention preservation
+- **Thread Management**: Create, preview, and navigate multi-post threads
+- **Media Support**: Upload and attach media files to posts
+- **Draft Saving**: Save posts as drafts for later editing
+- **Platform Account Selection**: Choose which accounts to post to on each platform
+- **Catppuccin Theming**: Four beautiful theme options (Latte, Frappé, Macchiato, Mocha)
+- **Advanced Configuration**: Customize post appearance and behavior
+- **Configuration Persistence**: Save and load splitting configurations
+
+## Architecture
+
+Multipost is built using a modern web stack, with a clear separation of concerns and an emphasis on maintainability and scalability.
+
+```mermaid
+graph TD
+    subgraph "Frontend"
+        A[React Components] --> B[React Query]
+        B --> C[API Client]
+        A --> D[Theme Provider]
+        A --> E[Form Hooks]
+        E --> F[State Management]
+    end
+
+    subgraph "Backend"
+        G[Express Server] --> H[Routes]
+        H --> I[Storage Interface]
+        H --> J[OpenAI Service]
+        I --> K[Memory Storage]
+    end
+
+    C --> G
+    J --> L[OpenAI API]
+```
+
+### Why This Architecture?
+
+This architecture was chosen to provide:
+
+1. **Clear Separation of Concerns**: Frontend and backend have distinct responsibilities, making the codebase easier to maintain.
+
+2. **Type Safety**: The shared schema ensures consistent types between frontend and backend.
+
+3. **Scalability**: The modular design allows for easy replacement of components (e.g., switching from in-memory storage to a database).
+
+4. **Developer Experience**: The architecture prioritizes rapid development and simplified debugging.
+
+### Frontend
+
+- **React**: Used for UI components due to its declarative nature and component reusability. React's virtual DOM ensures efficient updates.
+
+- **TypeScript**: Provides static typing to catch errors during development and improve code maintainability. Essential for larger codebases.
+
+- **TailwindCSS**: Chosen for its utility-first approach, which allows for rapid UI development without context switching between CSS files.
+
+- **Catppuccin**: Selected as the color palette framework for its visually pleasing, accessible color schemes that work well in both light and dark modes.
+
+- **shadcn/ui**: Leveraged for its high-quality, customizable components that integrate seamlessly with Tailwind CSS.
+
+- **React Query**: Manages asynchronous state, provides caching, and handles loading/error states consistently across the application.
+
+- **wouter**: A lightweight alternative to React Router, providing routing functionality with minimal overhead.
+
+### Backend
+
+- **Node.js**: Enables JavaScript on the server-side, allowing for code sharing between frontend and backend.
+
+- **Express**: Provides a minimal, flexible web framework for handling HTTP requests with middleware support.
+
+- **OpenAI API**: Integrated for AI-powered content processing, enhancing the application's capabilities with advanced NLP features.
+
+- **Memory Storage**: Used for data persistence in this version, simplifying deployment and configuration while demonstrating application capabilities.
+
+### Development Tools
+
+- **Vite**: Selected for its extremely fast development server and efficient production builds, significantly improving development experience.
+
+- **drizzle-orm**: Provides a lightweight ORM with type safety for database operations, while generating Zod schemas for validation.
+
+- **Zod**: Ensures runtime validation of data structures, complementing TypeScript's static type checking.
+
+### Data Flow Architecture
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant UI as UI Components
+    participant Hooks as React Hooks
+    participant Query as React Query
+    participant API as API Client
+    participant Server as Express Server
+    participant Storage as Memory Storage
+    participant OpenAI as OpenAI API
+
+    User->>UI: Compose Post
+    UI->>Hooks: Update Form State
+    Hooks->>UI: Reflect UI Changes
+
+    User->>UI: Submit Post
+    UI->>Hooks: Call submitPost()
+    Hooks->>Query: Create Mutation
+    Query->>API: POST /api/posts
+    API->>Server: HTTP Request
+
+    alt Content exceeds platform limits
+        Server->>OpenAI: Request content splitting
+        OpenAI->>Server: Return split content
+    end
+
+    Server->>Storage: Save post
+    Storage->>Server: Confirm save
+    Server->>API: Return response
+    API->>Query: Update cache
+    Query->>UI: Update UI state
+    UI->>User: Show success message
+```
+
+This architecture emphasizes unidirectional data flow, clear separation between presentation and business logic, and type safety throughout the stack.
+
+## Directory Structure
+
+```
+├── client/                  # Frontend code
+│   ├── src/
+│   │   ├── components/      # UI components
+│   │   ├── hooks/           # Custom React hooks
+│   │   ├── lib/             # Utility functions and services
+│   │   ├── pages/           # Page components
+│   │   ├── types/           # TypeScript type definitions
+│   │   ├── App.tsx          # Main app component
+│   │   └── main.tsx         # Entry point
+├── server/                  # Backend code
+│   ├── services/            # Service modules
+│   │   └── openaiService.ts # OpenAI integration
+│   ├── index.ts             # Main server entry point
+│   ├── routes.ts            # API route definitions
+│   └── storage.ts           # Data storage implementation
+└── shared/                  # Shared code between frontend/backend
+    └── schema.ts            # Data models and schemas
+```
+
+## Data Models
+
+### Core Models
+
+#### User
+
+```typescript
+{
+  id: number;
+  username: string;
+  password: string;
+}
+```
+
+#### Account
+
+```typescript
+{
+  id: number;
+  userId: number;
+  platformId: string; // 'bluesky', 'mastodon', 'threads'
+  username: string;
+  displayName: string;
+  avatarUrl: string;
+  instanceUrl: string; // For Mastodon
+  accessToken: string;
+  refreshToken: string;
+  expiresAt: Date;
+  isActive: boolean;
+}
+```
+
+#### Draft
+
+```typescript
+{
+  id: number;
   userId: number;
   content: string;
   mediaFiles: MediaFile[];
@@ -8,6 +327,7 @@
 ```
 
 #### Post
+
 ```typescript
 {
   id: number;
@@ -21,6 +341,7 @@
 ```
 
 #### MediaFile
+
 ```typescript
 {
   id: string;
@@ -33,6 +354,7 @@
 ```
 
 #### Platform
+
 ```typescript
 {
   id: string;           // 'bluesky', 'mastodon', 'threads'
@@ -42,6 +364,7 @@
 ```
 
 #### ThreadPost
+
 ```typescript
 {
   id: string;
@@ -51,6 +374,7 @@
 ```
 
 #### CharacterStat
+
 ```typescript
 {
   platform: string;
@@ -61,16 +385,18 @@
 ```
 
 #### SplittingStrategy
+
 ```typescript
 enum SplittingStrategy {
-  SEMANTIC = "semantic",           // Split by meaningful semantic chunks
-  SENTENCE = "sentence",           // Split by sentences
-  RETAIN_HASHTAGS = "retain_hashtags",  // Ensure hashtags are preserved
-  PRESERVE_MENTIONS = "preserve_mentions"  // Make sure @mentions stay intact
+  SEMANTIC = "semantic", // Split by meaningful semantic chunks
+  SENTENCE = "sentence", // Split by sentences
+  RETAIN_HASHTAGS = "retain_hashtags", // Ensure hashtags are preserved
+  PRESERVE_MENTIONS = "preserve_mentions", // Make sure @mentions stay intact
 }
 ```
 
 #### SplittingConfig
+
 ```typescript
 {
   name: string;
@@ -81,6 +407,7 @@ enum SplittingStrategy {
 ```
 
 #### AdvancedOptions
+
 ```typescript
 {
   useThreadNotation: boolean;
@@ -96,6 +423,7 @@ enum SplittingStrategy {
 ### Main Components
 
 #### PostComposer
+
 The central component for creating posts. Manages content, platform selection, and posting actions.
 
 ```typescript
@@ -130,6 +458,7 @@ interface PostComposerProps {
 ```
 
 #### ThreadPostsManager
+
 Manages thread creation, editing, and navigation.
 
 ```typescript
@@ -145,6 +474,7 @@ interface ThreadPostsManagerProps {
 ```
 
 #### AISplitPreview
+
 Displays AI-generated splitting options for long content.
 
 ```typescript
@@ -163,6 +493,7 @@ interface AISplitPreviewProps {
 ```
 
 #### PlatformPreview
+
 Shows how content will appear on different platforms.
 
 ```typescript
@@ -176,6 +507,7 @@ interface PlatformPreviewProps {
 ```
 
 #### PlatformCard
+
 Displays a platform with toggle functionality.
 
 ```typescript
@@ -188,6 +520,7 @@ interface PlatformCardProps {
 ```
 
 #### SplitWithAIButton
+
 Button to trigger AI splitting for long content.
 
 ```typescript
@@ -205,6 +538,7 @@ interface SplitWithAIButtonProps {
 ```
 
 #### SavedSplittingConfigs
+
 Manages saved AI splitting configurations.
 
 ```typescript
@@ -220,6 +554,7 @@ interface SavedSplittingConfigsProps {
 ### Custom Hooks
 
 #### usePostForm
+
 Manages form state for creating and editing posts.
 
 ```typescript
@@ -232,6 +567,7 @@ interface UsePostFormProps {
 ```
 
 Returns:
+
 ```typescript
 {
   formState: PostFormState;
@@ -262,6 +598,7 @@ Returns:
 ```
 
 #### useToast
+
 Manages toast notifications.
 
 ## Backend Services
@@ -312,22 +649,25 @@ The application uses OpenAI's GPT-4o model to split and optimize content:
 The application uses OpenAI's GPT-4o model for several key features:
 
 1. **API Key Management**:
+
    - The application checks for the presence of the OpenAI API key at server startup
    - Key validation happens before making API requests
    - Detailed error messages for missing or invalid keys
 
 2. **Error Handling**:
+
    - Comprehensive error handling for OpenAI API responses
    - User-friendly error messages with suggestions for resolution
    - Specific handling for common errors (rate limits, quota exceeded)
    - Detailed error logging for debugging
 
 3. **GPT-4o Prompt Engineering**:
+
    - Structured system prompts that combine multiple splitting strategies
    - JSON response formatting for consistent parsing
    - Thread optimization instructions built into every prompt
    - Character limit enforcement based on platform requirements
- 
+
 4. **Response Validation**:
    - Safety checks for malformed API responses
    - Thread indicator format validation to ensure two newlines before thread markers
@@ -349,6 +689,7 @@ Post form state is managed through the `usePostForm` hook, which handles:
 7. Thread management
 
 Local storage is used to persist:
+
 - Advanced options
 - Custom character limits
 - Splitting configurations
@@ -364,6 +705,7 @@ Thread creation and management is handled through:
 4. **Event Handling**: All thread-related buttons use proper event handling to prevent form submission
 
 Thread functionality includes:
+
 - Creating threads from scratch
 - Converting long posts into threads using AI
 - Adding/removing thread posts
@@ -379,6 +721,7 @@ Thread indicators follow a consistent formatting rule to ensure readability:
 - This ensures clear visual separation between post content and thread indicators
 - This formatting is applied automatically whether using manual thread creation or AI-based splitting
 - Example of proper thread formatting:
+
   ```
   Blake's 7 featured early representation with diverse casting and strong female characters. Its finale is one of TV's most shocking. Available on streaming platforms—give it three episodes. Fair warning: don't get attached to anyone.
 
@@ -388,11 +731,13 @@ Thread indicators follow a consistent formatting rule to ensure readability:
 ## Installation & Setup
 
 ### Prerequisites
+
 - Node.js (v14+)
 - npm (v6+)
 - OpenAI API key (for AI-powered features)
 
 ### Installation Steps
+
 1. Clone the repository
 2. Install dependencies:
    ```
@@ -410,17 +755,21 @@ Thread indicators follow a consistent formatting rule to ensure readability:
    ```
 
 ### OpenAI API Key
+
 The application requires an OpenAI API key for AI-powered features:
+
 - Post splitting based on character limits
 - Content optimization for different platforms
 
 If the OpenAI API key is missing or invalid, the application will:
+
 1. Log an error message on the server
 2. Return detailed error responses from API endpoints
 3. Display user-friendly error messages in the UI
 4. Include suggestions for fixing the issue
 
 To obtain an OpenAI API key:
+
 1. Create an account at [OpenAI](https://openai.com/)
 2. Navigate to API key management
 3. Generate a new API key
@@ -429,22 +778,23 @@ To obtain an OpenAI API key:
 ## Configuration
 
 ### Platform Configuration
+
 Platform settings are defined in `client/src/lib/platform-config.ts`:
 
 ```typescript
 export const DEFAULT_PLATFORMS: Platform[] = [
   {
-    id: 'bluesky',
+    id: "bluesky",
     isSelected: true,
   },
   {
-    id: 'mastodon',
+    id: "mastodon",
     isSelected: true,
   },
   {
-    id: 'threads',
+    id: "threads",
     isSelected: true,
-  }
+  },
 ];
 
 export const PLATFORM_CHARACTER_LIMITS: Record<string, number> = {
@@ -455,7 +805,9 @@ export const PLATFORM_CHARACTER_LIMITS: Record<string, number> = {
 ```
 
 ### Advanced Options
+
 Advanced options are stored in localStorage:
+
 - Thread notation format: ${index+1}/${total}
 - Custom Mastodon character limit
 - Show AI reasoning toggle
@@ -508,9 +860,11 @@ The theme implementation uses Tailwind CSS and CSS variables, allowing for:
 ## API Reference
 
 ### POST /api/split-post
+
 Split a post using AI.
 
 Request:
+
 ```json
 {
   "content": "Long post content to split...",
@@ -520,6 +874,7 @@ Request:
 ```
 
 Success Response:
+
 ```json
 {
   "semantic": {
@@ -541,6 +896,7 @@ Success Response:
 ```
 
 Error Response:
+
 ```json
 {
   "message": "Failed to split post",
@@ -551,15 +907,18 @@ Error Response:
 ```
 
 Error codes include:
+
 - `invalid_api_key`: The OpenAI API key is invalid
 - `missing_api_key`: The OpenAI API key is not configured
 - `rate_limit_exceeded`: Too many requests to OpenAI API in a short time
 - `insufficient_quota`: OpenAI API usage quota has been exceeded
 
 ### POST /api/optimize-post
+
 Optimize a post for a specific platform.
 
 Request:
+
 ```json
 {
   "content": "Long post content to optimize...",
@@ -569,6 +928,7 @@ Request:
 ```
 
 Success Response:
+
 ```json
 {
   "optimized": "Optimized content for the specified platform..."
@@ -576,6 +936,7 @@ Success Response:
 ```
 
 Error Response:
+
 ```json
 {
   "message": "Failed to optimize post",
@@ -586,9 +947,11 @@ Error Response:
 ```
 
 ### POST /api/posts
+
 Publish a post.
 
 Request:
+
 ```json
 {
   "content": "Post content",
@@ -604,6 +967,7 @@ Request:
 ```
 
 Response:
+
 ```json
 {
   "id": 1,
@@ -653,18 +1017,18 @@ graph TD
     A --> C[User Feedback]
     A --> D[Platform Context]
     A --> E[Visual Consistency]
-    
+
     B --> F[Central Composer]
     B --> G[Minimal Distractions]
-    
+
     C --> H[Character Counters]
     C --> I[Visual Preview]
     C --> J[Toast Notifications]
-    
+
     D --> K[Platform Icons]
     D --> L[Platform Cards]
     D --> M[Platform-Specific Previews]
-    
+
     E --> N[Catppuccin Theme]
     E --> O[Consistent Component Styles]
     E --> P[Responsive Layouts]
@@ -687,11 +1051,13 @@ The decision to implement theme-aware components was made to:
 Each major component was designed with specific goals in mind:
 
 1. **PostComposer**:
+
    - **Why a central textarea?** Provides a familiar, distraction-free writing experience.
    - **Why platform toggles?** Allows users to selectively target specific platforms while seeing immediate feedback on character limits.
    - **Why a tabbed preview?** Enables users to see how their post will look on each platform without cluttering the UI.
 
 2. **ThreadPostsManager**:
+
    - **Why a numbered navigation?** Makes it easy to see the sequence and navigate between posts in a thread.
    - **Why inline addition/removal?** Provides immediate control over thread structure without modal dialogs that would interrupt workflow.
 
@@ -736,6 +1102,7 @@ The application was built with performance in mind:
 ### Backend Performance
 
 1. **Efficient OpenAI Requests**: The application optimizes OpenAI API usage by:
+
    - Sending only necessary context in prompts
    - Using the most appropriate model settings
    - Implementing request batching when appropriate
@@ -757,18 +1124,18 @@ graph TD
     A --> C[Component Tests]
     A --> D[Integration Tests]
     A --> E[Error Handling Tests]
-    
+
     B --> F[OpenAI Service]
     B --> G[Storage Interface]
     B --> H[Utility Functions]
-    
+
     C --> I[React Components]
     C --> J[Hooks]
     C --> K[UI Behavior]
-    
+
     D --> L[End-to-End Flows]
     D --> M[API Interactions]
-    
+
     E --> N[API Error Scenarios]
     E --> O[UI Error States]
     E --> P[Validation Errors]
@@ -779,12 +1146,14 @@ graph TD
 The application includes tests for:
 
 1. **Component Tests**:
+
    - Platform Card rendering and interaction
    - Thread Posts Manager functionality
    - Character Stats display
    - Form validation
 
 2. **Service Tests**:
+
    - OpenAI integration
    - Thread indicator formatting
    - Content splitting strategies
@@ -828,11 +1197,13 @@ The application can be deployed through Replit Deployments:
 ### Common Issues and Solutions
 
 1. **OpenAI API Issues**:
+
    - **Error: "API key not found"** - Ensure OPENAI_API_KEY is set in environment variables
    - **Error: "Rate limit exceeded"** - Implement exponential backoff or request throttling
    - **Error: "Invalid API key"** - Verify the API key is correct and hasn't expired
 
 2. **UI Issues**:
+
    - **Theme not persisting** - Check localStorage access and browser cookie settings
    - **Preview not updating** - Verify React state update logic in form hooks
    - **Character counts incorrect** - Check the character counting logic for emoji and special characters
@@ -844,6 +1215,7 @@ The application can be deployed through Replit Deployments:
 ### Debugging Tips
 
 1. Use the browser developer tools to:
+
    - Monitor network requests
    - Check console logs
    - Inspect React component state with React DevTools
@@ -904,4 +1276,3 @@ This documentation has aimed to provide a complete understanding of both the "wh
 ---
 
 This README provides a comprehensive overview of the Multipost application. For specific implementation details, refer to the codebase.
->>>>>>> multipost-source/main
