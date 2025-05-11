@@ -192,39 +192,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // If specific strategy is provided, only generate that one
       if (strategy && Object.values(SplittingStrategy).includes(strategy)) {
-        // Generate split for the specific strategy only
-        try {
-          const result = await splitPost(
-            content, 
-            Math.min(...Object.values(platformLimits)), 
-            strategy
-          );
-          
-          // Format the response to match the expected structure in the client
-          const formattedResult = {
-            [strategy]: {
-              bluesky: result,
-              mastodon: result,
-              threads: result,
-              nostr: result
-            }
-          };
-          
-          return res.json(formattedResult);
-        } catch (splitError: any) {
-          console.error(`Error in split-post with strategy ${strategy}:`, splitError);
-          throw new Error(`Failed to split with strategy ${strategy}: ${splitError.message}`);
-        }
+        const result = await splitPost(
+          content, 
+          Math.min(...Object.values(platformLimits)), 
+          strategy
+        );
+        return res.json({ [strategy]: result });
       }
       
       // Generate all splitting options
-      try {
-        const result = await generateSplittingOptions(content, platformLimits);
-        res.json(result);
-      } catch (generateError: any) {
-        console.error("Error generating split options:", generateError);
-        throw new Error(`Failed to generate splitting options: ${generateError.message}`);
-      }
+      const result = await generateSplittingOptions(content, platformLimits);
+      res.json(result);
     } catch (error: any) {
       console.error("Error in split-post endpoint:", error);
       res.status(500).json({ 
