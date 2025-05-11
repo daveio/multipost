@@ -1,0 +1,222 @@
+import OpenAI from "openai";
+
+// Initialize OpenAI client
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
+
+// Splitting strategies
+export enum SplittingStrategy {
+  SEMANTIC = "semantic", // Split by meaningful semantic chunks
+  SENTENCE = "sentence", // Split by sentences
+  RETAIN_HASHTAGS = "retain_hashtags", // Ensure hashtags are preserved
+  PRESERVE_MENTIONS = "preserve_mentions", // Make sure @mentions stay intact
+  THREAD_OPTIMIZED = "thread_optimized", // Optimize for thread reading experience
+}
+
+interface SplitPostResult {
+  splitText: string[];
+  strategy: SplittingStrategy;
+  reasoning: string;
+}
+
+/**
+ * Split a long post into multiple posts for specific platform
+ */
+export async function splitPost(
+  content: string,
+  characterLimit: number,
+  strategy: SplittingStrategy
+): Promise<SplitPostResult> {
+  const systemPrompt = getSystemPromptForStrategy(strategy, characterLimit);
+  
+  try {
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+      messages: [
+        {
+          role: "system",
+          content: systemPrompt
+        },
+        {
+          role: "user",
+          content: content
+        }
+      ],
+      response_format: { type: "json_object" },
+      temperature: 0.7,
+    });
+
+    // Parse the response
+    const result = JSON.parse(response.choices[0].message.content);
+    
+    return {
+      splitText: result.posts,
+      strategy,
+      reasoning: result.reasoning
+    };
+  } catch (error: any) {
+    console.error("Error splitting post:", error);
+    throw new Error(`Failed to split post: ${error.message || "Unknown error"}`);
+  }
+}
+
+/**
+ * Generate multiple splitting strategies for a post and return all options
+ */
+export async function generateSplittingOptions(
+  content: string,
+  platformLimits: Record<string, number>
+): Promise<Record<SplittingStrategy, Record<string, SplitPostResult>>> {
+  // Create an object to hold all results by strategy and platform
+  const results: Record<SplittingStrategy, Record<string, SplitPostResult>> = {
+    [SplittingStrategy.SEMANTIC]: {},
+    [SplittingStrategy.SENTENCE]: {},
+    [SplittingStrategy.RETAIN_HASHTAGS]: {},
+    [SplittingStrategy.PRESERVE_MENTIONS]: {},
+    [SplittingStrategy.THREAD_OPTIMIZED]: {},
+  };
+  
+  // For each platform and strategy, generate splitting options
+  const platforms = Object.keys(platformLimits);
+  
+  // First, check if splitting is actually needed for any platform
+  const needsSplitting = platforms.some(platform => 
+    content.length > platformLimits[platform]
+  );
+  
+  if (!needsSplitting) {
+    // No splitting needed, return original content for all strategies and platforms
+    const noSplittingResult: SplitPostResult = {
+      splitText: [content],
+      strategy: SplittingStrategy.SEMANTIC,
+      reasoning: "Content is within character limits for all platforms. No splitting required."
+    };
+    
+    Object.values(SplittingStrategy).forEach(strategy => {
+      platforms.forEach(platform => {
+        results[strategy][platform] = noSplittingResult;
+      });
+    });
+    
+    return results;
+  }
+  
+  // For platforms that need splitting, run the AI for all strategies
+  for (const strategy of Object.values(SplittingStrategy)) {
+    for (const platform of platforms) {
+      if (content.length > platformLimits[platform]) {
+        try {
+          results[strategy][platform] = await splitPost(
+            content,
+            platformLimits[platform],
+            strategy as SplittingStrategy
+          );
+        } catch (error: any) {
+          console.error(`Error generating splitting for ${platform} with ${strategy}:`, error);
+          // Create a fallback if the API fails
+          results[strategy as SplittingStrategy][platform] = {
+            splitText: [content],
+            strategy: strategy as SplittingStrategy,
+            reasoning: "Failed to generate splitting. Using original content."
+          };
+        }
+      } else {
+        // No splitting needed for this platform
+        results[strategy as SplittingStrategy][platform] = {
+          splitText: [content],
+          strategy: strategy as SplittingStrategy,
+          reasoning: `Content is within character limit for ${platform}. No splitting required.`
+        };
+      }
+    }
+  }
+  
+  return results;
+}
+
+/**
+ * Optimize a post for a specific platform
+ */
+export async function optimizePost(
+  content: string,
+  platform: string,
+  characterLimit: number
+): Promise<string> {
+  try {
+    const response = await openai.chat.completions.create({
+      model: "gpt-4o", // the newest OpenAI model is "gpt-4o" which was released May 13, 2024. do not change this unless explicitly requested by the user
+      messages: [
+        {
+          role: "system",
+          content: `You are an expert social media optimizer. Your task is to optimize the given text for ${platform}, 
+          ensuring it fits within ${characterLimit} characters while preserving the original meaning and style.
+          Make adjustments to make the post more engaging and appropriate for ${platform}'s audience and format.
+          Don't use hashtags unless they were in the original content. Don't add emojis unless they were in the original.
+          Keep the same tone and voice as the original.`
+        },
+        {
+          role: "user",
+          content: content
+        }
+      ],
+      temperature: 0.7,
+      max_tokens: characterLimit,
+    });
+    
+    return response.choices[0].message.content.trim();
+  } catch (error) {
+    console.error("Error optimizing post:", error);
+    throw new Error(`Failed to optimize post: ${error.message}`);
+  }
+}
+
+/**
+ * Get the appropriate system prompt based on the splitting strategy
+ */
+function getSystemPromptForStrategy(strategy: SplittingStrategy, characterLimit: number): string {
+  const basePrompt = `You are an expert in splitting long social media posts into multiple shorter posts for a thread.
+  The character limit per post is ${characterLimit} characters.
+  Take the input text and split it into multiple posts that each stays under the character limit.
+  Ensure each post makes sense on its own while maintaining the original meaning and narrative flow.
+  Return your response as a JSON object with the following format:
+  {
+    "posts": ["post1", "post2", ...],
+    "reasoning": "brief explanation of your splitting approach"
+  }`;
+  
+  switch(strategy) {
+    case SplittingStrategy.SEMANTIC:
+      return `${basePrompt}
+      Split the text based on semantic units, preserving the meaning of each section.
+      Each split should contain complete thoughts or topics.`;
+      
+    case SplittingStrategy.SENTENCE:
+      return `${basePrompt}
+      Split the text at sentence boundaries, ensuring no sentence is cut in the middle.
+      Try to keep related sentences together when possible.`;
+      
+    case SplittingStrategy.RETAIN_HASHTAGS:
+      return `${basePrompt}
+      Ensure all hashtags from the original post are preserved.
+      If there are hashtags in the original, include all of them in the last post.
+      Split based on semantic units otherwise.`;
+      
+    case SplittingStrategy.PRESERVE_MENTIONS:
+      return `${basePrompt}
+      Ensure all @mentions from the original post are preserved.
+      If a post is split such that it separates an @mention from its context, 
+      include the @mention in both posts where relevant.
+      Split based on semantic units otherwise.`;
+      
+    case SplittingStrategy.THREAD_OPTIMIZED:
+      return `${basePrompt}
+      Format the posts specifically for an optimal thread reading experience.
+      Start each post (except the first) with a clear continuation indicator.
+      End each post (except the last) with a hook or cliffhanger to encourage reading the next post.
+      You should mark thread numbering yourself with notation like (1/3), (2/3), (3/3).`;
+      
+    default:
+      return basePrompt;
+  }
+}
