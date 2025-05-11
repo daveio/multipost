@@ -58,7 +58,12 @@ export function SplitWithAIButton({
         <Button 
           variant={variant} 
           size="sm" 
-          onClick={() => setShowSplitPreview(true)}
+          onClick={(e) => {
+            e.preventDefault(); // Prevent form submission
+            e.stopPropagation(); // Stop event propagation
+            setShowSplitPreview(true);
+          }}
+          type="button" // Explicitly set type to button to prevent form submission
           className="h-7 gap-1"
         >
           <Icon className="h-3.5 w-3.5" />

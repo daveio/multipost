@@ -101,7 +101,16 @@ export function AISplitPreview({
             </CardDescription>
           </CardHeader>
           <CardContent className="pt-2">
-            <Button onClick={onClose}>Close</Button>
+            <Button 
+              onClick={(e) => {
+                e.preventDefault(); // Prevent form submission
+                e.stopPropagation(); // Stop event propagation
+                onClose();
+              }}
+              type="button" // Explicitly set type to button
+            >
+              Close
+            </Button>
           </CardContent>
         </Card>
       </div>
@@ -219,7 +228,15 @@ export function AISplitPreview({
     <div className="bg-white rounded-xl shadow-sm p-6 mb-6">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-lg font-semibold">AI Post Splitting Preview</h2>
-        <Button variant="ghost" onClick={onClose}>
+        <Button 
+          variant="ghost" 
+          onClick={(e) => {
+            e.preventDefault(); // Prevent form submission
+            e.stopPropagation(); // Stop event propagation
+            onClose();
+          }}
+          type="button" // Explicitly set type to button
+        >
           <UIIcon.Close className="h-4 w-4" />
         </Button>
       </div>
@@ -306,11 +323,21 @@ export function AISplitPreview({
       
       {/* Action Buttons */}
       <div className="flex justify-between">
-        <Button variant="outline" onClick={onClose}>
+        <Button 
+          variant="outline" 
+          onClick={(e) => {
+            e.preventDefault(); // Prevent form submission
+            e.stopPropagation(); // Stop event propagation
+            onClose();
+          }}
+          type="button" // Explicitly set type to button
+        >
           Cancel
         </Button>
         <Button 
-          onClick={() => {
+          onClick={(e) => {
+            e.preventDefault(); // Prevent form submission
+            e.stopPropagation(); // Stop event propagation
             if (splitResults?.[activeStrategy]?.[activePlatform]) {
               onApplySplit(
                 activeStrategy, 
@@ -319,6 +346,7 @@ export function AISplitPreview({
               );
             }
           }}
+          type="button" // Explicitly set type to button
           disabled={isLoading || !splitResults}
         >
           Apply This Split
