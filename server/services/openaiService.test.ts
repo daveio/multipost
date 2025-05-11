@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { splitPost, optimizePost, SplittingStrategy } from './openaiService';
+import { splitPost, optimizePost, SplittingStrategy, validateThreadIndicatorFormatting } from './openaiService';
 
 // Mock OpenAI
 vi.mock('openai', () => {

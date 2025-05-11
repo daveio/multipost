@@ -32,11 +32,13 @@ interface SplitPostResult {
  * @param total The total number of posts in the thread
  * @returns The post with properly formatted thread indicator
  */
-function validateThreadIndicatorFormatting(post: string, index: number, total: number): string {
+export function validateThreadIndicatorFormatting(post: string, index: number, total: number): string {
   // Skip validation for empty posts
   if (!post || post.trim().length === 0) {
     return post;
   }
+  
+  console.log(`Validating thread indicator formatting for post ${index+1}/${total}: "${post.substring(0, 30)}..."`);
   
   // Check if this post has a thread indicator
   const threadIndicatorRegex = /🧵\s*(\d+)\s*(?:of|\/)\s*(\d+)$/;
@@ -62,7 +64,9 @@ function validateThreadIndicatorFormatting(post: string, index: number, total: n
   const indicator = post.substring(indicatorPosition);
   
   // Combine with two newlines in between
-  return content + '\n\n' + indicator;
+  const fixedPost = content + '\n\n' + indicator;
+  console.log(`Fixed thread indicator formatting: "${fixedPost.substring(Math.max(0, fixedPost.length - 50))}"`);
+  return fixedPost;
 }
 
 /**
