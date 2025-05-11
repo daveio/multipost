@@ -20,7 +20,7 @@ export function MediaStats({ mediaFiles }: MediaStatsProps) {
   }
 
   // For demo purposes, we'll assume all files are compatible with all platforms
-  const platforms = ["bluesky", "mastodon", "threads", "nostr"];
+  const platforms = ["bluesky", "mastodon", "threads"];
 
   return (
     <div className="bg-white rounded-xl shadow-sm p-6">
@@ -90,13 +90,7 @@ export function MediaStats({ mediaFiles }: MediaStatsProps) {
                     <p>Up to 10 images, JPG, PNG. Videos up to 2 minutes.</p>
                   </div>
                 </li>
-                <li className="flex items-start gap-2">
-                  <SocialIcon platform="nostr" className="text-yellow-500 mt-1" />
-                  <div>
-                    <span className="font-medium">Nostr:</span>
-                    <p>Multiple images supported. Size limits depend on relay.</p>
-                  </div>
-                </li>
+
               </ul>
             </AccordionContent>
           </AccordionItem>
