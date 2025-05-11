@@ -219,7 +219,12 @@ export class MemStorage implements IStorage {
   async getDrafts(userId: number): Promise<Draft[]> {
     return Array.from(this.drafts.values())
       .filter((draft) => draft.userId === userId)
-      .sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime());
+      .sort((a, b) => {
+        // Handle potentially null updatedAt values
+        const aTime = a.updatedAt ? a.updatedAt.getTime() : 0;
+        const bTime = b.updatedAt ? b.updatedAt.getTime() : 0;
+        return bTime - aTime;
+      });
   }
   
   async getDraft(id: number): Promise<Draft | undefined> {
@@ -265,7 +270,12 @@ export class MemStorage implements IStorage {
   async getPosts(userId: number): Promise<Post[]> {
     return Array.from(this.posts.values())
       .filter((post) => post.userId === userId)
-      .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+      .sort((a, b) => {
+        // Handle potentially null createdAt values
+        const aTime = a.createdAt ? a.createdAt.getTime() : 0;
+        const bTime = b.createdAt ? b.createdAt.getTime() : 0;
+        return bTime - aTime;
+      });
   }
   
   async getPost(id: number): Promise<Post | undefined> {
@@ -278,7 +288,12 @@ export class MemStorage implements IStorage {
       ...post, 
       id,
       status: "pending",
-      createdAt: new Date()
+      createdAt: new Date(),
+      // Ensure required fields are properly set and nullable fields have null rather than undefined
+      content: post.content,
+      mediaFiles: post.mediaFiles ?? null,
+      userId: post.userId ?? null,
+      platforms: post.platforms ?? null
     };
     this.posts.set(id, newPost);
     return newPost;
