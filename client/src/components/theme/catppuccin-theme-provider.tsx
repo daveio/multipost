@@ -1,11 +1,10 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { flavors } from "@catppuccin/palette";
-import { createTheme } from "./theme-utils";
+import { createTheme, CatppuccinTheme as ThemeType, ThemeMode as ModeType } from "@/lib/theme-utils";
 
-// Valid theme names
-export type CatppuccinFlavor = keyof typeof flavors;
-export type CatppuccinTheme = "latte" | "frappe" | "macchiato" | "mocha";
-export type ThemeMode = "light" | "dark";
+// Re-export the types with our own names
+export type CatppuccinTheme = ThemeType;
+export type ThemeMode = ModeType;
 
 // Theme context interface
 interface ThemeContextType {
@@ -49,7 +48,10 @@ export function CatppuccinThemeProvider({
   const [theme, setThemeState] = useState<CatppuccinTheme>(() => {
     // Check for saved theme in localStorage
     const savedTheme = localStorage.getItem(THEME_STORAGE_KEY);
-    return (savedTheme as CatppuccinTheme) || defaultTheme;
+    if (savedTheme && ["latte", "frappe", "macchiato", "mocha"].includes(savedTheme)) {
+      return savedTheme as CatppuccinTheme;
+    }
+    return defaultTheme;
   });
 
   // Get theme mode (light or dark)

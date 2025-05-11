@@ -1,9 +1,9 @@
-import { useEffect } from "react";
 import { SocialIcon, UIIcon } from "./SocialIcons";
 import { Button } from "@/components/ui/button";
-import { Moon, Sun } from "lucide-react";
+import { Moon, Palette, Sun } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
-import { useTheme } from "next-themes";
+import { useCatppuccinTheme } from "./theme/catppuccin-theme-provider";
+import { ThemeSelector } from "./theme/theme-selector";
 import { 
   DropdownMenu,
   DropdownMenuContent,
@@ -14,43 +14,42 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 export default function Header() {
-  const { theme, setTheme } = useTheme();
-
-  // Save theme preference to localStorage when it changes
-  useEffect(() => {
-    if (theme) {
-      localStorage.setItem("theme", theme);
-    }
-  }, [theme]);
+  const { theme, setTheme, mode, lightThemes, darkThemes } = useCatppuccinTheme();
 
   // Toggle between light and dark mode
-  const toggleTheme = () => {
-    setTheme(theme === "light" ? "dark" : "light");
+  const toggleDarkMode = () => {
+    // If in light mode, switch to dark (mocha)
+    // If in dark mode, switch to light (latte)
+    const newTheme = mode === "light" ? "mocha" : "latte";
+    setTheme(newTheme);
   };
 
   return (
-    <header className="bg-white dark:bg-gray-900 shadow-sm border-b border-gray-200 dark:border-gray-800">
+    <header className="bg-card shadow-sm border-b border-border">
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
         <div className="flex items-center space-x-2">
           <SocialIcon platform="multipost" className="text-primary" size={24} />
-          <h1 className="text-xl font-semibold text-neutral-900 dark:text-white">Multipost</h1>
+          <h1 className="text-xl font-semibold text-foreground">Multipost</h1>
         </div>
         <div className="flex items-center gap-3">
-          {/* Theme Toggle Button */}
+          {/* Dark Mode Toggle Button */}
           <Button 
             variant="ghost" 
             size="icon"
-            onClick={toggleTheme}
+            onClick={toggleDarkMode}
             className="rounded-full"
-            title={theme === "light" ? "Switch to dark mode" : "Switch to light mode"}
+            title={mode === "light" ? "Switch to dark mode" : "Switch to light mode"}
           >
-            {theme === "light" ? (
-              <Moon className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+            {mode === "light" ? (
+              <Moon className="h-[1.2rem] w-[1.2rem]" />
             ) : (
-              <Sun className="h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+              <Sun className="h-[1.2rem] w-[1.2rem]" />
             )}
-            <span className="sr-only">Toggle theme</span>
+            <span className="sr-only">Toggle dark mode</span>
           </Button>
+
+          {/* Theme Selector */}
+          <ThemeSelector />
 
           {/* Settings Button */}
           <DropdownMenu>
@@ -65,13 +64,20 @@ export default function Header() {
               <DropdownMenuSeparator />
               <DropdownMenuItem className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  {theme === "dark" ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
+                  {mode === "dark" ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
                   <span>Dark Mode</span>
                 </div>
                 <Switch 
-                  checked={theme === "dark"} 
-                  onCheckedChange={() => toggleTheme()} 
+                  checked={mode === "dark"} 
+                  onCheckedChange={toggleDarkMode} 
                 />
+              </DropdownMenuItem>
+              <DropdownMenuItem className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Palette className="h-4 w-4" />
+                  <span>Theme</span>
+                </div>
+                <span className="text-xs font-medium capitalize">{theme}</span>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
