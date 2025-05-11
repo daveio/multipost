@@ -413,10 +413,7 @@ export function AISplitPreview({
             </CardContent>
           </Card>
           
-          {/* Connection dot */}
-          <div className="absolute left-[18px] top-44 h-3 w-3 rounded-full bg-blue-400 z-20" />
-          
-          {/* Second post skeleton with refined animation */}
+          {/* Second post skeleton */}
           <Card className="border border-blue-100 shadow-sm relative z-10">
             <CardContent className="p-4">
               <div className="flex items-start gap-3">
@@ -428,10 +425,6 @@ export function AISplitPreview({
                   </div>
                   <Skeleton className="h-4 w-full bg-blue-50" />
                   <Skeleton className="h-4 w-3/4 bg-blue-50" />
-                  <div className="flex justify-between mt-3">
-                    <Skeleton className="h-5 w-20 bg-blue-100 rounded-full" />
-                    <Skeleton className="h-4 w-16 bg-blue-50" />
-                  </div>
                 </div>
               </div>
             </CardContent>
@@ -441,35 +434,7 @@ export function AISplitPreview({
     );
   };
   
-  // Helper functions for account data
-  const getDisplayName = (platformId: string): string => {
-    const account = accounts.find(a => a.platformId === platformId);
-    return account?.displayName || 'User';
-  };
-  
-  const getUsername = (platformId: string): string => {
-    const account = accounts.find(a => a.platformId === platformId);
-    return account?.username ? `@${account.username}` : '';
-  };
-  
-  const getAvatarUrl = (platformId: string): string => {
-    const account = accounts.find(a => a.platformId === platformId);
-    return account?.avatarUrl || '';
-  };
-  
-  const getAccountInitials = (platformId: string): string => {
-    const displayName = getDisplayName(platformId);
-    if (displayName && displayName !== 'User') {
-      const parts = displayName.split(' ');
-      if (parts.length > 1) {
-        return parts[0][0] + parts[1][0];
-      }
-      return displayName.substring(0, 2);
-    }
-    return platformId.substring(0, 2).toUpperCase();
-  };
-  
-  // Render split post preview
+  // Render split posts for a platform
   const renderSplitPosts = (platformId: string, strategy: SplittingStrategy) => {
     if (!splitResults) return null;
     
@@ -495,8 +460,8 @@ export function AISplitPreview({
       return (
         <div className="p-4 text-center text-gray-600">
           <AlertTriangle className="mx-auto h-8 w-8 text-red-500 mb-3" />
-          <h3 className="text-base font-medium text-gray-800 mb-2">Invalid Data Structure</h3>
-          <p>The API returned an invalid data structure.</p>
+          <h3 className="text-base font-medium text-gray-800 mb-2">Invalid Result Format</h3>
+          <p>The AI returned an unexpected data structure.</p>
           
           {/* Always show details if developer mode is enabled */}
           {advancedOptions.showRawJson ? (
@@ -570,163 +535,122 @@ export function AISplitPreview({
                 Developer Mode
               </Badge>
             </div>
-            <pre className="text-xs font-mono text-green-400 overflow-auto max-h-40">
+            <pre className="text-xs font-mono whitespace-pre-wrap overflow-auto max-h-60 text-green-400">
               {JSON.stringify(result, null, 2)}
             </pre>
           </div>
         )}
         
-        {/* Thread visualization with connecting lines */}
-        <div className="relative">
-          {splitTextArray.map((post, index) => (
-            <div key={index} className="relative">
-              {/* Vertical thread line and connecting dots */}
-              {index < splitTextArray.length - 1 && (
-                <>
-                  {/* Main connecting line */}
-                  <div className="absolute left-5 top-16 bottom-0 w-0.5 bg-gray-300 z-0" />
-                  
-                  {/* Thread connection dot at the bottom */}
-                  <div className="absolute left-[18px] bottom-0 h-2.5 w-2.5 rounded-full bg-gray-400 z-20 transform translate-y-1/2" />
-                </>
-              )}
-              
-              {/* Thread connection dot at the top (for all posts except the first) */}
-              {index > 0 && (
-                <div className="absolute left-[18px] top-0 h-2.5 w-2.5 rounded-full bg-gray-400 z-20 transform -translate-y-1/2" />
-              )}
-              
-              {/* Post card */}
-              <Card className="border-gray-200 shadow-sm mb-6 relative z-10">
-                <CardContent className="p-4">
-                  <div className="flex items-start gap-3">
-                    {/* Account avatar */}
-                    <Avatar className="h-10 w-10 border border-gray-200">
-                      {getAvatarUrl(platformId) ? (
-                        <AvatarImage src={getAvatarUrl(platformId)} alt={getDisplayName(platformId)} />
-                      ) : (
-                        <AvatarFallback>{getAccountInitials(platformId)}</AvatarFallback>
-                      )}
-                    </Avatar>
-                    
-                    {/* Post content */}
-                    <div className="flex-1">
-                      <div className="flex flex-col">
-                        <div className="flex items-center gap-1 mb-0.5">
-                          <span className="font-medium text-sm">{getDisplayName(platformId)}</span>
-                          <span className="text-gray-500 text-sm">{getUsername(platformId)}</span>
-                        </div>
-                        <div className="text-sm whitespace-pre-wrap">
-                          {post}
-                        </div>
-                        
-                        {/* Post meta */}
-                        <div className="flex justify-between mt-3">
-                          <div className="flex items-center gap-3 text-gray-500">
-                            <div className="flex items-center gap-1">
-                              <UIIcon.Reply className="h-3.5 w-3.5" />
-                              <span className="text-xs">5</span>
-                            </div>
-                            <div className="flex items-center gap-1">
-                              <UIIcon.Like className="h-3.5 w-3.5" />
-                              <span className="text-xs">12</span>
-                            </div>
-                          </div>
-                          
-                          {/* Post number in thread */}
-                          {splitTextArray.length > 1 && (
-                            <Badge variant="outline" className="text-xs">
-                              {index + 1} of {splitTextArray.length}
-                            </Badge>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          ))}
-        </div>
-        
-        {/* Apply Split Button */}
-        <div className="flex justify-between mt-6">
+        {/* Thread strategy indicator */}
+        <div className="flex justify-between items-center text-sm">
+          <div className="flex items-center gap-2">
+            <Badge variant="secondary" className="px-2 py-1 text-xs">
+              {splitTextArray.length === 1 ? 'Single Post' : `${splitTextArray.length}-Part Thread`}
+            </Badge>
+            <span className="text-gray-500">Character limit: {characterStats.find(s => s.platform === platformId)?.limit}</span>
+          </div>
           <Button
             variant="outline"
             size="sm"
-            className="gap-1.5"
-            onClick={() => {
-              // Reset results
-              setSplitResults(null);
-              // Generate new options
-              generateSplitOptions();
-            }}
+            onClick={() => onApplySplit(activeStrategy, platformId, splitTextArray)}
+            className="text-xs"
           >
-            <UIIcon.Refresh className="h-3.5 w-3.5" />
-            <span>Regenerate</span>
+            Apply This Split
           </Button>
-          
-          <div className="flex gap-2">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={onClose}
-            >
-              Cancel
-            </Button>
-            <Button
-              size="sm"
-              className="gap-1.5"
-              onClick={() => {
-                onApplySplit(result.strategy, platformId, splitTextArray);
-                onClose();
-              }}
-            >
-              <UIIcon.Check className="h-3.5 w-3.5" />
-              <span>Apply Split</span>
-            </Button>
-          </div>
+        </div>
+        
+        {/* Thread connection visualization */}
+        {splitTextArray.length > 1 && (
+          <div className="absolute left-5 top-1/2 bottom-0 w-0.5 bg-blue-200 z-0" />
+        )}
+        
+        {/* Render each post in the thread */}
+        <div className="space-y-4 relative">
+          {splitTextArray.map((text, index) => (
+            <Card key={index} className="border border-gray-200 shadow-sm relative z-10">
+              <CardContent className="p-4">
+                <div className="flex items-start gap-3">
+                  {/* Account avatar */}
+                  <Avatar>
+                    <AvatarImage 
+                      src={accounts.find(a => a.platformId === platformId)?.profileImageUrl} 
+                      alt={accounts.find(a => a.platformId === platformId)?.username}
+                    />
+                    <AvatarFallback>
+                      <SocialIcon platform={platformId} />
+                    </AvatarFallback>
+                  </Avatar>
+                  
+                  <div className="flex-1">
+                    {/* User info */}
+                    <div className="flex items-center">
+                      <span className="font-medium mr-2">{accounts.find(a => a.platformId === platformId)?.displayName}</span>
+                      <span className="text-gray-500 text-sm">@{accounts.find(a => a.platformId === platformId)?.username}</span>
+                    </div>
+                    
+                    {/* Post content */}
+                    <div className="mt-2 whitespace-pre-wrap">
+                      {text}
+                    </div>
+                    
+                    {/* Post meta */}
+                    <div className="flex items-center justify-between mt-3 text-xs text-gray-500">
+                      <span>{text.length} / {characterStats.find(s => s.platform === platformId)?.limit} characters</span>
+                      {splitTextArray.length > 1 && (
+                        <Badge variant="outline" className="px-2 py-0.5 text-xs">
+                          {index + 1} of {splitTextArray.length}
+                        </Badge>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
         </div>
       </div>
     );
   };
   
+  // Main render
   return (
-    <div className="bg-white rounded-xl shadow-sm p-6 mb-6">
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle>Split Content with AI</CardTitle>
-          <CardDescription>
-            Your post exceeds character limits for one or more platforms. Use AI to optimize the split.
-          </CardDescription>
-        </CardHeader>
+    <div className="fixed inset-0 z-50 bg-black/70 flex items-center justify-center overflow-hidden">
+      <div className="bg-white dark:bg-gray-900 rounded-lg shadow-xl max-w-5xl w-full max-h-[90vh] overflow-hidden flex flex-col">
+        <div className="flex items-center justify-between p-4 border-b dark:border-gray-700">
+          <div className="flex items-center">
+            <UIIcon.Split className="mr-2 h-5 w-5" />
+            <h2 className="text-xl font-bold">AI-Powered Splitting Preview</h2>
+          </div>
+          <Button variant="ghost" size="icon" onClick={onClose}>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-x"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+            <span className="sr-only">Close</span>
+          </Button>
+        </div>
         
-        <CardContent>
+        <div className="p-6 overflow-y-auto flex-1">
           {/* Loading state */}
           {isLoading ? renderLoading() : (
             <div className="space-y-6">
               {/* Strategy Selection */}
               <div className="space-y-2">
-                <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center justify-between mb-4">
                   <div>
-                    <h3 className="text-sm font-medium mb-1">Splitting Strategies</h3>
-                    <p className="text-xs text-gray-500">Select one or more strategies to generate splits</p>
+                    <h3 className="text-lg font-medium mb-1">Splitting Strategies</h3>
+                    <p className="text-sm text-gray-500 dark:text-gray-400">Select multiple strategies for AI to combine them optimally</p>
                   </div>
                   
-                  <div className="flex flex-wrap gap-1.5">
+                  <div className="flex flex-wrap gap-2">
                     <Button 
-                      variant="ghost" 
+                      variant="outline" 
                       size="sm"
                       onClick={resetToDefault}
-                      className="h-7 text-xs"
                     >
                       Reset
                     </Button>
                     <Button 
-                      variant="ghost" 
+                      variant="outline" 
                       size="sm"
                       onClick={selectAllStrategies}
-                      className="h-7 text-xs"
                     >
                       Select All
                     </Button>
@@ -748,99 +672,87 @@ export function AISplitPreview({
                       <Tooltip>
                         <TooltipTrigger asChild>
                           <div>
-                            <Badge 
+                            <Button
                               variant={selectedStrategies.includes(strategy) ? "default" : "outline"}
-                              className={`
-                                cursor-pointer transition-all duration-200 select-none
-                                ${selectedStrategies.includes(strategy) ? 'bg-primary hover:bg-primary/90' : 'bg-transparent hover:bg-gray-100'}
-                              `}
+                              size="sm"
                               onClick={() => toggleStrategy(strategy)}
+                              className={`relative ${selectedStrategies.includes(strategy) ? "border-primary" : "opacity-70"}`}
                             >
-                              {selectedStrategies.includes(strategy) && (
-                                <UIIcon.Check className="mr-1 h-3 w-3" />
-                              )}
                               {getStrategyName(strategy)}
-                            </Badge>
+                              {selectedStrategies.includes(strategy) && (
+                                <span className="absolute -top-1 -right-1 h-3 w-3 rounded-full bg-green-500 border border-white"></span>
+                              )}
+                            </Button>
                           </div>
                         </TooltipTrigger>
-                        <TooltipContent side="bottom" className="max-w-xs">
-                          <p className="text-sm font-medium">{getStrategyName(strategy)}</p>
-                          <p className="text-xs mt-1">{getStrategyTooltip(strategy)}</p>
+                        <TooltipContent>
+                          <p>{getStrategyTooltip(strategy)}</p>
                         </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
                   ))}
                 </div>
+                
+                {/* Generate button */}
+                <div className="mt-4 flex justify-end">
+                  <Button 
+                    onClick={generateSplitOptions}
+                    disabled={isLoading || selectedStrategies.length === 0}
+                    className="px-4"
+                  >
+                    <UIIcon.Sparkles className="mr-2 h-4 w-4" />
+                    Generate Splits with AI
+                  </Button>
+                </div>
               </div>
               
-              {/* Error Display */}
+              {/* Error display */}
               {error && (
-                <Alert variant="destructive" className="mb-3">
+                <Alert variant="destructive">
                   <AlertTriangle className="h-4 w-4" />
-                  <AlertDescription className="ml-2">
-                    <div className="font-medium">{error}</div>
-                    
-                    {errorDetails && (
-                      <div className="mt-2">
-                        {advancedOptions.showRawJson ? (
-                          // Developer mode error display (always expanded)
-                          <div className="text-xs bg-gray-900 text-gray-200 p-3 rounded-md border border-gray-700">
-                            <h4 className="text-gray-300 font-mono flex items-center mb-2">
-                              <span className="inline-block mr-2 p-1 bg-red-800 text-red-200 rounded">Error</span>
-                              Developer Mode Error Data
-                            </h4>
-                            
-                            {/* Tips based on error type */}
-                            {errorDetails.includes('rate_limit_exceeded') && (
-                              <div className="p-2 bg-amber-950 border border-amber-800 rounded text-amber-200 mb-3">
-                                <p className="font-medium mb-1">Rate Limit Exceeded</p>
+                  <AlertDescription>
+                    <div className="space-y-2">
+                      <p className="font-medium">{error}</p>
+                      
+                      {errorDetails && (
+                        <details className="mt-2 bg-red-50 p-2 rounded text-xs border border-red-200">
+                          <summary className="cursor-pointer">View Error Details</summary>
+                          <div className="mt-2 space-y-2">
+                            {errorDetails.includes('rate_limit') && (
+                              <div className="p-2 bg-amber-50 border border-amber-200 rounded">
+                                <p className="font-medium">Rate Limit Exceeded</p>
                                 <p>OpenAI's rate limit was reached. Please wait a few moments and try again.</p>
                               </div>
                             )}
                             
                             {errorDetails.includes('invalid_api_key') && (
-                              <div className="p-2 bg-red-950 border border-red-800 rounded text-red-200 mb-3">
-                                <p className="font-medium mb-1">API Authentication Error</p>
+                              <div className="p-2 bg-amber-50 border border-amber-200 rounded">
+                                <p className="font-medium">API Authentication Error</p>
                                 <p>There might be an issue with the OpenAI API key. Please check that it's correctly configured.</p>
                               </div>
                             )}
                             
-                            {/* Raw error details with syntax highlighting */}
-                            <pre className="overflow-auto p-2 bg-gray-950 font-mono text-green-400 rounded max-h-80">
-                              {errorDetails}
-                            </pre>
-                          </div>
-                        ) : (
-                          // Normal user error display
-                          <details className="text-xs bg-red-50 p-3 rounded-md border border-red-200">
-                            <summary className="font-medium cursor-pointer">View Technical Details</summary>
-                            <div className="mt-2 space-y-2">
-                              {/* Tips based on error type */}
-                              {errorDetails.includes('rate_limit_exceeded') && (
-                                <div className="p-2 bg-amber-50 border border-amber-200 rounded">
-                                  <p className="font-medium">Rate Limit Exceeded</p>
-                                  <p>OpenAI's rate limit was reached. Please wait a few moments and try again.</p>
-                                </div>
-                              )}
-                              
-                              {errorDetails.includes('invalid_api_key') && (
-                                <div className="p-2 bg-amber-50 border border-amber-200 rounded">
-                                  <p className="font-medium">API Authentication Error</p>
-                                  <p>There might be an issue with the OpenAI API key. Please check that it's correctly configured.</p>
-                                </div>
-                              )}
-                              
-                              {/* Raw error details */}
-                              <div className="p-2 bg-gray-900 text-gray-100 rounded overflow-x-auto">
-                                <pre className="text-xs whitespace-pre-wrap">
-                                  {errorDetails}
-                                </pre>
-                              </div>
+                            {/* Raw error details */}
+                            <div className="p-2 bg-gray-900 text-gray-100 rounded overflow-x-auto">
+                              <pre className="text-xs whitespace-pre-wrap">
+                                {errorDetails}
+                              </pre>
                             </div>
-                          </details>
-                        )}
+                          </div>
+                        </details>
+                      )}
+                      
+                      <div className="mt-2">
+                        <Button 
+                          variant="outline"
+                          size="sm"
+                          onClick={generateSplitOptions}
+                        >
+                          <UIIcon.Refresh className="h-3.5 w-3.5 mr-1" />
+                          <span>Try Again</span>
+                        </Button>
                       </div>
-                    )}
+                    </div>
                   </AlertDescription>
                 </Alert>
               )}
@@ -879,61 +791,27 @@ export function AISplitPreview({
                           <TabsTrigger 
                             key={platformId}
                             value={platformId}
-                            className="inline-flex items-center gap-1.5"
+                            className="flex items-center gap-1.5"
                           >
-                            <SocialIcon platform={platformId} className="h-3.5 w-3.5" />
+                            <SocialIcon platform={platformId} className="h-4 w-4" />
                             <span>{getPlatformName(platformId)}</span>
                           </TabsTrigger>
                         ))}
                       </TabsList>
                       
-                      {/* Results for each platform */}
                       {platformsNeedingSplit.map(platformId => (
-                        <TabsContent key={platformId} value={platformId} className="mt-0">
+                        <TabsContent key={platformId} value={platformId} className="relative pt-2">
                           {renderSplitPosts(platformId, activeStrategy)}
                         </TabsContent>
                       ))}
                     </Tabs>
                   </>
                 )}
-                
-                {/* Generate button (only visible when results are not available yet) */}
-                {!splitResults && !isLoading && !error && (
-                  <div className="flex justify-end">
-                    <Button 
-                      onClick={generateSplitOptions}
-                      className="gap-1.5"
-                    >
-                      <Info className="h-3.5 w-3.5" />
-                      <span>Generate Split Options</span>
-                    </Button>
-                  </div>
-                )}
-                
-                {/* Generate button (visible when there's an error) */}
-                {!splitResults && !isLoading && error && (
-                  <div className="flex justify-between mt-6">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={onClose}
-                    >
-                      Cancel
-                    </Button>
-                    <Button 
-                      onClick={generateSplitOptions}
-                      className="gap-1.5"
-                    >
-                      <UIIcon.Refresh className="h-3.5 w-3.5" />
-                      <span>Try Again</span>
-                    </Button>
-                  </div>
-                )}
               </div>
             </div>
           )}
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   );
 }

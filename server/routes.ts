@@ -196,38 +196,49 @@ export async function registerRoutes(app: Express): Promise<Server> {
           // Create a result object to store all the strategy results
           const results: Record<string, Record<string, any>> = {};
           
-          // Process each requested strategy
+          // Important: Process all strategies together, not individually
+          console.log(`Processing all selected strategies together: ${strategies.join(', ')}`);
+          
+          // Initialize the results for each selected strategy
           for (const strategy of strategies) {
             if (!Object.values(SplittingStrategy).includes(strategy)) {
               continue; // Skip invalid strategies
             }
-            
-            console.log(`Processing strategy: ${strategy}`);
             results[strategy] = {};
+          }
+          
+          // Generate platform-specific splits using all selected strategies together
+          for (const platform of Object.keys(platformLimits)) {
+            const limit = platformLimits[platform];
             
-            // Generate platform-specific splits using all selected strategies
-            for (const platform of Object.keys(platformLimits)) {
-              const limit = platformLimits[platform];
+            // Only split if content exceeds platform limit
+            if (content.length > limit) {
+              console.log(`Splitting for ${platform} with limit ${limit} using all selected strategies together`);
               
-              // Only split if content exceeds platform limit
-              if (content.length > limit) {
-                console.log(`Splitting for ${platform} with limit ${limit} using multiple strategies`);
-                const platformResult = await splitPost(
-                  content, 
-                  limit, 
-                  strategies // Pass all selected strategies at once
-                );
+              // Make a single API call with all strategies
+              const platformResult = await splitPost(
+                content, 
+                limit, 
+                strategies // Pass all selected strategies at once
+              );
+              
+              // Store the same result under each strategy key for UI compatibility
+              for (const strategy of strategies) {
+                if (!Object.values(SplittingStrategy).includes(strategy)) continue;
                 
-                // Store the result under the current strategy key for compatibility
                 results[strategy][platform] = {
                   ...platformResult,
-                  strategy: strategy as SplittingStrategy  // Override strategy for consistent structure
+                  strategy: strategies // Show all selected strategies in the result
                 };
-              } else {
-                // No splitting needed
+              }
+            } else {
+              // No splitting needed
+              for (const strategy of strategies) {
+                if (!Object.values(SplittingStrategy).includes(strategy)) continue;
+                
                 results[strategy][platform] = {
                   splitText: [content],
-                  strategy: strategy as SplittingStrategy,
+                  strategy: strategies,
                   reasoning: `Content is within character limit for ${platform} (${limit} chars). No splitting required.`
                 };
               }
