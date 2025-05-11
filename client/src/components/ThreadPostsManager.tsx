@@ -163,7 +163,13 @@ export function ThreadPostsManager({
   };
   
   // Handle adding a new post with proper data synchronization
-  const handleAddPost = () => {
+  const handleAddPost = (event?: React.MouseEvent) => {
+    // Prevent default action to stop form submission
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+    
     try {
       // Save current state to localStorage before adding new post
       setThreadState(prev => {
@@ -173,9 +179,11 @@ export function ThreadPostsManager({
           content: prev.currentContent
         };
         
-        // Let parent handle the actual post creation
-        // but pass the current content to ensure it's preserved
-        onAddPost(prev.currentContent);
+        // Use setTimeout to prevent form submission
+        setTimeout(() => {
+          // Let parent handle the actual post creation after the current event cycle
+          onAddPost(prev.currentContent);
+        }, 0);
         
         return {
           ...prev,
@@ -193,7 +201,13 @@ export function ThreadPostsManager({
   };
   
   // Handle removing a post with proper data synchronization
-  const handleRemovePost = (index: number) => {
+  const handleRemovePost = (index: number, event?: React.MouseEvent) => {
+    // Prevent default action to stop form submission
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+    
     try {
       // Save the current state before removing
       setThreadState(prev => {
@@ -203,8 +217,11 @@ export function ThreadPostsManager({
           content: prev.currentContent
         };
         
-        // Let parent handle the actual post removal
-        onRemovePost(index);
+        // Use setTimeout to prevent form submission
+        setTimeout(() => {
+          // Let parent handle the actual post removal
+          onRemovePost(index);
+        }, 0);
         
         return {
           ...prev,
@@ -222,7 +239,13 @@ export function ThreadPostsManager({
   };
   
   // Handle exiting thread mode with proper data synchronization
-  const handleExit = () => {
+  const handleExit = (event?: React.MouseEvent) => {
+    // Prevent default action to stop form submission
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+    
     try {
       // Save the current content before exiting
       if (threadState.posts[threadState.activeIndex]) {
@@ -240,13 +263,19 @@ export function ThreadPostsManager({
         // Save to localStorage before exit
         localStorage.setItem(THREAD_STORAGE_KEY, JSON.stringify(finalState));
         
-        // Tell parent the final content to maintain
-        onContentChange(threadState.currentContent);
-        
-        // Now exit
-        onExit();
+        // Use setTimeout to prevent form submission
+        setTimeout(() => {
+          // Tell parent the final content to maintain
+          onContentChange(threadState.currentContent);
+          
+          // Now exit
+          onExit();
+        }, 0);
       } else {
-        onExit();
+        // Use setTimeout to prevent form submission
+        setTimeout(() => {
+          onExit(); 
+        }, 0);
       }
     } catch (error) {
       console.error("Error exiting thread mode:", error);
@@ -292,7 +321,7 @@ export function ThreadPostsManager({
           <Button 
             variant="default" 
             size="sm"
-            onClick={handleAddPost}
+            onClick={(e) => handleAddPost(e)}
           >
             <Plus className="mr-1 h-4 w-4" />
             Add Post
@@ -356,7 +385,7 @@ export function ThreadPostsManager({
                     variant="ghost"
                     size="icon"
                     className="h-7 w-7 text-destructive hover:bg-destructive/10"
-                    onClick={() => handleRemovePost(index)}
+                    onClick={(e) => handleRemovePost(index, e)}
                     disabled={threadState.posts.length <= 1}
                   >
                     <Trash2 className="h-4 w-4" />
