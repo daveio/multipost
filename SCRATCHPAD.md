@@ -66,6 +66,9 @@
 ## Threading Indicator Fixes
 
 - Whenever threading indicators are used, make sure two newlines are used beforehand.
+- OpenAI is being told to add thread indicators with two newlines.
+  - We should also check that they actually do that.
+    - If they don't, correct it.
 
 ### Good
 
