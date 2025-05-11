@@ -9,6 +9,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useToast } from "@/hooks/use-toast";
 import { SocialIcon, UIIcon } from "./SocialIcons";
+import { AlertTriangle } from "lucide-react";
 import { 
   SplittingStrategy, 
   SplitPostResult,
@@ -283,9 +284,9 @@ export function AISplitPreview({
   );
   
   return (
-    <div className="bg-white rounded-xl shadow-sm p-6 mb-6">
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-lg font-semibold">AI Post Splitting Preview</h2>
+    <div className="bg-white rounded-xl shadow-sm p-6 mb-6 fixed top-10 left-10 right-10 bottom-10 z-50 overflow-auto">
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-xl font-semibold">AI Post Splitting Preview</h2>
         <Button 
           variant="ghost" 
           onClick={(e) => {
@@ -295,51 +296,51 @@ export function AISplitPreview({
           }}
           type="button" // Explicitly set type to button
         >
-          <UIIcon.Close className="h-4 w-4" />
+          <UIIcon.Close className="h-5 w-5" />
         </Button>
       </div>
       
       {/* Select Platform Tabs */}
-      <div className="mb-4">
-        <h3 className="text-sm font-medium mb-2">Platform Requiring Split:</h3>
-        <div className="flex flex-wrap gap-2">
+      <div className="mb-6">
+        <h3 className="text-base font-medium mb-3">Platform Requiring Split:</h3>
+        <div className="flex flex-wrap gap-3">
           {platformsNeedingSplit.map(platformId => (
             <Button
               key={platformId}
               variant={activePlatform === platformId ? "default" : "outline"}
-              size="sm"
+              size="default"
               onClick={(e) => {
                 e.preventDefault();
                 e.stopPropagation();
                 setActivePlatform(platformId);
               }}
               type="button"
-              className="flex items-center gap-1"
+              className="flex items-center gap-2 px-4 py-2"
             >
-              <SocialIcon platform={platformId} size={14} />
-              <span>{getPlatformName(platformId)}</span>
+              <SocialIcon platform={platformId} size={18} />
+              <span className="font-medium">{getPlatformName(platformId)}</span>
             </Button>
           ))}
         </div>
       </div>
       
       {/* Select Strategy Tabs */}
-      <div className="mb-4">
-        <h3 className="text-sm font-medium mb-2">Choose a Splitting Strategy:</h3>
+      <div className="mb-6">
+        <h3 className="text-base font-medium mb-3">Choose a Splitting Strategy:</h3>
         <div>
-          <div className="flex flex-wrap gap-2 mb-2">
+          <div className="flex flex-wrap gap-3 mb-3">
             {Object.values(SplittingStrategy).map(strategy => (
               <Button
                 key={strategy}
                 variant={activeStrategy === strategy ? "default" : "outline"}
-                size="sm"
+                size="default"
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
                   setActiveStrategy(strategy as SplittingStrategy);
                 }}
                 type="button"
-                className="text-xs"
+                className="px-4 py-2"
               >
                 {getStrategyName(strategy as SplittingStrategy)}
               </Button>
@@ -347,56 +348,64 @@ export function AISplitPreview({
           </div>
           
           {/* Strategy Description */}
-          <div className="text-xs text-gray-500 bg-gray-50 p-2 rounded">
+          <div className="text-sm text-gray-700 bg-gray-50 p-4 rounded-lg border border-gray-100">
             {getStrategyDescription(activeStrategy)}
           </div>
         </div>
       </div>
       
-      {/* Split Preview */}
-      <Card className="mb-4">
-        <CardHeader className="px-4 py-3">
-          <CardTitle className="text-md">Split Preview</CardTitle>
-          <CardDescription>
-            Here's how your post will be split for {getPlatformName(activePlatform)}
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="px-4 py-0 pb-4">
-          <ScrollArea className="max-h-96 pr-3">
-            {isLoading ? (
-              renderLoading()
-            ) : error ? (
-              <Alert variant="destructive">
-                <AlertDescription>{error}</AlertDescription>
-              </Alert>
-            ) : splitResults ? (
-              renderSplitPosts(activePlatform, activeStrategy)
-            ) : (
-              <div className="text-center py-4 text-gray-500">
-                No splitting options available.
+      <div className="flex flex-col lg:flex-row gap-6">
+        {/* Left side: Split Preview */}
+        <div className="w-full lg:w-2/3">
+          <Card className="mb-6">
+            <CardHeader className="p-5 border-b">
+              <CardTitle className="text-lg">Split Preview</CardTitle>
+              <CardDescription className="text-base">
+                How your post will be split for {getPlatformName(activePlatform)}
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="p-5">
+              <div className="h-[400px] overflow-auto pr-3">
+                {isLoading ? (
+                  renderLoading()
+                ) : error ? (
+                  <Alert variant="destructive" className="mb-4">
+                    <AlertDescription className="text-base">{error}</AlertDescription>
+                  </Alert>
+                ) : splitResults ? (
+                  renderSplitPosts(activePlatform, activeStrategy)
+                ) : (
+                  <div className="text-center py-8 text-gray-500">
+                    <AlertTriangle className="mx-auto h-12 w-12 text-amber-500 mb-4" />
+                    <p className="text-lg font-medium">No splitting options available.</p>
+                    <p className="mt-2">Try entering a longer post.</p>
+                  </div>
+                )}
               </div>
-            )}
-          </ScrollArea>
-        </CardContent>
-      </Card>
-      
-      {/* Original Post */}
-      <Card className="mb-4">
-        <CardHeader className="px-4 py-3">
-          <CardTitle className="text-md">Original Post</CardTitle>
-          <CardDescription>
-            {content.length} characters ({characterStats.find(s => s.platform === activePlatform)?.limit || 0} character limit)
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="px-4 py-0 pb-4">
-          <ScrollArea className="max-h-40">
-            <p className="text-sm">{content}</p>
-          </ScrollArea>
-        </CardContent>
-      </Card>
+            </CardContent>
+          </Card>
+        </div>
+        
+        {/* Right side: Original Post */}
+        <div className="w-full lg:w-1/3">
+          <Card className="mb-6">
+            <CardHeader className="p-5 border-b">
+              <CardTitle className="text-lg">Original Post</CardTitle>
+              <CardDescription className="text-base">
+                {content.length} characters ({characterStats.find(s => s.platform === activePlatform)?.limit || 0} character limit)
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="p-5">
+              <div className="max-h-[200px] overflow-auto">
+                <p className="text-base whitespace-pre-wrap">{content}</p>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
       
       {/* Action Buttons */}
-      <div className="flex justify-between">
+      <div className="flex justify-between mt-6">
         <Button 
           variant="outline" 
           onClick={(e) => {
@@ -405,6 +414,8 @@ export function AISplitPreview({
             onClose();
           }}
           type="button" // Explicitly set type to button
+          size="lg"
+          className="px-6"
         >
           Cancel
         </Button>
@@ -422,6 +433,8 @@ export function AISplitPreview({
           }}
           type="button" // Explicitly set type to button
           disabled={isLoading || !splitResults}
+          size="lg"
+          className="px-6"
         >
           Apply This Split
         </Button>
