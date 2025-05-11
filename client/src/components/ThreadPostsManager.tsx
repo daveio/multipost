@@ -30,13 +30,9 @@ export function ThreadPostsManager({
   // Handle content change for the active post
   const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const newContent = e.target.value;
-    onContentChange(newContent);
     
-    // Also update the thread post content
-    const updatedPost = {
-      ...threadPosts[activeIndex],
-      content: newContent
-    };
+    // Update the global content state which triggers re-renders
+    onContentChange(newContent);
   };
   
   return (
