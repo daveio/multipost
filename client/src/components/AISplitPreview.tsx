@@ -113,12 +113,17 @@ export function AISplitPreview({
   
   // Save the current configuration
   const saveConfig = (name: string) => {
+    // Ensure strategies are converted to string array to avoid serialization issues
+    const strategyStrings = selectedStrategies.map(strategy => strategy.toString());
+    
     // Create a new config object
     const newConfig: SplittingConfig = {
       name,
-      strategies: selectedStrategies,
+      strategies: strategyStrings,
       createdAt: new Date()
     };
+    
+    console.log('Saving config:', newConfig);
     
     // Get current saved configs or initialize empty array
     const currentConfigs = advancedOptions.savedSplittingConfigs || [];
@@ -149,12 +154,34 @@ export function AISplitPreview({
   
   // Load a saved configuration
   const loadConfig = (config: SplittingConfig) => {
-    setSelectedStrategies(config.strategies as SplittingStrategy[]);
+    // Convert string array to SplittingStrategy array
+    let strategyArray: SplittingStrategy[] = [];
     
-    toast({
-      title: "Configuration Loaded",
-      description: `Loaded splitting configuration "${config.name}".`,
-    });
+    // Validate each strategy in the config
+    if (Array.isArray(config.strategies)) {
+      strategyArray = config.strategies.filter((strategy) => 
+        Object.values(SplittingStrategy).includes(strategy as SplittingStrategy)
+      ) as SplittingStrategy[];
+    }
+    
+    console.log('Loading config:', config, 'Strategies:', strategyArray);
+    
+    // Set selected strategies if we have valid ones
+    if (strategyArray.length > 0) {
+      setSelectedStrategies(strategyArray);
+      
+      toast({
+        title: "Configuration Loaded",
+        description: `Loaded splitting configuration "${config.name}".`,
+      });
+    } else {
+      // Show error if no valid strategies found
+      toast({
+        title: "Invalid Configuration",
+        description: "The selected configuration contains no valid strategies.",
+        variant: "destructive"
+      });
+    }
   };
   
   // Delete a saved configuration
