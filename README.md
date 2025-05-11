@@ -1,67 +1,40 @@
 # Multipost
 
+Multipost is a web app which allows a user to crosspost to multiple social networks at the same time, and adjusts the post for each network. The design should prioritize visual appeal and user experience, with a focus on real-time feedback mechanisms, particularly for character counts in the post entry field. Optimize the application for desktop environments while ensuring full responsiveness for mobile devices. Use Ruby on Rails as the framework for this application, with Stimulus for JavaScript, Tailwind CSS version 4 for styling, and the DaisyUI library for UI components.
+
+## Specifications
+
 Multipost is a web app which allows a user to crosspost to multiple social networks at the same time, and adjusts the post for each network.
+
+The frontend will not talk to social networks or AI services directly. Instead, it will use the API provided by the backend, which will handle all communication with third-party endpoints.
 
 ## Platform
 
-- Nuxt, latest version.
-  - All dependencies should be their latest version where possible, or the most recent version possible.
-  - Feel free to add Nuxt add-ons.
-- JWT-based authentication.
-- An API which the frontend uses.
-  - Also allow the API to be called outside the frontend.
-  - API uses the same JWT authentication as the frontend.
+- Ruby on Rails 8.
+- Stimulus for JavaScript.
+- Tailwind CSS version 4.
+- DaisyUI for UI components.
 
-### Code Style and Libraries
+## Dependencies
 
-- DO use TypeScript.
-- DO NOT use React.
-  - DO NOT use React components.
-  - DO NOT use React libraries.
-  - DO NOT use JSX or TSX.
-- Do things the Vue way, instead of forcing TSX, React, and React components on Nuxt.
-- DO NOT use shadcn or Radix UI.
-  - DO use DaisyUI instead.
-  - DO use the Catppuccin theming from:
-    - [https://github.com/catppuccin/daisyui](https://github.com/catppuccin/daisyui)
-    - [https://github.com/catppuccin/tailwindcss](https://github.com/catppuccin/tailwindcss)
-  - DO use the Catppuccin color palette.
-- The following libraries may be helpful, but feel free to use others if they are more appropriate:
-  - [https://nuxt.com/modules/fonts](https://nuxt.com/modules/fonts)
-  - [https://nuxt.com/modules/icon](https://nuxt.com/modules/icon)
-  - [https://nuxt.com/modules/image](https://nuxt.com/modules/image)
+- All dependencies should be their latest version where possible, or the most recent version possible.
 
 ## Social Networks
 
 Priority 1 is the highest priority. Priority 2 is less important than priority 1 and more important than priority 3, and so on.
 
-### Priority 1: Core Networks
+## Networks
 
 - Bluesky
 - Mastodon (with custom instance)
 - Threads
 - Nostr
 
-### Priority 2: Photo Sharing
-
-- Instagram
-- Pixelfed (with custom instance)
-
-### Priority 3: Additional Social Networks
-
-- Facebook
-
-### Priority 4: Macroblogging
-
-- Tumblr
-- Pillowfort
-- Dreamwidth
-
 ## Features
 
 - Crosspost to multiple social networks at the same time.
   - Also allow multiple accounts per social network.
-  - Also allow multiple instances for Mastodon and Pixelfed, with the option for multiple accounts per instance.
+  - Also allow multiple instances for Mastodon, with the option for multiple accounts per instance.
 - Allow photos to be attached.
   - Adjust and convert the photos according to the requirements of the social networks.
   - Adjust and convert for each network separately unless the requirements are the same.
@@ -77,58 +50,21 @@ This is an important feature.
 - Find the maximum character count for each social network.
   - On Mastodon this varies by instance. Fetch the character count from the instance(s) in use.
 - Use AI to split the text into multiple posts while keeping the meaning of the post.
-  - We can use Cloudflare or Vercel for AI functionality, I'm also open to other options.
+  - Use the OpenAI API to access the GPT-4.1 model. There may be a gem for this.
   - Configure both and allow them to be switched between in the config file and/or environment variables.
 - Add threading information (`🧵 x/y` where `x` is the current post and `y` is the total number of posts).
+- Give a display of the character count for the post, updated as the user types.
+  - Also break the character count down by network, again with real-time updates.
 
 ## Design
 
-### Visual References
+### Styles and Components
 
-Inspired by Buffer and Hootsuite's posting interfaces, adapted with the Catppuccin color palette for a modern, cohesive look.
+Follow the [Tailwind CSS Style Guide](https://tailwindcss.com/docs/content-configuration).
 
-### Style Guide
+Use the [DaisyUI Components](https://daisyui.com/components/) for UI components.
 
-- Design System: DaisyUI with Tailwind CSS v4
-- Theme: Catppuccin color palette (implemented via [catppuccin/daisyui](https://github.com/catppuccin/daisyui) and [catppuccin/tailwindcss](https://github.com/catppuccin/tailwindcss))
+### Layout
+
 - Layout: Clean, organized posting interface with clear platform selection and preview capabilities
 - Components: Modern form elements, platform-specific preview cards, media upload area with conversion status indicators
-
-## Further prompt which became necessary
-
-Don’t use JSX (or in this case, TSX). Alter the codebase to avoid it. In fact, I asked you not to use React, but you seem to be using it, as well as a bunch of Radix UI components; we should be using DaisyUI instead, with the Catppucin theming from [https://github.com/catppuccin/daisyui](https://github.com/catppuccin/daisyui) and [https://github.com/catppuccin/tailwindcss](https://github.com/catppuccin/tailwindcss) .
-
-Do things the Vue way, instead of forcing TSX, React, and React components on Nuxt. Nuxt is a Vue framework.
-
-I do like the design; try not to modify it too much, but the priority is to migrate away from TSX, React, and React components.
-
-I will reiterate and expand on the original instructions -
-
-### Platform, again and with more detail
-
-- Nuxt, latest version.
-  - All dependencies should be their latest version where possible, or the most recent version possible.
-  - Feel free to add Nuxt add-ons.
-- JWT-based authentication.
-- An API which the frontend uses.
-  - Also allow the API to be called outside the frontend.
-  - API uses the same JWT authentication as the frontend.
-
-### Code Style and Libraries, again and with more detail
-
-- DO use TypeScript.
-- DO NOT use React.
-  - DO NOT use React components.
-  - DO NOT use React libraries.
-  - DO NOT use JSX or TSX.
-- Do things the Vue way, instead of forcing TSX, React, and React components on Nuxt.
-- DO NOT use shadcn or Radix UI.
-  - DO use DaisyUI instead.
-  - DO use the Catppuccin theming from:
-    - [https://github.com/catppuccin/daisyui](https://github.com/catppuccin/daisyui)
-    - [https://github.com/catppuccin/tailwindcss](https://github.com/catppuccin/tailwindcss)
-  - DO use the Catppuccin color palette.
-- The following libraries may be helpful, but feel free to use others if they are more appropriate:
-  - [https://nuxt.com/modules/fonts](https://nuxt.com/modules/fonts)
-  - [https://nuxt.com/modules/icon](https://nuxt.com/modules/icon)
-  - [https://nuxt.com/modules/image](https://nuxt.com/modules/image)
