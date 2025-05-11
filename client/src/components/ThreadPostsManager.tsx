@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Card } from "@/components/ui/card";
 import { ThreadPost } from "../types";
 import { AlignJustify, ArrowLeft, ArrowRight, Maximize2, Minimize2, Pencil, Plus, Trash2, XCircle } from "lucide-react";
+import { useToast } from "../hooks/use-toast";
 
 interface ThreadPostsManagerProps {
   threadPosts: ThreadPost[];
@@ -25,14 +26,155 @@ export function ThreadPostsManager({
   onContentChange,
   onExit
 }: ThreadPostsManagerProps) {
+  const { toast } = useToast();
   const [expandedView, setExpandedView] = useState(false);
+  const [localPosts, setLocalPosts] = useState<ThreadPost[]>([]);
+  const [localContent, setLocalContent] = useState("");
+  
+  // Keep track of our own synchronized copy of the posts
+  useEffect(() => {
+    // Only do a full reset when needed
+    const needsReset = threadPosts.length !== localPosts.length || 
+                       !localPosts[activeIndex] || 
+                       (localPosts[activeIndex] && localPosts[activeIndex].order !== activeIndex);
+    
+    if (needsReset) {
+      console.log("Resetting local posts state", { threadPosts, activeIndex });
+      const freshLocalPosts = JSON.parse(JSON.stringify(threadPosts));
+      setLocalPosts(freshLocalPosts);
+      
+      // Set the local content to match the active post
+      if (freshLocalPosts[activeIndex]) {
+        setLocalContent(freshLocalPosts[activeIndex].content || "");
+      }
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [threadPosts, activeIndex]); // Deliberately excluding localPosts to prevent loops
+  
+  // When switching posts, save content for previous post first
+  const handleSwitchPost = (newIndex: number) => {
+    try {
+      // Save current content to local posts first
+      const updatedPosts = [...localPosts];
+      if (updatedPosts[activeIndex]) {
+        updatedPosts[activeIndex] = {
+          ...updatedPosts[activeIndex],
+          content: localContent
+        };
+      }
+      
+      // Update local content to the new post
+      const newContent = updatedPosts[newIndex]?.content || "";
+      setLocalContent(newContent);
+      setLocalPosts(updatedPosts);
+      
+      // Notify parent component
+      onContentChange(newContent);
+      onSwitchPost(newIndex);
+    } catch (error) {
+      console.error("Error switching posts:", error);
+      toast({
+        title: "Error Switching Posts",
+        description: "There was a problem switching between posts.",
+        variant: "destructive"
+      });
+    }
+  };
   
   // Handle content change for the active post
   const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const newContent = e.target.value;
     
+    // Save to local state first
+    setLocalContent(newContent);
+    
+    // Update the local posts array
+    const updatedPosts = [...localPosts];
+    if (updatedPosts[activeIndex]) {
+      updatedPosts[activeIndex] = {
+        ...updatedPosts[activeIndex],
+        content: newContent
+      };
+      setLocalPosts(updatedPosts);
+    }
+    
     // Update the global content state which triggers re-renders
     onContentChange(newContent);
+  };
+  
+  // Handle adding a new post with proper data synchronization
+  const handleAddPost = () => {
+    try {
+      // Save current content first
+      const updatedPosts = [...localPosts];
+      if (updatedPosts[activeIndex]) {
+        updatedPosts[activeIndex] = {
+          ...updatedPosts[activeIndex],
+          content: localContent
+        };
+      }
+      setLocalPosts(updatedPosts);
+      
+      // Let parent handle the actual post creation
+      onAddPost();
+    } catch (error) {
+      console.error("Error adding post:", error);
+      toast({
+        title: "Error Adding Post",
+        description: "There was a problem adding a new post.",
+        variant: "destructive"
+      });
+    }
+  };
+  
+  // Handle removing a post with proper data synchronization
+  const handleRemovePost = (index: number) => {
+    try {
+      // Save current content first
+      const updatedPosts = [...localPosts];
+      if (updatedPosts[activeIndex]) {
+        updatedPosts[activeIndex] = {
+          ...updatedPosts[activeIndex],
+          content: localContent
+        };
+      }
+      setLocalPosts(updatedPosts);
+      
+      // Let parent handle the post removal
+      onRemovePost(index);
+    } catch (error) {
+      console.error("Error removing post:", error);
+      toast({
+        title: "Error Removing Post",
+        description: "There was a problem removing the post.",
+        variant: "destructive"
+      });
+    }
+  };
+  
+  // Handle exiting thread mode with proper data synchronization
+  const handleExit = () => {
+    try {
+      // Save current content first
+      const updatedPosts = [...localPosts];
+      if (updatedPosts[activeIndex]) {
+        updatedPosts[activeIndex] = {
+          ...updatedPosts[activeIndex],
+          content: localContent
+        };
+      }
+      setLocalPosts(updatedPosts);
+      
+      // Let parent handle exiting thread mode
+      onExit();
+    } catch (error) {
+      console.error("Error exiting thread mode:", error);
+      toast({
+        title: "Error Exiting Thread Mode",
+        description: "There was a problem exiting thread mode.",
+        variant: "destructive"
+      });
+    }
   };
   
   return (
@@ -45,7 +187,7 @@ export function ThreadPostsManager({
             Thread Mode
           </Badge>
           <Badge variant="secondary" className="px-3 py-1">
-            {threadPosts.length} {threadPosts.length === 1 ? 'post' : 'posts'}
+            {localPosts.length} {localPosts.length === 1 ? 'post' : 'posts'}
           </Badge>
         </div>
         <div className="flex items-center gap-2">
@@ -69,7 +211,7 @@ export function ThreadPostsManager({
           <Button 
             variant="default" 
             size="sm"
-            onClick={() => onAddPost()}
+            onClick={handleAddPost}
           >
             <Plus className="mr-1 h-4 w-4" />
             Add Post
@@ -77,7 +219,7 @@ export function ThreadPostsManager({
           <Button 
             variant="destructive" 
             size="sm"
-            onClick={onExit}
+            onClick={handleExit}
           >
             <XCircle className="mr-1 h-4 w-4" />
             Exit Thread
@@ -87,19 +229,19 @@ export function ThreadPostsManager({
       
       {/* Post navigator */}
       <div className="flex items-center gap-2 overflow-x-auto pb-2">
-        {threadPosts.map((post, index) => (
+        {localPosts.map((post, index) => (
           <Button
             key={`thread-post-${index}`}
             variant={activeIndex === index ? "default" : "outline"}
             size="sm"
             className="flex-shrink-0"
-            onClick={() => onSwitchPost(index)}
+            onClick={() => handleSwitchPost(index)}
           >
             Post {index + 1}
             {index === 0 && (
               <span className="ml-1 text-xs opacity-75">(first)</span>
             )}
-            {index === threadPosts.length - 1 && index > 0 && (
+            {index === localPosts.length - 1 && index > 0 && (
               <span className="ml-1 text-xs opacity-75">(last)</span>
             )}
           </Button>
@@ -110,21 +252,21 @@ export function ThreadPostsManager({
       {expandedView && (
         <div className="space-y-3 mt-4 rounded-lg border p-4 bg-muted/30">
           <h3 className="text-sm font-medium mb-2">All Posts in Thread</h3>
-          {threadPosts.map((post, index) => (
+          {localPosts.map((post, index) => (
             <Card 
               key={`expanded-post-${index}`}
               className={`p-3 relative ${activeIndex === index ? 'border-primary' : ''}`}
             >
               <div className="flex justify-between items-start mb-2">
                 <Badge variant={activeIndex === index ? "default" : "outline"}>
-                  Post {index + 1}/{threadPosts.length}
+                  Post {index + 1}/{localPosts.length}
                 </Badge>
                 <div className="flex gap-1">
                   <Button
                     variant="ghost"
                     size="icon"
                     className="h-7 w-7"
-                    onClick={() => onSwitchPost(index)}
+                    onClick={() => handleSwitchPost(index)}
                   >
                     <Pencil className="h-4 w-4" />
                     <span className="sr-only">Edit</span>
@@ -133,8 +275,8 @@ export function ThreadPostsManager({
                     variant="ghost"
                     size="icon"
                     className="h-7 w-7 text-destructive hover:bg-destructive/10"
-                    onClick={() => onRemovePost(index)}
-                    disabled={threadPosts.length <= 1}
+                    onClick={() => handleRemovePost(index)}
+                    disabled={localPosts.length <= 1}
                   >
                     <Trash2 className="h-4 w-4" />
                     <span className="sr-only">Delete</span>
@@ -142,7 +284,7 @@ export function ThreadPostsManager({
                 </div>
               </div>
               <div className="text-sm whitespace-pre-wrap break-words">
-                {post.content || <span className="text-muted-foreground italic">Empty post</span>}
+                {index === activeIndex ? localContent : (post.content || <span className="text-muted-foreground italic">Empty post</span>)}
               </div>
             </Card>
           ))}
@@ -153,21 +295,21 @@ export function ThreadPostsManager({
       <div className="relative">
         <div className="absolute top-2 right-2 z-10">
           <Badge variant="outline" className="bg-background">
-            Editing Post {activeIndex + 1}/{threadPosts.length}
+            Editing Post {activeIndex + 1}/{localPosts.length}
           </Badge>
         </div>
         <Textarea
-          value={threadPosts[activeIndex]?.content || ''}
+          value={localContent}
           onChange={handleContentChange}
           placeholder={`Write content for post ${activeIndex + 1}...`}
           className="min-h-[150px]"
         />
-        {threadPosts.length > 1 && (
+        {localPosts.length > 1 && (
           <div className="flex justify-end mt-2">
             <Button
               variant="destructive"
               size="sm"
-              onClick={() => onRemovePost(activeIndex)}
+              onClick={() => handleRemovePost(activeIndex)}
             >
               <Trash2 className="mr-1 h-4 w-4" />
               Remove This Post
@@ -182,7 +324,7 @@ export function ThreadPostsManager({
           variant="outline"
           size="sm"
           disabled={activeIndex === 0}
-          onClick={() => onSwitchPost(activeIndex - 1)}
+          onClick={() => handleSwitchPost(activeIndex - 1)}
         >
           <ArrowLeft className="mr-1 h-4 w-4" />
           Previous Post
@@ -190,8 +332,8 @@ export function ThreadPostsManager({
         <Button
           variant="outline"
           size="sm"
-          disabled={activeIndex >= threadPosts.length - 1}
-          onClick={() => onSwitchPost(activeIndex + 1)}
+          disabled={activeIndex >= localPosts.length - 1}
+          onClick={() => handleSwitchPost(activeIndex + 1)}
         >
           Next Post
           <ArrowRight className="ml-1 h-4 w-4" />
