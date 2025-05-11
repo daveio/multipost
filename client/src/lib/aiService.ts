@@ -16,9 +16,11 @@ export interface SplitPostResult {
 
 /**
  * Splits a post into multiple posts using different strategies
+ * If a specific strategy is provided, only that strategy will be calculated
  */
 export async function splitPost(content: string, strategy?: SplittingStrategy): Promise<Record<SplittingStrategy, Record<string, SplitPostResult>>> {
   try {
+    console.log(`Splitting post with ${strategy ? 'strategy: ' + strategy : 'all strategies'}`);
     const response = await apiRequest('POST', '/api/split-post', { content, strategy });
     const data = await response.json();
     return data;

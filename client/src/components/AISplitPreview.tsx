@@ -9,7 +9,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useToast } from "@/hooks/use-toast";
 import { SocialIcon, UIIcon } from "./SocialIcons";
-import { AlertTriangle } from "lucide-react";
+import { AlertTriangle, CheckCircle2 } from "lucide-react";
 import { 
   SplittingStrategy, 
   SplitPostResult,
@@ -19,6 +19,7 @@ import {
 } from "@/lib/aiService";
 import { Account, CharacterStat } from "../types";
 import { getPlatformName } from '@/lib/platform-config';
+import { Progress } from "@/components/ui/progress";
 
 interface AISplitPreviewProps {
   content: string;
@@ -32,16 +33,18 @@ interface AISplitPreviewProps {
 export function AISplitPreview({ 
   content, 
   isOpen, 
-  accounts, 
-  characterStats, 
-  onClose, 
-  onApplySplit 
+  accounts,
+  characterStats,
+  onClose,
+  onApplySplit
 }: AISplitPreviewProps) {
   const { toast } = useToast();
-  
-  const [activeStrategy, setActiveStrategy] = useState<SplittingStrategy>(SplittingStrategy.SEMANTIC);
-  const [activePlatform, setActivePlatform] = useState<string>('bluesky');
   const [isLoading, setIsLoading] = useState(false);
+  const [progressStage, setProgressStage] = useState<string>('');
+  const [progressPercent, setProgressPercent] = useState<number>(0);
+  const [activePlatform, setActivePlatform] = useState<string>('');
+  const [activeStrategy, setActiveStrategy] = useState<SplittingStrategy>(SplittingStrategy.SEMANTIC);
+  const [selectedStrategies, setSelectedStrategies] = useState<SplittingStrategy[]>([SplittingStrategy.SEMANTIC]);
   const [splitResults, setSplitResults] = useState<Record<SplittingStrategy, Record<string, SplitPostResult>> | null>(null);
   const [error, setError] = useState<string | null>(null);
   
@@ -60,45 +63,107 @@ export function AISplitPreview({
     }
   }, [platformsNeedingSplit, activePlatform]);
   
-  // Generate AI splitting options when opened
-  useEffect(() => {
-    async function generateSplitOptions() {
-      if (isOpen && content && needsSplitting) {
-        setIsLoading(true);
-        setError(null);
+  // Toggle a strategy selection
+  const toggleStrategy = (strategy: SplittingStrategy) => {
+    setSelectedStrategies(prev => {
+      if (prev.includes(strategy)) {
+        // If it's the only selected strategy, don't remove it
+        if (prev.length === 1) return prev;
+        return prev.filter(s => s !== strategy);
+      } else {
+        return [...prev, strategy];
+      }
+    });
+  };
+  
+  // Select all strategies
+  const selectAllStrategies = () => {
+    setSelectedStrategies(Object.values(SplittingStrategy));
+  };
+  
+  // Reset to default (semantic only)
+  const resetToDefault = () => {
+    setSelectedStrategies([SplittingStrategy.SEMANTIC]);
+  };
+  
+  // Generate AI splitting options
+  const generateSplitOptions = async () => {
+    if (!content || !needsSplitting) return;
+    
+    setIsLoading(true);
+    setError(null);
+    setProgressStage('Initializing AI split');
+    setProgressPercent(5);
+    
+    const updateProgress = (stage: string, percent: number) => {
+      setProgressStage(stage);
+      setProgressPercent(percent);
+    };
+    
+    try {
+      updateProgress('Analyzing content...', 10);
+      await new Promise(r => setTimeout(r, 500)); // UI smoothness
+      
+      updateProgress('Preparing splitting strategies...', 20);
+      await new Promise(r => setTimeout(r, 500)); // UI smoothness
+      
+      const results: Record<SplittingStrategy, Record<string, SplitPostResult>> = {};
+      
+      for (let i = 0; i < selectedStrategies.length; i++) {
+        const strategy = selectedStrategies[i];
+        const progressBase = 20 + (i * (60 / selectedStrategies.length));
+        
+        updateProgress(`Generating ${getStrategyName(strategy)} split (${i+1}/${selectedStrategies.length})...`, progressBase);
+        console.log(`Requesting split for strategy: ${strategy}`);
         
         try {
-          console.log("Calling splitPost with content:", content.substring(0, 50) + "...");
-          const results = await splitPost(content);
-          console.log("Split results received:", results);
+          // Call the API for each selected strategy individually
+          const strategyResult = await splitPost(content, strategy);
           
-          // Check if results has the expected structure
-          if (results && Object.keys(results).length > 0) {
-            setSplitResults(results);
-          } else {
-            setError("Received empty or invalid results from the server");
-            toast({
-              title: 'Error',
-              description: 'Failed to generate split options. Invalid response format.',
-              variant: 'destructive',
-            });
+          updateProgress(`Processing ${getStrategyName(strategy)} results...`, progressBase + 15);
+          
+          if (strategyResult && Object.keys(strategyResult).length > 0) {
+            results[strategy] = strategyResult[strategy];
           }
-        } catch (error: any) {
-          console.error('Failed to generate split options:', error);
-          setError(error.message || 'Failed to generate split options');
-          toast({
-            title: 'Error',
-            description: 'Failed to generate split options. Please try again.',
-            variant: 'destructive',
-          });
-        } finally {
-          setIsLoading(false);
+        } catch (err) {
+          console.error(`Error with strategy ${strategy}:`, err);
+          // Continue with other strategies even if one fails
         }
       }
+      
+      updateProgress('Finalizing results...', 95);
+      
+      // Check if we got any results
+      if (Object.keys(results).length > 0) {
+        setSplitResults(results);
+        updateProgress('Split generation complete!', 100);
+      } else {
+        setError("No valid results were returned from any strategy");
+        toast({
+          title: 'Error',
+          description: 'Failed to generate split options. All strategies failed.',
+          variant: 'destructive',
+        });
+      }
+    } catch (error: any) {
+      console.error('Failed to generate split options:', error);
+      setError(error.message || 'Failed to generate split options');
+      toast({
+        title: 'Error',
+        description: 'Failed to generate split options. Please try again.',
+        variant: 'destructive',
+      });
+    } finally {
+      setIsLoading(false);
     }
-    
-    generateSplitOptions();
-  }, [isOpen, content, needsSplitting, toast]);
+  };
+  
+  // Automatically generate split options on first open
+  useEffect(() => {
+    if (isOpen && content && needsSplitting && !splitResults && !isLoading) {
+      generateSplitOptions();
+    }
+  }, [isOpen, content, needsSplitting]);
   
   // If no split is needed, show a message
   if (!needsSplitting) {
@@ -107,7 +172,7 @@ export function AISplitPreview({
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center">
-              <UIIcon.Check className="mr-2 h-5 w-5 text-green-500" />
+              <CheckCircle2 className="mr-2 h-5 w-5 text-green-500" />
               No Splitting Required
             </CardTitle>
             <CardDescription>
@@ -131,36 +196,64 @@ export function AISplitPreview({
     );
   }
   
-  // Get the active platform's account
-  const getActiveAccount = (platformId: string): Account | undefined => {
-    return accounts.find(account => account.platformId === platformId && account.isActive);
+  // Render loading state 
+  const renderLoading = () => {
+    return (
+      <div className="space-y-4">
+        <div className="space-y-2 mb-4">
+          <Progress value={progressPercent} className="h-2 w-full" />
+          <p className="text-sm text-gray-500">{progressStage}</p>
+        </div>
+        
+        <div className="space-y-4">
+          <div className="flex items-start gap-3">
+            <Skeleton className="h-10 w-10 rounded-full" />
+            <div className="flex-1 space-y-2">
+              <Skeleton className="h-4 w-24" />
+              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-4 w-3/4" />
+            </div>
+          </div>
+          
+          <div className="flex items-start gap-3">
+            <Skeleton className="h-10 w-10 rounded-full" />
+            <div className="flex-1 space-y-2">
+              <Skeleton className="h-4 w-24" />
+              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-4 w-1/2" />
+            </div>
+          </div>
+        </div>
+      </div>
+    );
   };
   
+  // Helper functions for account data
   const getDisplayName = (platformId: string): string => {
-    const account = getActiveAccount(platformId);
-    return account?.displayName || `${platformId.charAt(0).toUpperCase() + platformId.slice(1)} User`;
+    const account = accounts.find(a => a.platformId === platformId);
+    return account?.displayName || 'User';
   };
   
   const getUsername = (platformId: string): string => {
-    const account = getActiveAccount(platformId);
-    if (account) {
-      if (platformId === 'mastodon' && account.instanceUrl) {
-        return `@${account.username}@${account.instanceUrl}`;
-      }
-      return `@${account.username}`;
-    }
-    return `@${platformId}_user`;
+    const account = accounts.find(a => a.platformId === platformId);
+    return account?.username ? `@${account.username}` : '';
   };
   
   const getAvatarUrl = (platformId: string): string => {
-    const account = getActiveAccount(platformId);
-    return account?.avatarUrl || '';
+    const account = accounts.find(a => a.platformId === platformId);
+    return account?.avatar || '';
   };
   
   const getAccountInitials = (platformId: string): string => {
-    const account = getActiveAccount(platformId);
-    if (account?.displayName) {
-      return account.displayName.substring(0, 2).toUpperCase();
+    const displayName = getDisplayName(platformId);
+    if (displayName && displayName !== 'User') {
+      const parts = displayName.split(' ');
+      if (parts.length > 1) {
+        return parts[0][0] + parts[1][0];
+      }
+      return displayName.substring(0, 2);
     }
     return platformId.substring(0, 2).toUpperCase();
   };
@@ -256,32 +349,13 @@ export function AISplitPreview({
         
         {/* Reasoning */}
         <Alert className="bg-gray-50">
-          <AlertDescription>
-            <strong>AI Reasoning:</strong> {result.reasoning}
+          <AlertDescription className="text-xs text-gray-600">
+            <strong>Reasoning:</strong> {result.reasoning}
           </AlertDescription>
         </Alert>
       </div>
     );
   };
-  
-  // Render loading state
-  const renderLoading = () => (
-    <div className="space-y-4">
-      {[1, 2].map(i => (
-        <Card key={i} className="border">
-          <CardContent className="p-4">
-            <div className="flex items-start gap-3">
-              <Skeleton className="h-10 w-10 rounded-full" />
-              <div className="flex-1 space-y-2">
-                <Skeleton className="h-4 w-24" />
-                <Skeleton className="h-16 w-full" />
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      ))}
-    </div>
-  );
   
   return (
     <div className="bg-white rounded-xl shadow-sm p-6 mb-6 fixed top-10 left-10 right-10 bottom-10 z-50 overflow-auto">
@@ -326,18 +400,38 @@ export function AISplitPreview({
       
       {/* Select Strategy Tabs */}
       <div className="mb-6">
-        <h3 className="text-base font-medium mb-3">Choose a Splitting Strategy:</h3>
+        <div className="flex justify-between items-center mb-3">
+          <h3 className="text-base font-medium">Choose Splitting Strategies:</h3>
+          <div className="flex gap-2">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={selectAllStrategies}
+              className="text-xs"
+            >
+              Select All
+            </Button>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={resetToDefault}
+              className="text-xs"
+            >
+              Reset
+            </Button>
+          </div>
+        </div>
         <div>
           <div className="flex flex-wrap gap-3 mb-3">
             {Object.values(SplittingStrategy).map(strategy => (
               <Button
                 key={strategy}
-                variant={activeStrategy === strategy ? "default" : "outline"}
+                variant={selectedStrategies.includes(strategy) ? "default" : "outline"}
                 size="default"
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
-                  setActiveStrategy(strategy as SplittingStrategy);
+                  toggleStrategy(strategy as SplittingStrategy);
                 }}
                 type="button"
                 className="px-4 py-2"
@@ -346,6 +440,21 @@ export function AISplitPreview({
               </Button>
             ))}
           </div>
+          
+          {/* Generate Button */}
+          <Button 
+            variant="secondary"
+            className="w-full mb-3" 
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              generateSplitOptions();
+            }}
+            disabled={isLoading || selectedStrategies.length === 0}
+            type="button"
+          >
+            {isLoading ? 'Generating...' : 'Generate Split Options'}
+          </Button>
           
           {/* Strategy Description */}
           <div className="text-sm text-gray-700 bg-gray-50 p-4 rounded-lg border border-gray-100">
