@@ -166,11 +166,56 @@ export function AISplitPreview({
   
   // Render split post preview
   const renderSplitPosts = (platformId: string, strategy: SplittingStrategy) => {
-    if (!splitResults) return null;
+    if (!splitResults) {
+      console.log("No split results available");
+      return (
+        <div className="p-4 text-center text-gray-500">
+          No split results available. Try entering a longer post.
+        </div>
+      );
+    }
     
-    const result = splitResults[strategy]?.[platformId];
-    if (!result) return null;
+    console.log("Available strategies:", Object.keys(splitResults));
+    console.log("Looking for strategy:", strategy, "platform:", platformId);
     
+    if (!splitResults[strategy]) {
+      console.log("Strategy not found in results");
+      return (
+        <div className="p-4 text-center text-gray-500">
+          No split results for this strategy. Try another one.
+        </div>
+      );
+    }
+    
+    const result = splitResults[strategy][platformId];
+    if (!result) {
+      console.log("No result for platform:", platformId);
+      
+      // Try to get any platform result for this strategy
+      const availablePlatforms = Object.keys(splitResults[strategy]);
+      console.log("Available platforms for strategy:", availablePlatforms);
+      
+      if (availablePlatforms.length > 0) {
+        const fallbackResult = splitResults[strategy][availablePlatforms[0]];
+        console.log("Using fallback result:", fallbackResult);
+        
+        if (fallbackResult) {
+          return renderSplitResult(fallbackResult, platformId);
+        }
+      }
+      
+      return (
+        <div className="p-4 text-center text-gray-500">
+          No split result for this platform. Try another platform.
+        </div>
+      );
+    }
+    
+    return renderSplitResult(result, platformId);
+  };
+  
+  // Helper function to render a split result
+  const renderSplitResult = (result: SplitPostResult, platformId: string) => {
     return (
       <div className="space-y-4">
         {result.splitText.map((post, index) => (
@@ -257,39 +302,55 @@ export function AISplitPreview({
       {/* Select Platform Tabs */}
       <div className="mb-4">
         <h3 className="text-sm font-medium mb-2">Platform Requiring Split:</h3>
-        <Tabs value={activePlatform} onValueChange={(value) => setActivePlatform(value)}>
-          <TabsList className="w-full">
-            {platformsNeedingSplit.map(platformId => (
-              <TabsTrigger
-                key={platformId}
-                value={platformId}
-                className="flex-1"
-              >
-                <SocialIcon platform={platformId} className="mr-1" size={14} />
-                <span className="ml-1">{getPlatformName(platformId)}</span>
-              </TabsTrigger>
-            ))}
-          </TabsList>
-        </Tabs>
+        <div className="flex flex-wrap gap-2">
+          {platformsNeedingSplit.map(platformId => (
+            <Button
+              key={platformId}
+              variant={activePlatform === platformId ? "default" : "outline"}
+              size="sm"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setActivePlatform(platformId);
+              }}
+              type="button"
+              className="flex items-center gap-1"
+            >
+              <SocialIcon platform={platformId} size={14} />
+              <span>{getPlatformName(platformId)}</span>
+            </Button>
+          ))}
+        </div>
       </div>
       
       {/* Select Strategy Tabs */}
       <div className="mb-4">
         <h3 className="text-sm font-medium mb-2">Choose a Splitting Strategy:</h3>
-        <Tabs value={activeStrategy} onValueChange={(v) => setActiveStrategy(v as SplittingStrategy)}>
-          <TabsList className="w-full">
+        <div>
+          <div className="flex flex-wrap gap-2 mb-2">
             {Object.values(SplittingStrategy).map(strategy => (
-              <TabsTrigger key={strategy} value={strategy} className="flex-1 text-xs">
+              <Button
+                key={strategy}
+                variant={activeStrategy === strategy ? "default" : "outline"}
+                size="sm"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setActiveStrategy(strategy as SplittingStrategy);
+                }}
+                type="button"
+                className="text-xs"
+              >
                 {getStrategyName(strategy as SplittingStrategy)}
-              </TabsTrigger>
+              </Button>
             ))}
-          </TabsList>
+          </div>
           
           {/* Strategy Description */}
-          <div className="text-xs text-gray-500 mt-2">
+          <div className="text-xs text-gray-500 bg-gray-50 p-2 rounded">
             {getStrategyDescription(activeStrategy)}
           </div>
-        </Tabs>
+        </div>
       </div>
       
       {/* Split Preview */}
