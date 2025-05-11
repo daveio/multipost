@@ -1,4 +1,4 @@
-import { type Server, createServer } from 'http'
+import { type Server, createServer } from 'node:http'
 import { insertDraftSchema, insertPostSchema, mediaFileSchema, platformSchema } from '@shared/schema'
 import type { Express, NextFunction, Request, Response } from 'express'
 import { z } from 'zod'
@@ -128,7 +128,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
     // Check if custom Mastodon limit is provided as a query parameter
     const customMastodonLimit = req.query.customMastodonLimit as string
     const mastodonLimit =
-      customMastodonLimit && !isNaN(Number.parseInt(customMastodonLimit)) ? Number.parseInt(customMastodonLimit) : 500
+      customMastodonLimit && !Number.isNaN(Number.parseInt(customMastodonLimit))
+        ? Number.parseInt(customMastodonLimit)
+        : 500
 
     res.json({
       bluesky: 300,
@@ -190,7 +192,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const platformLimits: Record<string, number> = {
         bluesky: 300,
         mastodon:
-          customMastodonLimit && !isNaN(Number.parseInt(customMastodonLimit))
+          customMastodonLimit && !Number.isNaN(Number.parseInt(customMastodonLimit))
             ? Number.parseInt(customMastodonLimit)
             : 500,
         threads: 500
@@ -314,7 +316,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       // Add specific error handling for common OpenAI API issues
-      if (error.response && error.response.status) {
+      if (error.response?.status) {
         errorResponse.statusCode = error.response.status
 
         if (error.response.status === 401) {
@@ -362,7 +364,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const platformLimits: Record<string, number> = {
         bluesky: 300,
         mastodon:
-          customMastodonLimit && !isNaN(Number.parseInt(customMastodonLimit))
+          customMastodonLimit && !Number.isNaN(Number.parseInt(customMastodonLimit))
             ? Number.parseInt(customMastodonLimit)
             : 500,
         threads: 500
@@ -395,7 +397,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
 
       // Add specific error handling for common OpenAI API issues
-      if (error.response && error.response.status) {
+      if (error.response?.status) {
         errorResponse.statusCode = error.response.status
 
         if (error.response.status === 401) {

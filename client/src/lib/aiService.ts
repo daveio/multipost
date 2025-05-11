@@ -30,7 +30,7 @@ export async function splitPost(
     // Convert single strategy to array
     const strategiesArray = strategies ? (Array.isArray(strategies) ? strategies : [strategies]) : undefined
 
-    console.log(`Splitting post with strategies:`, strategiesArray || 'default')
+    console.log('Splitting post with strategies:', strategiesArray || 'default')
 
     // Send the strategies as an array along with custom Mastodon limit if provided
     const response = await apiRequest('POST', '/api/split-post', {

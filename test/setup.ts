@@ -17,7 +17,7 @@ beforeAll(() => {
   Object.defineProperty(window, 'matchMedia', {
     writable: true,
     value: vi.fn().mockImplementation((query) => ({
-      matches: query.includes('dark') ? true : false, // Default to dark mode for tests
+      matches: !!query.includes('dark'), // Default to dark mode for tests
       media: query,
       onchange: null,
       addListener: vi.fn(),

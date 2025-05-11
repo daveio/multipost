@@ -147,23 +147,21 @@ export function PostComposer({
                       // Ensure there are exactly two newlines before the thread indicator
                       // First trim any trailing whitespace/newlines
                       const trimmedContent = content.trimEnd()
-                      updatedContent =
-                        trimmedContent +
-                        '\n\n' +
-                        advancedOptions.threadNotationFormat.replace('x', '1').replace('y', '2')
+                      updatedContent = `${trimmedContent}\n\n${advancedOptions.threadNotationFormat
+                        .replace('x', '1')
+                        .replace('y', '2')}`
                     }
 
                     // Create new post with thread numbering
                     const newPost = advancedOptions.useThreadNotation
-                      ? '\n\n' + advancedOptions.threadNotationFormat.replace('x', '2').replace('y', '2')
+                      ? `\n\n${advancedOptions.threadNotationFormat.replace('x', '2').replace('y', '2')}`
                       : ''
 
                     // Apply the split
-                    onApplySplit &&
-                      onApplySplit(SplittingStrategy.SEMANTIC, characterStats[0]?.platform || 'bluesky', [
-                        updatedContent,
-                        newPost
-                      ])
+                    onApplySplit?.(SplittingStrategy.SEMANTIC, characterStats[0]?.platform || 'bluesky', [
+                      updatedContent,
+                      newPost
+                    ])
                   }}
                   type="button"
                   className="flex-shrink-0"
@@ -241,7 +239,11 @@ export function PostComposer({
                   <Checkbox
                     id="useThreadNotation"
                     checked={advancedOptions.useThreadNotation}
-                    onCheckedChange={(checked) => onAdvancedOptionsChange({ useThreadNotation: checked as boolean })}
+                    onCheckedChange={(checked) =>
+                      onAdvancedOptionsChange({
+                        useThreadNotation: checked as boolean
+                      })
+                    }
                   />
                   <div className="grid gap-1.5 leading-none">
                     <label
@@ -260,7 +262,11 @@ export function PostComposer({
                   <Checkbox
                     id="schedulePost"
                     checked={advancedOptions.schedulePost}
-                    onCheckedChange={(checked) => onAdvancedOptionsChange({ schedulePost: checked as boolean })}
+                    onCheckedChange={(checked) =>
+                      onAdvancedOptionsChange({
+                        schedulePost: checked as boolean
+                      })
+                    }
                   />
                   <div className="grid gap-1.5 leading-none">
                     <label
@@ -308,7 +314,7 @@ export function PostComposer({
                             defaultValue={advancedOptions.customMastodonLimit || 500}
                             onChange={(e) => {
                               const value = Number.parseInt(e.target.value)
-                              if (value && !isNaN(value) && value >= 100) {
+                              if (value && !Number.isNaN(value) && value >= 100) {
                                 // Get the container for consistent styling
                                 const container = document.getElementById('mastodonLimitContainer')
 
@@ -316,7 +322,9 @@ export function PostComposer({
                                 localStorage.setItem('customMastodonLimit', value.toString())
 
                                 // Update state
-                                onAdvancedOptionsChange({ customMastodonLimit: value })
+                                onAdvancedOptionsChange({
+                                  customMastodonLimit: value
+                                })
 
                                 // Add flash effect for saving
                                 container?.classList.remove('flash-reset')
@@ -373,7 +381,9 @@ export function PostComposer({
                               localStorage.removeItem('customMastodonLimit')
 
                               // Reset to default
-                              onAdvancedOptionsChange({ customMastodonLimit: 500 })
+                              onAdvancedOptionsChange({
+                                customMastodonLimit: 500
+                              })
 
                               // Remove animation classes after completion
                               setTimeout(() => {
@@ -416,7 +426,9 @@ export function PostComposer({
                         }
 
                         // Update state
-                        onAdvancedOptionsChange({ showRawJson: checked as boolean })
+                        onAdvancedOptionsChange({
+                          showRawJson: checked as boolean
+                        })
 
                         // Remove animation classes after completion
                         setTimeout(() => {
@@ -462,7 +474,9 @@ export function PostComposer({
                         }
 
                         // Update state
-                        onAdvancedOptionsChange({ showReasoning: checked as boolean })
+                        onAdvancedOptionsChange({
+                          showReasoning: checked as boolean
+                        })
 
                         // Remove animation classes after completion
                         setTimeout(() => {

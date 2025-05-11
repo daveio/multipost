@@ -107,9 +107,8 @@ export function AISplitPreview({
         // If it's the only selected strategy, don't remove it
         if (prev.length === 1) return prev
         return prev.filter((s) => s !== strategy)
-      } else {
-        return [...prev, strategy]
       }
+      return [...prev, strategy]
     })
   }
 
@@ -284,13 +283,13 @@ export function AISplitPreview({
       }
 
       updateProgress(`Generating splits for ${selectedStrategies.length} strategies...`, 40)
-      console.log(`Requesting splits for strategies:`, selectedStrategies)
+      console.log('Requesting splits for strategies:', selectedStrategies)
 
       // Call the API with all selected strategies and custom Mastodon limit if available
       const customMastodonLimit = advancedOptions?.customMastodonLimit
       const results = await splitPost(content, selectedStrategies, customMastodonLimit)
 
-      updateProgress(`Processing results...`, 80)
+      updateProgress('Processing results...', 80)
       console.log('Split results:', results)
 
       if (!results || Object.keys(results).length === 0) {
@@ -430,8 +429,8 @@ export function AISplitPreview({
             {progressPercent < 30 && (
               <div className="flex items-center text-blue-700 bg-blue-100 px-3 py-1 rounded-full">
                 <span className="relative flex h-2 w-2 mr-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75" />
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500" />
                 </span>
                 Analyzing content structure...
               </div>
@@ -439,8 +438,8 @@ export function AISplitPreview({
             {progressPercent >= 30 && progressPercent < 60 && (
               <div className="flex items-center text-indigo-700 bg-indigo-100 px-3 py-1 rounded-full">
                 <span className="relative flex h-2 w-2 mr-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-indigo-500"></span>
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75" />
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-indigo-500" />
                 </span>
                 Optimizing splits using AI...
               </div>
@@ -448,8 +447,8 @@ export function AISplitPreview({
             {progressPercent >= 60 && progressPercent < 90 && (
               <div className="flex items-center text-purple-700 bg-purple-100 px-3 py-1 rounded-full">
                 <span className="relative flex h-2 w-2 mr-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-purple-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-purple-500"></span>
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-purple-400 opacity-75" />
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-purple-500" />
                 </span>
                 Generating formatted thread...
               </div>
@@ -457,8 +456,8 @@ export function AISplitPreview({
             {progressPercent >= 90 && (
               <div className="flex items-center text-green-700 bg-green-100 px-3 py-1 rounded-full">
                 <span className="relative flex h-2 w-2 mr-2">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75" />
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500" />
                 </span>
                 Finalizing thread notation...
               </div>
@@ -660,8 +659,8 @@ export function AISplitPreview({
               strokeLinejoin="round"
               className="mr-1.5"
             >
-              <polyline points="9 10 4 15 9 20"></polyline>
-              <path d="M20 4v7a4 4 0 0 1-4 4H4"></path>
+              <polyline points="9 10 4 15 9 20" />
+              <path d="M20 4v7a4 4 0 0 1-4 4H4" />
             </svg>
             Use This Thread Format
           </Button>
@@ -821,7 +820,7 @@ export function AISplitPreview({
                             >
                               {getStrategyName(strategy)}
                               {selectedStrategies.includes(strategy) && (
-                                <span className="absolute -top-1 -right-1 h-3 w-3 rounded-full bg-green-500 border border-white"></span>
+                                <span className="absolute -top-1 -right-1 h-3 w-3 rounded-full bg-green-500 border border-white" />
                               )}
                             </Button>
                           </div>

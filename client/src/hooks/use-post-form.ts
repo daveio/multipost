@@ -35,7 +35,10 @@ const initialAdvancedOptions: AdvancedOptions = {
 export function usePostForm({
   initialContent = '',
   initialMediaFiles = [],
-  initialPlatforms = DEFAULT_PLATFORMS.map((p) => ({ id: p.id, isSelected: p.isSelected }))
+  initialPlatforms = DEFAULT_PLATFORMS.map((p) => ({
+    id: p.id,
+    isSelected: p.isSelected
+  }))
 }: UsePostFormProps = {}) {
   const { toast } = useToast()
   const queryClient = useQueryClient()
@@ -143,7 +146,9 @@ export function usePostForm({
         size: file.size
       }))
 
-      const response = await apiRequest('POST', '/api/upload', { files: filesData })
+      const response = await apiRequest('POST', '/api/upload', {
+        files: filesData
+      })
       return response.json()
     },
     onSuccess: (data) => {
@@ -363,7 +368,10 @@ export function usePostForm({
     setFormState({
       content: '',
       mediaFiles: [],
-      selectedPlatforms: DEFAULT_PLATFORMS.map((p) => ({ id: p.id, isSelected: p.isSelected })),
+      selectedPlatforms: DEFAULT_PLATFORMS.map((p) => ({
+        id: p.id,
+        isSelected: p.isSelected
+      })),
       advancedOptions: initialAdvancedOptions,
       characterStats: formState.characterStats,
       activePreviewTab: formState.activePreviewTab,
@@ -637,7 +645,7 @@ export function usePostForm({
         formState.activeThreadIndex < formState.threadPosts.length
       ) {
         const activePost = formState.threadPosts[formState.activeThreadIndex]
-        if (activePost && activePost.content) {
+        if (activePost?.content) {
           content = activePost.content
         }
       }

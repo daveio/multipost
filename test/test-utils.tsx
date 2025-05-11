@@ -77,12 +77,28 @@ export const mockAccounts = [
 ]
 
 export const mockDrafts = [
-  { id: 1, content: 'Draft 1 content', mediaFiles: [], createdAt: new Date().toISOString() },
-  { id: 2, content: 'Draft 2 content', mediaFiles: [], createdAt: new Date().toISOString() }
+  {
+    id: 1,
+    content: 'Draft 1 content',
+    mediaFiles: [],
+    createdAt: new Date().toISOString()
+  },
+  {
+    id: 2,
+    content: 'Draft 2 content',
+    mediaFiles: [],
+    createdAt: new Date().toISOString()
+  }
 ]
 
 export const mockMediaFiles = [
-  { id: 'media1', url: 'https://example.com/image1.jpg', type: 'image/jpeg', name: 'image1.jpg', size: 1024 }
+  {
+    id: 'media1',
+    url: 'https://example.com/image1.jpg',
+    type: 'image/jpeg',
+    name: 'image1.jpg',
+    size: 1024
+  }
 ]
 
 export const mockThreadPosts = [

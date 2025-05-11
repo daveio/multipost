@@ -64,7 +64,7 @@ export function validateThreadIndicatorFormatting(post: string, index: number, t
   const indicator = post.substring(indicatorPosition)
 
   // Combine with two newlines in between
-  const fixedPost = content + '\n\n' + indicator
+  const fixedPost = `${content}\n\n${indicator}`
   console.log(`Fixed thread indicator formatting: "${fixedPost.substring(Math.max(0, fixedPost.length - 50))}"`)
   return fixedPost
 }
@@ -355,7 +355,7 @@ function getStrategyDescription(strategy: SplittingStrategy): string {
     // Thread optimization is now applied to all strategies automatically
 
     default:
-      return `Split based on semantic units, preserving the meaning of each section.`
+      return 'Split based on semantic units, preserving the meaning of each section.'
   }
 }
 

@@ -19,7 +19,9 @@ const Progress = React.forwardRef<
   >
     <ProgressPrimitive.Indicator
       className={cn('h-full w-full flex-1 transition-all', indicatorClassName || color || 'bg-primary')}
-      style={{ transform: `translateX(-${100 - ((value || 0) / max) * 100}%)` }}
+      style={{
+        transform: `translateX(-${100 - ((value || 0) / max) * 100}%)`
+      }}
     />
   </ProgressPrimitive.Root>
 ))

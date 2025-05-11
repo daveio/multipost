@@ -75,13 +75,12 @@ export default function Home() {
   }
 
   // Create a mapping of selected accounts by platform
-  const selectedAccountsByPlatform = formState.selectedPlatforms.reduce<{ [key: string]: number[] }>(
-    (acc, platform) => {
-      acc[platform.id] = platform.accounts || []
-      return acc
-    },
-    {}
-  )
+  const selectedAccountsByPlatform = formState.selectedPlatforms.reduce<{
+    [key: string]: number[]
+  }>((acc, platform) => {
+    acc[platform.id] = platform.accounts || []
+    return acc
+  }, {})
 
   return (
     <div className="min-h-screen bg-background">
