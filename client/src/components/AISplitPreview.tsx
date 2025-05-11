@@ -205,8 +205,9 @@ export function AISplitPreview({
       updateProgress(`Generating splits for ${selectedStrategies.length} strategies...`, 40);
       console.log(`Requesting splits for strategies:`, selectedStrategies);
       
-      // Call the API with all selected strategies
-      const results = await splitPost(content, selectedStrategies);
+      // Call the API with all selected strategies and custom Mastodon limit if available
+      const customMastodonLimit = advancedOptions?.customMastodonLimit;
+      const results = await splitPost(content, selectedStrategies, customMastodonLimit);
       
       updateProgress(`Processing results...`, 80);
       console.log("Split results:", results);

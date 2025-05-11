@@ -135,9 +135,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
   
   // Platform character limits
   app.get(`${API_PREFIX}/platforms/character-limits`, (req: Request, res: Response) => {
+    // Check if custom Mastodon limit is provided as a query parameter
+    const customMastodonLimit = req.query.customMastodonLimit as string;
+    const mastodonLimit = customMastodonLimit && !isNaN(parseInt(customMastodonLimit)) 
+      ? parseInt(customMastodonLimit) 
+      : 500;
+      
     res.json({
       bluesky: 300,
-      mastodon: 500,
+      mastodon: mastodonLimit,
       threads: 500,
       nostr: 1000
     });
@@ -322,7 +328,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // AI Post Optimization for specific platform
   app.post(`${API_PREFIX}/optimize-post`, async (req: Request, res: Response) => {
     try {
-      const { content, platform } = req.body;
+      const { content, platform, customMastodonLimit } = req.body;
       
       if (!content || typeof content !== 'string') {
         return res.status(400).json({ message: "Content is required and must be a string" });
@@ -335,7 +341,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Get character limit for the platform
       const platformLimits: Record<string, number> = {
         bluesky: 300,
-        mastodon: 500,
+        mastodon: customMastodonLimit && !isNaN(parseInt(customMastodonLimit)) ? parseInt(customMastodonLimit) : 500,
         threads: 500,
         nostr: 1000
       };

@@ -17,10 +17,14 @@ export interface SplitPostResult {
 /**
  * Splits a post into multiple posts using different strategies
  * If a specific strategy is provided, only that strategy will be calculated
+ * @param content The post content to split
+ * @param strategies The strategies to use for splitting
+ * @param customMastodonLimit Optional custom character limit for Mastodon
  */
 export async function splitPost(
   content: string, 
-  strategies?: SplittingStrategy | SplittingStrategy[]
+  strategies?: SplittingStrategy | SplittingStrategy[],
+  customMastodonLimit?: number
 ): Promise<Record<SplittingStrategy, Record<string, SplitPostResult>>> {
   try {
     // Convert single strategy to array
@@ -30,10 +34,11 @@ export async function splitPost(
     
     console.log(`Splitting post with strategies:`, strategiesArray || 'default');
     
-    // Send the strategies as an array
+    // Send the strategies as an array along with custom Mastodon limit if provided
     const response = await apiRequest('POST', '/api/split-post', { 
       content, 
-      strategies: strategiesArray 
+      strategies: strategiesArray,
+      customMastodonLimit
     });
     
     const data = await response.json();
@@ -65,10 +70,21 @@ export async function splitPost(
 
 /**
  * Optimizes a post for a specific platform
+ * @param content The post content to optimize
+ * @param platform The platform to optimize for
+ * @param customMastodonLimit Optional custom character limit for Mastodon
  */
-export async function optimizePost(content: string, platform: string): Promise<string> {
+export async function optimizePost(
+  content: string, 
+  platform: string, 
+  customMastodonLimit?: number
+): Promise<string> {
   try {
-    const response = await apiRequest('POST', '/api/optimize-post', { content, platform });
+    const response = await apiRequest('POST', '/api/optimize-post', { 
+      content, 
+      platform, 
+      customMastodonLimit 
+    });
     const data = await response.json();
     return data.optimized;
   } catch (error: any) {

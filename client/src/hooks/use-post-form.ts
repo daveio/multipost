@@ -49,7 +49,16 @@ export function usePostForm({
   
   // Fetch platform character limits
   const { data: platformLimits } = useQuery({
-    queryKey: ['/api/platforms/character-limits'],
+    queryKey: ['/api/platforms/character-limits', formState.advancedOptions.customMastodonLimit],
+    queryFn: async ({ queryKey }) => {
+      const [path, customMastodonLimit] = queryKey;
+      // Add customMastodonLimit as a query parameter if defined
+      const url = customMastodonLimit 
+        ? `${path}?customMastodonLimit=${customMastodonLimit}`
+        : path;
+      const response = await fetch(url);
+      return response.json();
+    },
     staleTime: Infinity, // This rarely changes, so cache it for a long time
   });
   
