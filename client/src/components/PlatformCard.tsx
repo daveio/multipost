@@ -72,6 +72,7 @@ export function PlatformCard({ platform, charCount, active, onToggle }: Platform
           checked={active} 
           onCheckedChange={() => onToggle(platform.id)}
           onClick={(e) => e.stopPropagation()}
+          className="platform-switch"
         />
       </div>
       <h4 className="font-medium text-foreground">{platform.name}</h4>
