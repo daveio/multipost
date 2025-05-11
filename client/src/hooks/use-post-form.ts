@@ -12,7 +12,7 @@ import {
   Account,
   Draft
 } from '../types';
-import { DEFAULT_PLATFORMS, PLATFORM_CHARACTER_LIMITS } from '../lib/platform-config';
+import { DEFAULT_PLATFORMS, PLATFORM_CHARACTER_LIMITS, getCharacterLimit } from '../lib/platform-config';
 
 // Load settings from localStorage if available
 const savedShowRawJson = localStorage.getItem('showRawJson');

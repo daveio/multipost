@@ -1,4 +1,4 @@
-import { Platform } from "../types";
+import { Platform, AdvancedOptions } from "../types";
 
 // Character limits for each platform
 export const PLATFORM_CHARACTER_LIMITS = {
@@ -6,6 +6,20 @@ export const PLATFORM_CHARACTER_LIMITS = {
   mastodon: 500,
   threads: 500,
   nostr: 1000
+};
+
+/**
+ * Get the character limit for a platform, taking into account any custom limits
+ * @param platformId The platform ID
+ * @param advancedOptions Optional advanced options with custom limits
+ * @returns The character limit for the platform
+ */
+export function getCharacterLimit(platformId: string, advancedOptions?: AdvancedOptions): number {
+  if (platformId === 'mastodon' && advancedOptions?.customMastodonLimit) {
+    return advancedOptions.customMastodonLimit;
+  }
+  
+  return PLATFORM_CHARACTER_LIMITS[platformId as keyof typeof PLATFORM_CHARACTER_LIMITS] || 280; // Default to Twitter's limit as fallback
 };
 
 // Media constraints for each platform
