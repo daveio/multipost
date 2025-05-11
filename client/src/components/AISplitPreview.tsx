@@ -616,8 +616,8 @@ export function AISplitPreview({
   // Main render
   return (
     <div className="fixed inset-0 z-50 bg-black/70 flex items-center justify-center overflow-hidden">
-      <div className="bg-white dark:bg-gray-900 rounded-lg shadow-xl max-w-5xl w-full max-h-[90vh] overflow-hidden flex flex-col">
-        <div className="flex items-center justify-between p-4 border-b dark:border-gray-700">
+      <div className="bg-white rounded-lg shadow-xl max-w-5xl w-full max-h-[90vh] overflow-hidden flex flex-col">
+        <div className="flex items-center justify-between p-4 border-b">
           <div className="flex items-center">
             <UIIcon.Split className="mr-2 h-5 w-5" />
             <h2 className="text-xl font-bold">AI-Powered Splitting Preview</h2>
@@ -637,7 +637,7 @@ export function AISplitPreview({
                 <div className="flex items-center justify-between mb-4">
                   <div>
                     <h3 className="text-lg font-medium mb-1">Splitting Strategies</h3>
-                    <p className="text-sm text-gray-500 dark:text-gray-400">Select multiple strategies for AI to combine them optimally</p>
+                    <p className="text-sm text-gray-500">Select multiple strategies for AI to combine them optimally</p>
                   </div>
                   
                   <div className="flex flex-wrap gap-2">

@@ -75,7 +75,7 @@ export function PostComposer({
       
       <form onSubmit={handleFormSubmit}>
         {/* Text Area for Post */}
-        <div className="form-control mb-4">
+        <div className="form-control mb-4 relative">
           <Textarea 
             id="postContent" 
             value={content}
@@ -84,6 +84,45 @@ export function PostComposer({
             placeholder="What's on your mind? Type your message here to post across multiple platforms..."
             disabled={isPendingPost}
           />
+          
+          {/* Start/Continue Thread Button - Only appears when content exceeds character limit */}
+          {isContentTooLong && (
+            <div className="absolute bottom-3 right-3">
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={(e) => {
+                  e.preventDefault();
+                  
+                  // Add thread numbering to current content if needed
+                  let updatedContent = content;
+                  const isFirstPost = !content.includes(advancedOptions.threadNotationFormat.replace('x', '1'));
+                  
+                  if (isFirstPost && advancedOptions.useThreadNotation) {
+                    updatedContent = content + '\n\n' + advancedOptions.threadNotationFormat.replace('x', '1').replace('y', '2');
+                  }
+                  
+                  // Create new post with thread numbering
+                  const newPost = advancedOptions.useThreadNotation 
+                    ? advancedOptions.threadNotationFormat.replace('x', '2').replace('y', '2') 
+                    : '';
+                  
+                  // Apply the split
+                  onApplySplit && onApplySplit(
+                    SplittingStrategy.SEMANTIC,
+                    characterStats[0]?.platform || 'bluesky',
+                    [updatedContent, newPost]
+                  );
+                }}
+                type="button"
+              >
+                <UIIcon.Split className="mr-2 h-4 w-4" />
+                {!content.includes(advancedOptions.threadNotationFormat.replace('x', '1')) 
+                  ? "Start Thread" 
+                  : "Continue Thread"}
+              </Button>
+            </div>
+          )}
           
           {/* Character Count */}
           <div className="mt-2 flex justify-between text-sm">
