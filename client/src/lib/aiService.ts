@@ -18,11 +18,26 @@ export interface SplitPostResult {
  * Splits a post into multiple posts using different strategies
  * If a specific strategy is provided, only that strategy will be calculated
  */
-export async function splitPost(content: string, strategy?: SplittingStrategy): Promise<Record<SplittingStrategy, Record<string, SplitPostResult>>> {
+export async function splitPost(
+  content: string, 
+  strategies?: SplittingStrategy | SplittingStrategy[]
+): Promise<Record<SplittingStrategy, Record<string, SplitPostResult>>> {
   try {
-    console.log(`Splitting post with ${strategy ? 'strategy: ' + strategy : 'all strategies'}`);
-    const response = await apiRequest('POST', '/api/split-post', { content, strategy });
+    // Convert single strategy to array
+    const strategiesArray = strategies 
+      ? (Array.isArray(strategies) ? strategies : [strategies]) 
+      : undefined;
+    
+    console.log(`Splitting post with strategies:`, strategiesArray || 'default');
+    
+    // Send the strategies as an array
+    const response = await apiRequest('POST', '/api/split-post', { 
+      content, 
+      strategies: strategiesArray 
+    });
+    
     const data = await response.json();
+    console.log('Split post API response:', data);
     return data;
   } catch (error) {
     console.error('Error splitting post:', error);

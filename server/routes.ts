@@ -176,7 +176,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // AI Post Splitting
   app.post(`${API_PREFIX}/split-post`, async (req: Request, res: Response) => {
     try {
-      const { content, strategy } = req.body;
+      const { content, strategies } = req.body;
       
       if (!content || typeof content !== 'string') {
         return res.status(400).json({ message: "Content is required and must be a string" });
@@ -190,33 +190,86 @@ export async function registerRoutes(app: Express): Promise<Server> {
         nostr: 1000
       };
       
-      // If specific strategy is provided, only generate that one
-      if (strategy && Object.values(SplittingStrategy).includes(strategy)) {
+      // If specific strategies are provided, only generate those
+      if (strategies && Array.isArray(strategies) && strategies.length > 0) {
         try {
-          const result = await splitPost(
-            content, 
-            Math.min(...Object.values(platformLimits)), 
-            strategy
-          );
+          // Create a result object to store all the strategy results
+          const results: Record<string, Record<string, any>> = {};
           
-          // Create properly structured response with platform keys
-          const structuredResult: Record<string, any> = {};
-          
-          // Add to each platform
-          for (const platform of Object.keys(platformLimits)) {
-            structuredResult[platform] = result;
+          // Process each requested strategy
+          for (const strategy of strategies) {
+            if (!Object.values(SplittingStrategy).includes(strategy)) {
+              continue; // Skip invalid strategies
+            }
+            
+            console.log(`Processing strategy: ${strategy}`);
+            results[strategy] = {};
+            
+            // Generate platform-specific splits for this strategy
+            for (const platform of Object.keys(platformLimits)) {
+              const limit = platformLimits[platform];
+              
+              // Only split if content exceeds platform limit
+              if (content.length > limit) {
+                console.log(`Splitting for ${platform} with limit ${limit}`);
+                const platformResult = await splitPost(
+                  content, 
+                  limit, 
+                  strategy as SplittingStrategy
+                );
+                
+                results[strategy][platform] = platformResult;
+              } else {
+                // No splitting needed
+                results[strategy][platform] = {
+                  splitText: [content],
+                  strategy: strategy,
+                  reasoning: `Content is within character limit for ${platform} (${limit} chars). No splitting required.`
+                };
+              }
+            }
           }
           
-          return res.json({ [strategy]: structuredResult });
+          return res.json(results);
         } catch (error) {
-          console.error("Error in split post with specific strategy:", error);
+          console.error("Error in split post with strategies:", error);
           throw error;
         }
+      } else {
+        // No specific strategies provided, use the first one (SEMANTIC) for simplicity
+        const singleStrategy = SplittingStrategy.SEMANTIC;
+        
+        // Create a result object
+        const results: Record<string, Record<string, any>> = {
+          [singleStrategy]: {}
+        };
+        
+        // Generate platform-specific splits
+        for (const platform of Object.keys(platformLimits)) {
+          const limit = platformLimits[platform];
+          
+          // Only split if content exceeds platform limit
+          if (content.length > limit) {
+            console.log(`Splitting for ${platform} with limit ${limit}`);
+            const platformResult = await splitPost(
+              content, 
+              limit, 
+              singleStrategy
+            );
+            
+            results[singleStrategy][platform] = platformResult;
+          } else {
+            // No splitting needed
+            results[singleStrategy][platform] = {
+              splitText: [content],
+              strategy: singleStrategy,
+              reasoning: `Content is within character limit for ${platform} (${limit} chars). No splitting required.`
+            };
+          }
+        }
+        
+        return res.json(results);
       }
-      
-      // Generate all splitting options
-      const result = await generateSplittingOptions(content, platformLimits);
-      res.json(result);
     } catch (error: any) {
       console.error("Error in split-post endpoint:", error);
       res.status(500).json({ 

@@ -108,27 +108,26 @@ export function AISplitPreview({
       updateProgress('Preparing splitting strategies...', 20);
       await new Promise(r => setTimeout(r, 500)); // UI smoothness
       
-      // Get the first selected strategy (we'll make one API call at a time)
+      // Validate selected strategies
       if (selectedStrategies.length === 0) {
         throw new Error("No splitting strategies selected");
       }
       
-      const strategy = selectedStrategies[0];
-      updateProgress(`Generating ${getStrategyName(strategy)} split...`, 40);
-      console.log(`Requesting split for strategy: ${strategy}`);
+      updateProgress(`Generating splits for ${selectedStrategies.length} strategies...`, 40);
+      console.log(`Requesting splits for strategies:`, selectedStrategies);
       
-      // Call the API for the selected strategy
-      const strategyResult = await splitPost(content, strategy);
+      // Call the API with all selected strategies
+      const results = await splitPost(content, selectedStrategies);
       
       updateProgress(`Processing results...`, 80);
-      console.log("Strategy result:", strategy, strategyResult);
+      console.log("Split results:", results);
       
-      if (!strategyResult || Object.keys(strategyResult).length === 0) {
+      if (!results || Object.keys(results).length === 0) {
         throw new Error("API returned empty results");
       }
       
       updateProgress('Finalizing results...', 95);
-      setSplitResults(strategyResult);
+      setSplitResults(results);
       updateProgress('Split generation complete!', 100);
       
     } catch (error: any) {
@@ -292,8 +291,8 @@ export function AISplitPreview({
       console.log("Converting direct result format");
       
       const splitTextArray = Array.isArray(strategyResults) 
-        ? strategyResults 
-        : strategyResults.splitText;
+        ? strategyResults as string[]
+        : (strategyResults.splitText as string[]);
         
       result = {
         splitText: splitTextArray,
