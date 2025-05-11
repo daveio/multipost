@@ -304,7 +304,10 @@ export function ThreadPostsManager({
           <Button 
             variant="outline" 
             size="sm"
-            onClick={() => setExpandedView(!expandedView)}
+            onClick={(e) => {
+              e.preventDefault();
+              setExpandedView(!expandedView);
+            }}
           >
             {expandedView ? (
               <>
@@ -329,7 +332,7 @@ export function ThreadPostsManager({
           <Button 
             variant="destructive" 
             size="sm"
-            onClick={handleExit}
+            onClick={(e) => handleExit(e)}
           >
             <XCircle className="mr-1 h-4 w-4" />
             Exit Thread
