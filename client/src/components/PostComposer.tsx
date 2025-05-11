@@ -1,0 +1,267 @@
+import { FormEvent } from "react";
+import { Textarea } from "@/components/ui/textarea";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
+import { UIIcon, SocialIcon } from "./SocialIcons";
+import { MediaUploader } from "./MediaUploader";
+import { PlatformCard } from "./PlatformCard";
+import { 
+  Accordion, 
+  AccordionContent, 
+  AccordionItem, 
+  AccordionTrigger 
+} from "@/components/ui/accordion";
+import { DEFAULT_PLATFORMS } from "../lib/platform-config";
+import { Platform, CharacterStat, MediaFile, AdvancedOptions } from "../types";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+
+interface PostComposerProps {
+  content: string;
+  mediaFiles: MediaFile[];
+  characterStats: CharacterStat[];
+  selectedPlatforms: { id: string; isSelected: boolean; accounts?: number[] }[];
+  advancedOptions: AdvancedOptions;
+  isPendingDraft: boolean;
+  isPendingPost: boolean;
+  isPendingUpload: boolean;
+  isFormValid: boolean;
+  onContentChange: (content: string) => void;
+  onTogglePlatform: (platformId: string) => void;
+  onAdvancedOptionsChange: (options: Partial<AdvancedOptions>) => void;
+  onUploadFiles: (files: File[]) => void;
+  onRemoveMediaFile: (fileId: string) => void;
+  onSaveAsDraft: () => void;
+  onSubmitPost: () => void;
+  onResetForm: () => void;
+}
+
+export function PostComposer({
+  content,
+  mediaFiles,
+  characterStats,
+  selectedPlatforms,
+  advancedOptions,
+  isPendingDraft,
+  isPendingPost,
+  isPendingUpload,
+  isFormValid,
+  onContentChange,
+  onTogglePlatform,
+  onAdvancedOptionsChange,
+  onUploadFiles,
+  onRemoveMediaFile,
+  onSaveAsDraft,
+  onSubmitPost,
+  onResetForm
+}: PostComposerProps) {
+  const handleFormSubmit = (e: FormEvent) => {
+    e.preventDefault();
+    onSubmitPost();
+  };
+
+  const isContentTooLong = characterStats.some(stat => stat.current > stat.limit);
+
+  return (
+    <div className="bg-white rounded-xl shadow-sm p-6 mb-6">
+      <h2 className="text-lg font-semibold mb-4">Create Post</h2>
+      
+      <form onSubmit={handleFormSubmit}>
+        {/* Text Area for Post */}
+        <div className="form-control mb-4">
+          <Textarea 
+            id="postContent" 
+            value={content}
+            onChange={(e) => onContentChange(e.target.value)}
+            className="resize-none h-40"
+            placeholder="What's on your mind? Type your message here to post across multiple platforms..."
+            disabled={isPendingPost}
+          />
+          
+          {/* Character Count */}
+          <div className="mt-2 flex justify-between text-sm">
+            <div className={
+              isContentTooLong ? "char-counter-danger" : 
+              content.length > 0.8 * Math.min(...characterStats.map(s => s.limit)) ? 
+                "char-counter-warning" : "text-gray-500"
+            }>
+              {content.length} characters
+            </div>
+            {isContentTooLong && (
+              <Alert className="py-1 px-2 h-auto bg-amber-50 border-amber-200">
+                <AlertDescription className="flex items-center text-xs text-amber-700">
+                  <UIIcon.Settings className="mr-1 h-4 w-4" />
+                  Post too long for some platforms. AI splitting recommended.
+                </AlertDescription>
+              </Alert>
+            )}
+          </div>
+        </div>
+        
+        {/* Media Upload */}
+        <MediaUploader 
+          mediaFiles={mediaFiles}
+          isPendingUpload={isPendingUpload}
+          onUpload={onUploadFiles}
+          onRemove={onRemoveMediaFile}
+        />
+        
+        {/* Platform Selection */}
+        <div className="mb-6">
+          <h3 className="text-md font-medium mb-3">Post to these platforms</h3>
+          
+          {/* Selected Platforms Summary */}
+          <div className="flex flex-wrap gap-2 mb-4">
+            {selectedPlatforms
+              .filter(p => p.isSelected)
+              .map((platform) => (
+                <Badge key={platform.id} variant="outline" className="gap-1">
+                  <UIIcon.Check className="text-success h-3 w-3" />
+                  <span className="capitalize">{platform.id}</span>
+                </Badge>
+              ))}
+          </div>
+          
+          {/* Platform Cards */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            {DEFAULT_PLATFORMS.map((platform) => {
+              const selectedPlatform = selectedPlatforms.find(p => p.id === platform.id);
+              const stat = characterStats.find(s => s.platform === platform.id);
+              
+              return (
+                <PlatformCard 
+                  key={platform.id}
+                  platform={platform}
+                  charCount={stat?.current || 0}
+                  active={selectedPlatform?.isSelected || false}
+                  onToggle={onTogglePlatform}
+                />
+              );
+            })}
+          </div>
+        </div>
+        
+        {/* Advanced Options (Collapsible) */}
+        <Accordion type="single" collapsible className="mb-6 border rounded-lg">
+          <AccordionItem value="advanced-options">
+            <AccordionTrigger className="px-4 py-3 text-md font-medium">
+              Advanced Options
+            </AccordionTrigger>
+            <AccordionContent className="px-4 pb-4">
+              <div className="space-y-4">
+                <div className="flex items-start space-x-2">
+                  <Checkbox 
+                    id="useAiOptimization"
+                    checked={advancedOptions.useAiOptimization}
+                    onCheckedChange={(checked) => 
+                      onAdvancedOptionsChange({ useAiOptimization: checked as boolean })
+                    }
+                  />
+                  <div className="grid gap-1.5 leading-none">
+                    <label
+                      htmlFor="useAiOptimization"
+                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                    >
+                      Use AI to optimize for each platform
+                    </label>
+                  </div>
+                </div>
+                
+                <div className="flex items-start space-x-2">
+                  <Checkbox 
+                    id="autoSplitLongPosts"
+                    checked={advancedOptions.autoSplitLongPosts}
+                    onCheckedChange={(checked) => 
+                      onAdvancedOptionsChange({ autoSplitLongPosts: checked as boolean })
+                    }
+                  />
+                  <div className="grid gap-1.5 leading-none">
+                    <label
+                      htmlFor="autoSplitLongPosts"
+                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                    >
+                      Auto-split long posts with AI
+                    </label>
+                  </div>
+                </div>
+                
+                <div className="flex items-start space-x-2">
+                  <Checkbox 
+                    id="useThreadNotation"
+                    checked={advancedOptions.useThreadNotation}
+                    onCheckedChange={(checked) => 
+                      onAdvancedOptionsChange({ useThreadNotation: checked as boolean })
+                    }
+                  />
+                  <div className="grid gap-1.5 leading-none">
+                    <label
+                      htmlFor="useThreadNotation"
+                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                    >
+                      Use thread notation (🧵 x/y)
+                    </label>
+                  </div>
+                </div>
+                
+                <div className="flex items-start space-x-2">
+                  <Checkbox 
+                    id="schedulePost"
+                    checked={advancedOptions.schedulePost}
+                    onCheckedChange={(checked) => 
+                      onAdvancedOptionsChange({ schedulePost: checked as boolean })
+                    }
+                  />
+                  <div className="grid gap-1.5 leading-none">
+                    <label
+                      htmlFor="schedulePost"
+                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                    >
+                      Schedule this post
+                    </label>
+                    <Input 
+                      type="datetime-local" 
+                      className="mt-2 w-full max-w-xs" 
+                      disabled={!advancedOptions.schedulePost}
+                      onChange={(e) => onAdvancedOptionsChange({ 
+                        scheduledTime: e.target.value ? new Date(e.target.value) : undefined 
+                      })}
+                    />
+                  </div>
+                </div>
+              </div>
+            </AccordionContent>
+          </AccordionItem>
+        </Accordion>
+        
+        {/* Action Buttons */}
+        <div className="flex justify-between items-center">
+          <Button 
+            type="button" 
+            variant="outline" 
+            onClick={onSaveAsDraft}
+            disabled={!isFormValid || isPendingDraft || isPendingPost}
+          >
+            <UIIcon.Save className="mr-1 h-4 w-4" /> Save Draft
+          </Button>
+          <div className="flex gap-2">
+            <Button 
+              type="button" 
+              variant="ghost" 
+              onClick={onResetForm}
+              disabled={isPendingDraft || isPendingPost}
+            >
+              <UIIcon.Undo className="mr-1 h-4 w-4" /> Reset
+            </Button>
+            <Button 
+              type="submit" 
+              disabled={!isFormValid || isPendingDraft || isPendingPost}
+            >
+              <UIIcon.Send className="mr-1 h-4 w-4" /> Post Now
+            </Button>
+          </div>
+        </div>
+      </form>
+    </div>
+  );
+}

@@ -1,0 +1,62 @@
+import { Draft } from "../types";
+import { Button } from "@/components/ui/button";
+import { UIIcon } from "./SocialIcons";
+import { formatRelativeTime } from "../lib/platform-config";
+
+interface DraftsListProps {
+  drafts: Draft[];
+  onLoadDraft: (draftId: number) => void;
+  onDeleteDraft: (draftId: number) => void;
+}
+
+export function DraftsList({ drafts, onLoadDraft, onDeleteDraft }: DraftsListProps) {
+  if (drafts.length === 0) {
+    return (
+      <div className="bg-white rounded-xl shadow-sm p-6">
+        <h2 className="text-lg font-semibold mb-4">Recent Drafts</h2>
+        <p className="text-sm text-gray-500">No drafts available. Save a draft to see it here.</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="bg-white rounded-xl shadow-sm p-6">
+      <h2 className="text-lg font-semibold mb-4">Recent Drafts</h2>
+      <div className="space-y-3">
+        {drafts.map((draft) => (
+          <div 
+            key={draft.id}
+            className="p-3 border rounded-lg flex justify-between items-center hover:bg-gray-50 cursor-pointer"
+            onClick={() => onLoadDraft(draft.id)}
+          >
+            <div>
+              <p className="line-clamp-1 text-sm">{draft.content}</p>
+              <div className="flex gap-2 mt-1">
+                <span className="text-xs text-gray-500">
+                  {draft.platforms.filter(p => p.isSelected).length} platforms
+                </span>
+                <span className="text-xs text-gray-500">
+                  {draft.mediaFiles ? draft.mediaFiles.length : 0} media files
+                </span>
+                <span className="text-xs text-gray-500">
+                  {formatRelativeTime(new Date(draft.updatedAt))}
+                </span>
+              </div>
+            </div>
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="h-8 w-8"
+              onClick={(e) => { 
+                e.stopPropagation();
+                onDeleteDraft(draft.id);
+              }}
+            >
+              <UIIcon.Delete className="h-4 w-4 text-gray-400" />
+            </Button>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
