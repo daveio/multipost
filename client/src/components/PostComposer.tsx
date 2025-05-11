@@ -238,6 +238,34 @@ export function PostComposer({
                     />
                   </div>
                 </div>
+                
+                {/* Developer Options */}
+                <div className="border-t border-gray-200 pt-4 mt-4">
+                  <h4 className="text-sm font-medium mb-3">Developer Options</h4>
+                  <div className="flex items-start space-x-2">
+                    <Checkbox 
+                      id="showRawJson"
+                      checked={advancedOptions.showRawJson}
+                      onCheckedChange={(checked) => {
+                        // Save to localStorage
+                        localStorage.setItem('showRawJson', JSON.stringify(checked));
+                        // Update state
+                        onAdvancedOptionsChange({ showRawJson: checked as boolean });
+                      }}
+                    />
+                    <div className="grid gap-1.5 leading-none">
+                      <label
+                        htmlFor="showRawJson"
+                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                      >
+                        Show raw JSON from AI responses
+                      </label>
+                      <p className="text-xs text-gray-500 mt-1">
+                        Displays the raw JSON received from OpenAI API for debugging purposes.
+                      </p>
+                    </div>
+                  </div>
+                </div>
               </div>
             </AccordionContent>
           </AccordionItem>

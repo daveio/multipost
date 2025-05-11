@@ -35,6 +35,10 @@ interface AISplitPreviewProps {
   characterStats: CharacterStat[];
   onClose: () => void;
   onApplySplit: (strategy: SplittingStrategy, platformId: string, splitText: string[]) => void;
+  advancedOptions?: {
+    showRawJson?: boolean;
+    [key: string]: any;
+  };
 }
 
 export function AISplitPreview({ 

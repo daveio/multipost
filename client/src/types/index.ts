@@ -58,6 +58,7 @@ export interface AdvancedOptions {
   threadNotationFormat: string; // Format for thread notation: "🧵 x/y" or "🧵 x of y"
   schedulePost: boolean;
   scheduledTime?: Date;
+  showRawJson: boolean; // Option to show raw JSON from OpenAI API responses
 }
 
 export interface PostFormState {

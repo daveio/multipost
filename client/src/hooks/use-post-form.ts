@@ -14,11 +14,15 @@ import {
 } from '../types';
 import { DEFAULT_PLATFORMS, PLATFORM_CHARACTER_LIMITS } from '../lib/platform-config';
 
+// Load settings from localStorage if available
+const savedShowRawJson = localStorage.getItem('showRawJson');
+
 const initialAdvancedOptions: AdvancedOptions = {
   useThreadNotation: false,
   threadNotationFormat: "🧵 x of y", // Default to new format
   schedulePost: false,
-  scheduledTime: undefined
+  scheduledTime: undefined,
+  showRawJson: savedShowRawJson ? JSON.parse(savedShowRawJson) : false // Default to false, but load from localStorage if available
 };
 
 export function usePostForm({ 
