@@ -151,11 +151,16 @@ export function usePostForm({
     Object.entries(platformLimits).forEach(([platform, limit]) => {
       const platformObject = DEFAULT_PLATFORMS.find(p => p.id === platform);
       if (platformObject) {
+        // Use custom Mastodon limit if available
+        const actualLimit = platform === 'mastodon' && formState.advancedOptions.customMastodonLimit 
+          ? formState.advancedOptions.customMastodonLimit 
+          : (limit as number);
+          
         stats.push({
           platform,
           current: contentLength,
-          limit: limit as number,
-          percentage: Math.min(100, (contentLength / (limit as number)) * 100)
+          limit: actualLimit,
+          percentage: Math.min(100, (contentLength / actualLimit) * 100)
         });
       }
     });
@@ -164,7 +169,7 @@ export function usePostForm({
       ...prev,
       characterStats: stats
     }));
-  }, [formState.content, platformLimits]);
+  }, [formState.content, platformLimits, formState.advancedOptions.customMastodonLimit]);
   
   // Update platforms with accounts data when it's available
   useEffect(() => {

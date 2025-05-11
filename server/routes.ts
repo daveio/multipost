@@ -176,7 +176,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // AI Post Splitting
   app.post(`${API_PREFIX}/split-post`, async (req: Request, res: Response) => {
     try {
-      const { content, strategies } = req.body;
+      const { content, strategies, customMastodonLimit } = req.body;
       
       if (!content || typeof content !== 'string') {
         return res.status(400).json({ message: "Content is required and must be a string" });
@@ -185,7 +185,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Get platform character limits
       const platformLimits: Record<string, number> = {
         bluesky: 300,
-        mastodon: 500,
+        mastodon: customMastodonLimit && !isNaN(parseInt(customMastodonLimit)) ? parseInt(customMastodonLimit) : 500,
         threads: 500,
         nostr: 1000
       };

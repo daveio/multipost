@@ -22,8 +22,18 @@ export function getCharacterLimit(platformId: string, advancedOptions?: Advanced
   return PLATFORM_CHARACTER_LIMITS[platformId as keyof typeof PLATFORM_CHARACTER_LIMITS] || 280; // Default to Twitter's limit as fallback
 };
 
+// Define a type for media constraints
+interface MediaConstraints {
+  maxImages: number | undefined;
+  maxImageSize: number | undefined;
+  allowedImageTypes: string[];
+  supportsVideo: boolean;
+  maxVideoSize?: number | undefined;
+  maxVideoDuration?: number;
+}
+
 // Media constraints for each platform
-export const PLATFORM_MEDIA_CONSTRAINTS = {
+export const PLATFORM_MEDIA_CONSTRAINTS: Record<string, MediaConstraints> = {
   bluesky: {
     maxImages: 4,
     maxImageSize: 10 * 1024 * 1024, // 10MB
@@ -91,7 +101,7 @@ export const DEFAULT_PLATFORMS: Platform[] = [
 
 // Check if a media file is compatible with a platform
 export function isMediaCompatible(file: File, platformId: string): boolean {
-  const constraints = PLATFORM_MEDIA_CONSTRAINTS[platformId as keyof typeof PLATFORM_MEDIA_CONSTRAINTS];
+  const constraints = PLATFORM_MEDIA_CONSTRAINTS[platformId];
   
   if (!constraints) return false;
   
@@ -99,7 +109,7 @@ export function isMediaCompatible(file: File, platformId: string): boolean {
   const isVideo = file.type.startsWith('video/');
   
   if (isImage) {
-    return constraints.allowedImageTypes?.includes(file.type) && 
+    return constraints.allowedImageTypes.includes(file.type) && 
            (constraints.maxImageSize === undefined || file.size <= constraints.maxImageSize);
   }
   
