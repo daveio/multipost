@@ -454,6 +454,8 @@ The application uses OpenAI's GPT-4o model for several key features:
  
 4. **Response Validation**:
    - Safety checks for malformed API responses
+   - Thread indicator format validation to ensure two newlines before thread markers
+   - Automatic correction of improperly formatted thread indicators
    - Handling for unexpected response formats
    - Fallback mechanisms for failed requests
    - Structured error propagation to client
