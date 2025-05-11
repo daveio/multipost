@@ -107,7 +107,14 @@ export function AISplitPreview({
       updateProgress('Preparing splitting strategies...', 20);
       await new Promise(r => setTimeout(r, 500)); // UI smoothness
       
-      const results: Record<SplittingStrategy, Record<string, SplitPostResult>> = {};
+      // Initialize the results structure with empty objects for all strategies
+      const results: Record<SplittingStrategy, Record<string, SplitPostResult>> = {
+        [SplittingStrategy.SEMANTIC]: {},
+        [SplittingStrategy.SENTENCE]: {}, 
+        [SplittingStrategy.RETAIN_HASHTAGS]: {}, 
+        [SplittingStrategy.PRESERVE_MENTIONS]: {}, 
+        [SplittingStrategy.THREAD_OPTIMIZED]: {}
+      };
       
       for (let i = 0; i < selectedStrategies.length; i++) {
         const strategy = selectedStrategies[i];
@@ -121,8 +128,10 @@ export function AISplitPreview({
           const strategyResult = await splitPost(content, strategy);
           
           updateProgress(`Processing ${getStrategyName(strategy)} results...`, progressBase + 15);
+          console.log("Strategy result:", strategy, strategyResult);
           
-          if (strategyResult && Object.keys(strategyResult).length > 0) {
+          if (strategyResult && Object.keys(strategyResult).length > 0 && strategyResult[strategy]) {
+            // Update our initialized structure with the response data
             results[strategy] = strategyResult[strategy];
           }
         } catch (err) {
@@ -243,7 +252,7 @@ export function AISplitPreview({
   
   const getAvatarUrl = (platformId: string): string => {
     const account = accounts.find(a => a.platformId === platformId);
-    return account?.avatar || '';
+    return account?.avatarUrl || '';
   };
   
   const getAccountInitials = (platformId: string): string => {
@@ -310,9 +319,16 @@ export function AISplitPreview({
   
   // Helper function to render a split result
   const renderSplitResult = (result: SplitPostResult, platformId: string) => {
+    console.log("Rendering split result:", result);
+    
+    // Ensure splitText is an array
+    const splitTextArray = Array.isArray(result.splitText) 
+      ? result.splitText 
+      : [result.splitText];
+    
     return (
       <div className="space-y-4">
-        {result.splitText.map((post, index) => (
+        {splitTextArray.map((post, index) => (
           <Card key={index} className="border">
             <CardContent className="p-4">
               <div className="flex items-start gap-3">
@@ -333,7 +349,7 @@ export function AISplitPreview({
                   {/* Thread numbering */}
                   <div className="mt-2">
                     <Badge variant="outline">
-                      Post {index + 1} of {result.splitText.length}
+                      Post {index + 1} of {splitTextArray.length}
                     </Badge>
                   </div>
                   
@@ -350,7 +366,7 @@ export function AISplitPreview({
         {/* Reasoning */}
         <Alert className="bg-gray-50">
           <AlertDescription className="text-xs text-gray-600">
-            <strong>Reasoning:</strong> {result.reasoning}
+            <strong>Reasoning:</strong> {result.reasoning || "Split based on platform character limits"}
           </AlertDescription>
         </Alert>
       </div>
