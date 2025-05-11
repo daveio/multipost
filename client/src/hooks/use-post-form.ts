@@ -8,7 +8,9 @@ import {
   CharacterStat, 
   UsePostFormProps, 
   PostFormState, 
-  AdvancedOptions
+  AdvancedOptions,
+  Account,
+  Draft
 } from '../types';
 import { DEFAULT_PLATFORMS, PLATFORM_CHARACTER_LIMITS } from '../lib/platform-config';
 
@@ -44,13 +46,13 @@ export function usePostForm({
   });
   
   // Fetch accounts
-  const { data: accounts = [] } = useQuery({
+  const { data: accounts = [] } = useQuery<Account[]>({
     queryKey: ['/api/accounts'],
     staleTime: 60000, // Cache for 1 minute
   });
   
   // Query for drafts
-  const { data: drafts = [] } = useQuery({
+  const { data: drafts = [] } = useQuery<Draft[]>({
     queryKey: ['/api/drafts'],
     staleTime: 30000, // Cache for 30 seconds
   });
@@ -161,10 +163,10 @@ export function usePostForm({
     if (accounts.length === 0) return;
     
     const platformsWithAccounts = formState.selectedPlatforms.map(platform => {
-      const platformAccounts = accounts.filter(acc => acc.platformId === platform.id);
+      const platformAccounts = accounts.filter((acc: Account) => acc.platformId === platform.id);
       return {
         ...platform,
-        accounts: platform.accounts || platformAccounts.filter(acc => acc.isActive).map(acc => acc.id)
+        accounts: platform.accounts || platformAccounts.filter((acc: Account) => acc.isActive).map((acc: Account) => acc.id)
       };
     });
     
@@ -281,7 +283,7 @@ export function usePostForm({
   
   // Load a draft
   const loadDraft = (draftId: number) => {
-    const draft = drafts.find(d => d.id === draftId);
+    const draft = drafts.find((d: Draft) => d.id === draftId);
     if (!draft) return;
     
     setFormState(prev => ({
