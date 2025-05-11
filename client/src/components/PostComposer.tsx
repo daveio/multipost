@@ -143,12 +143,15 @@ export function PostComposer({
                     const isFirstPost = !content.includes(advancedOptions.threadNotationFormat.replace('x', '1'));
                     
                     if (isFirstPost && advancedOptions.useThreadNotation) {
-                      updatedContent = content + '\n\n' + advancedOptions.threadNotationFormat.replace('x', '1').replace('y', '2');
+                      // Ensure there are exactly two newlines before the thread indicator
+                      // First trim any trailing whitespace/newlines
+                      const trimmedContent = content.trimEnd();
+                      updatedContent = trimmedContent + '\n\n' + advancedOptions.threadNotationFormat.replace('x', '1').replace('y', '2');
                     }
                     
                     // Create new post with thread numbering
                     const newPost = advancedOptions.useThreadNotation 
-                      ? advancedOptions.threadNotationFormat.replace('x', '2').replace('y', '2') 
+                      ? '\n\n' + advancedOptions.threadNotationFormat.replace('x', '2').replace('y', '2') 
                       : '';
                     
                     // Apply the split
