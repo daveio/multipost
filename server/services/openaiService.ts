@@ -26,6 +26,46 @@ interface SplitPostResult {
 }
 
 /**
+ * Validate and fix thread indicator formatting to ensure it has two newlines before it
+ * @param post The post text to validate
+ * @param index The index of the post in the thread (0-based)
+ * @param total The total number of posts in the thread
+ * @returns The post with properly formatted thread indicator
+ */
+function validateThreadIndicatorFormatting(post: string, index: number, total: number): string {
+  // Skip validation for empty posts
+  if (!post || post.trim().length === 0) {
+    return post;
+  }
+  
+  // Check if this post has a thread indicator
+  const threadIndicatorRegex = /🧵\s*(\d+)\s*(?:of|\/)\s*(\d+)$/;
+  const threadIndicatorMatch = post.match(threadIndicatorRegex);
+  
+  // If no thread indicator, no changes needed
+  if (!threadIndicatorMatch) {
+    return post;
+  }
+  
+  // Check if the thread indicator already has two newlines before it
+  const twoNewlinesBeforeRegex = /\n\n🧵\s*(\d+)\s*(?:of|\/)\s*(\d+)$/;
+  if (twoNewlinesBeforeRegex.test(post)) {
+    // Already formatted correctly
+    return post;
+  }
+  
+  // Find the thread indicator position
+  const indicatorPosition = post.lastIndexOf(threadIndicatorMatch[0]);
+  
+  // Split the post into content and indicator
+  const content = post.substring(0, indicatorPosition).trim();
+  const indicator = post.substring(indicatorPosition);
+  
+  // Combine with two newlines in between
+  return content + '\n\n' + indicator;
+}
+
+/**
  * Split a long post into multiple posts for specific platform
  * using multiple strategies simultaneously
  */
@@ -106,6 +146,9 @@ export async function splitPost(
         if (typeof result.posts[i] !== 'string') {
           throw new Error(`Post at index ${i} is not a string. Type: ${typeof result.posts[i]}, Value: ${JSON.stringify(result.posts[i])}`);
         }
+        
+        // Validate and fix thread indicators formatting
+        result.posts[i] = validateThreadIndicatorFormatting(result.posts[i], i, result.posts.length);
       }
       
       // Use the first strategy as the main one for response structure
