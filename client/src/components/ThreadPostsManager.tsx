@@ -301,7 +301,7 @@ export function ThreadPostsManager({
       
       {/* Post navigator */}
       <div className="flex items-center gap-2 overflow-x-auto pb-2">
-        {threadState.posts.map((post, index) => (
+        {threadState.posts.map((post: ThreadPost, index: number) => (
           <Button
             key={`thread-post-${index}`}
             variant={threadState.activeIndex === index ? "default" : "outline"}
@@ -324,7 +324,7 @@ export function ThreadPostsManager({
       {expandedView && (
         <div className="space-y-3 mt-4 rounded-lg border p-4 bg-muted/30">
           <h3 className="text-sm font-medium mb-2">All Posts in Thread</h3>
-          {threadState.posts.map((post, index) => (
+          {threadState.posts.map((post: ThreadPost, index: number) => (
             <Card 
               key={`expanded-post-${index}`}
               className={`p-3 relative ${threadState.activeIndex === index ? 'border-primary' : ''}`}
