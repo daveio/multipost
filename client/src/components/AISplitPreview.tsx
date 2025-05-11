@@ -498,9 +498,20 @@ export function AISplitPreview({
         <div className="relative">
           {splitTextArray.map((post, index) => (
             <div key={index} className="relative">
-              {/* Vertical thread line */}
+              {/* Vertical thread line and connecting dots */}
               {index < splitTextArray.length - 1 && (
-                <div className="absolute left-5 top-16 bottom-0 w-0.5 bg-gray-200 z-0" />
+                <>
+                  {/* Main connecting line */}
+                  <div className="absolute left-5 top-16 bottom-0 w-0.5 bg-gray-300 z-0" />
+                  
+                  {/* Thread connection dot at the bottom */}
+                  <div className="absolute left-[18px] bottom-0 h-2.5 w-2.5 rounded-full bg-gray-400 z-20 transform translate-y-1/2" />
+                </>
+              )}
+              
+              {/* Thread connection dot at the top of subsequent posts */}
+              {index > 0 && (
+                <div className="absolute left-[18px] top-0 h-2.5 w-2.5 rounded-full bg-gray-400 z-20 transform -translate-y-1/2" />
               )}
               
               <Card key={`post-${index}`} className="border relative z-10 mb-4">
@@ -670,16 +681,37 @@ export function AISplitPreview({
             <Alert variant="destructive" className="mb-3">
               <AlertTriangle className="h-4 w-4" />
               <AlertDescription className="ml-2">
-                {error}
+                <div className="font-medium">{error}</div>
+                
                 {errorDetails && (
-                  <details className="mt-2 text-xs">
-                    <summary className="cursor-pointer">View Technical Details</summary>
-                    <div className="mt-2 p-2 bg-gray-900 text-gray-100 rounded overflow-x-auto">
-                      <pre className="text-xs whitespace-pre-wrap">
-                        {errorDetails}
-                      </pre>
-                    </div>
-                  </details>
+                  <div className="mt-2">
+                    <details className="text-xs bg-red-50 p-3 rounded-md border border-red-200">
+                      <summary className="font-medium cursor-pointer">View Technical Details</summary>
+                      <div className="mt-2 space-y-2">
+                        {/* Tips based on error type */}
+                        {errorDetails.includes('rate_limit_exceeded') && (
+                          <div className="p-2 bg-amber-50 border border-amber-200 rounded">
+                            <p className="font-medium">Rate Limit Exceeded</p>
+                            <p>OpenAI's rate limit was reached. Please wait a few moments and try again.</p>
+                          </div>
+                        )}
+                        
+                        {errorDetails.includes('invalid_api_key') && (
+                          <div className="p-2 bg-amber-50 border border-amber-200 rounded">
+                            <p className="font-medium">API Authentication Error</p>
+                            <p>There might be an issue with the OpenAI API key. Please check that it's correctly configured.</p>
+                          </div>
+                        )}
+                        
+                        {/* Raw error details */}
+                        <div className="p-2 bg-gray-900 text-gray-100 rounded overflow-x-auto">
+                          <pre className="text-xs whitespace-pre-wrap">
+                            {errorDetails}
+                          </pre>
+                        </div>
+                      </div>
+                    </details>
+                  </div>
                 )}
               </AlertDescription>
             </Alert>
