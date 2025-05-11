@@ -51,7 +51,13 @@ export function AISplitPreview({
   const [progressPercent, setProgressPercent] = useState<number>(0);
   const [activePlatform, setActivePlatform] = useState<string>('');
   const [activeStrategy, setActiveStrategy] = useState<SplittingStrategy>(SplittingStrategy.SEMANTIC);
-  const [selectedStrategies, setSelectedStrategies] = useState<SplittingStrategy[]>([SplittingStrategy.SEMANTIC]);
+  // Enable multiple strategies by default
+  const [selectedStrategies, setSelectedStrategies] = useState<SplittingStrategy[]>([
+    SplittingStrategy.SEMANTIC,
+    SplittingStrategy.SENTENCE,
+    SplittingStrategy.RETAIN_HASHTAGS,
+    SplittingStrategy.PRESERVE_MENTIONS
+  ]);
   const [splitResults, setSplitResults] = useState<Record<SplittingStrategy, Record<string, SplitPostResult>> | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [errorDetails, setErrorDetails] = useState<string | null>(null);
@@ -89,9 +95,14 @@ export function AISplitPreview({
     setSelectedStrategies(Object.values(SplittingStrategy));
   };
   
-  // Reset to default (semantic only)
+  // Reset to default (all strategies enabled)
   const resetToDefault = () => {
-    setSelectedStrategies([SplittingStrategy.SEMANTIC]);
+    setSelectedStrategies([
+      SplittingStrategy.SEMANTIC,
+      SplittingStrategy.SENTENCE,
+      SplittingStrategy.RETAIN_HASHTAGS,
+      SplittingStrategy.PRESERVE_MENTIONS
+    ]);
   };
   
   // Generate AI splitting options
@@ -770,9 +781,10 @@ export function AISplitPreview({
             </Alert>
           )}
           
-          {/* Strategy Description */}
-          <div className="text-sm text-gray-700 bg-gray-50 p-4 rounded-lg border border-gray-100">
-            {getStrategyDescription(activeStrategy)}
+          {/* Strategy active indicator */}
+          <div className="text-sm flex items-center gap-2 bg-blue-50 p-3 rounded-lg border border-blue-100">
+            <div className="w-2 h-2 rounded-full bg-blue-500"></div>
+            <span className="font-medium text-blue-700">Active strategy: {getStrategyName(activeStrategy)}</span>
           </div>
         </div>
       </div>

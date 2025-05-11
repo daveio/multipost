@@ -95,14 +95,49 @@ export function PostComposer({
               {content.length} characters
             </div>
             
-            {/* AI Split Button - replaces the alert */}
-            <SplitWithAIButton 
-              content={content}
-              isContentTooLong={isContentTooLong}
-              accounts={accounts}
-              characterStats={characterStats}
-              onApplySplit={onApplySplit || (() => {})}
-            />
+            {/* Post splitting options */}
+            <div className="flex gap-2">
+              {/* Manual Split Button */}
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={(e) => {
+                  e.preventDefault();
+                  
+                  // Add thread numbering to current content if needed
+                  let updatedContent = content;
+                  if (advancedOptions.useThreadNotation && !content.includes(advancedOptions.threadNotationFormat.replace('x', '1').replace('y', '2'))) {
+                    updatedContent = content + '\n\n' + advancedOptions.threadNotationFormat.replace('x', '1').replace('y', '2');
+                  }
+                  
+                  // Create new post with thread numbering
+                  const newPost = advancedOptions.useThreadNotation 
+                    ? advancedOptions.threadNotationFormat.replace('x', '2').replace('y', '2') 
+                    : '';
+                  
+                  // Apply the split
+                  onApplySplit && onApplySplit(
+                    SplittingStrategy.SEMANTIC,
+                    characterStats[0]?.platform || 'bluesky',
+                    [updatedContent, newPost]
+                  );
+                }}
+                className="h-7 gap-1"
+                type="button"
+              >
+                <UIIcon.Split className="h-3.5 w-3.5" />
+                <span className="text-xs">Split Manually</span>
+              </Button>
+
+              {/* AI Split Button */}
+              <SplitWithAIButton 
+                content={content}
+                isContentTooLong={isContentTooLong}
+                accounts={accounts}
+                characterStats={characterStats}
+                onApplySplit={onApplySplit || (() => {})}
+              />
+            </div>
           </div>
         </div>
         

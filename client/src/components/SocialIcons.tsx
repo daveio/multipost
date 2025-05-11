@@ -19,7 +19,9 @@ import {
   Plus,
   Trash,
   AlertCircle,
-  AlertTriangle
+  AlertTriangle,
+  Scissors,
+  SplitSquareVertical
 } from "lucide-react";
 
 type SocialIconProps = {
@@ -78,5 +80,7 @@ export const UIIcon = {
   Server: Server,
   Refresh: RefreshCw,
   Warning: AlertCircle,
-  Alert: AlertTriangle
+  Alert: AlertTriangle,
+  Split: SplitSquareVertical,
+  Cut: Scissors
 };
