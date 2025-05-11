@@ -251,7 +251,7 @@ export function PostComposer({
                 <div className="border-t border-gray-200 pt-4 mt-4">
                   <h4 className="text-sm font-medium mb-3">Platform Settings</h4>
                   <div className="flex items-center space-x-4 mb-4">
-                    <div className="grid gap-1.5 leading-none flex-1">
+                    <div id="mastodonLimitContainer" className={`grid gap-1.5 leading-none flex-1 p-2 ${localStorage.getItem('customMastodonLimit') !== null ? 'local-storage-setting' : ''}`}>
                       <label
                         htmlFor="mastodonCharLimit"
                         className="text-sm font-medium leading-none"
@@ -274,8 +274,8 @@ export function PostComposer({
                             onChange={(e) => {
                               const value = parseInt(e.target.value);
                               if (value && !isNaN(value) && value >= 100) {
-                                // Create a ref to the input element to animate
-                                const inputEl = e.target;
+                                // Get the container for consistent styling
+                                const container = document.getElementById('mastodonLimitContainer');
                                 
                                 // Save to localStorage
                                 localStorage.setItem('customMastodonLimit', value.toString());
@@ -283,12 +283,13 @@ export function PostComposer({
                                 // Update state
                                 onAdvancedOptionsChange({ customMastodonLimit: value });
                                 
-                                // Add a subtle flash effect to indicate saving
-                                inputEl.style.transition = 'background-color 0.5s ease';
-                                inputEl.style.backgroundColor = 'rgba(132, 204, 22, 0.2)'; // Light green
+                                // Add flash effect for saving
+                                container?.classList.remove('flash-reset');
+                                container?.classList.add('flash-save');
                                 
+                                // Remove animation classes after completion
                                 setTimeout(() => {
-                                  inputEl.style.backgroundColor = '';
+                                  container?.classList.remove('flash-save', 'flash-reset');
                                 }, 800);
                               }
                             }}
@@ -309,25 +310,29 @@ export function PostComposer({
                             e.preventDefault();
                             e.stopPropagation();
                             
+                            // Get the container for consistent styling
+                            const container = document.getElementById('mastodonLimitContainer');
+                            
                             // Get the input element
                             const inputEl = document.getElementById('mastodonCharLimit') as HTMLInputElement;
                             if (inputEl) {
-                              // Add a subtle flash effect to indicate resetting
-                              inputEl.style.transition = 'background-color 0.5s ease';
-                              inputEl.style.backgroundColor = 'rgba(239, 68, 68, 0.2)'; // Light red
+                              // Add flash effect for resetting
+                              container?.classList.remove('flash-save');
+                              container?.classList.add('flash-reset');
                               
+                              // Reset input value
+                              inputEl.value = '500';
+                              
+                              // Remove from localStorage
+                              localStorage.removeItem('customMastodonLimit');
+                              
+                              // Reset to default
+                              onAdvancedOptionsChange({ customMastodonLimit: 500 });
+                              
+                              // Remove animation classes after completion
                               setTimeout(() => {
-                                inputEl.style.backgroundColor = '';
-                                
-                                // Reset input value
-                                inputEl.value = '500';
-                                
-                                // Remove from localStorage
-                                localStorage.removeItem('customMastodonLimit');
-                                
-                                // Reset to default
-                                onAdvancedOptionsChange({ customMastodonLimit: 500 });
-                              }, 300);
+                                container?.classList.remove('flash-save', 'flash-reset');
+                              }, 800);
                             }
                           }}
                         >
@@ -341,18 +346,37 @@ export function PostComposer({
                 {/* Developer Options */}
                 <div className="border-t border-gray-200 pt-4 mt-4">
                   <h4 className="text-sm font-medium mb-3">Developer Options</h4>
-                  <div className="flex items-start space-x-2">
+                  <div className={`flex items-start space-x-2 p-2 ${localStorage.getItem('showRawJson') !== null ? 'local-storage-setting' : ''}`}>
                     <Checkbox 
                       id="showRawJson"
                       checked={advancedOptions.showRawJson}
                       onCheckedChange={(checked) => {
+                        // Get the parent container for the animation
+                        const container = document.getElementById('showRawJsonContainer');
+                        
                         // Save to localStorage
-                        localStorage.setItem('showRawJson', JSON.stringify(checked));
+                        if (checked) {
+                          localStorage.setItem('showRawJson', JSON.stringify(checked));
+                          // Add flash effect for saving
+                          container?.classList.remove('flash-reset');
+                          container?.classList.add('flash-save');
+                        } else {
+                          localStorage.removeItem('showRawJson');
+                          // Add flash effect for resetting
+                          container?.classList.remove('flash-save');
+                          container?.classList.add('flash-reset');
+                        }
+                        
                         // Update state
                         onAdvancedOptionsChange({ showRawJson: checked as boolean });
+                        
+                        // Remove animation classes after completion
+                        setTimeout(() => {
+                          container?.classList.remove('flash-save', 'flash-reset');
+                        }, 800);
                       }}
                     />
-                    <div className="grid gap-1.5 leading-none">
+                    <div id="showRawJsonContainer" className="grid gap-1.5 leading-none">
                       <label
                         htmlFor="showRawJson"
                         className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
@@ -378,6 +402,29 @@ export function PostComposer({
                     e.preventDefault();
                     e.stopPropagation();
                     
+                    // Get all containers for localStorage settings
+                    const mastodonLimitContainer = document.getElementById('mastodonLimitContainer');
+                    const showRawJsonContainer = document.getElementById('showRawJsonContainer');
+                    
+                    // Reset input value for Mastodon
+                    const mastodonInputEl = document.getElementById('mastodonCharLimit') as HTMLInputElement;
+                    if (mastodonInputEl) {
+                      mastodonInputEl.value = '500';
+                    }
+                    
+                    // Apply flash reset effect to all localStorage settings
+                    [mastodonLimitContainer, showRawJsonContainer].forEach(container => {
+                      if (container) {
+                        container.classList.remove('flash-save');
+                        container.classList.add('flash-reset');
+                        
+                        // Remove animation classes after completion
+                        setTimeout(() => {
+                          container.classList.remove('flash-save', 'flash-reset');
+                        }, 800);
+                      }
+                    });
+                    
                     // Clear localStorage settings
                     localStorage.removeItem('customMastodonLimit');
                     localStorage.removeItem('showRawJson');
@@ -393,9 +440,15 @@ export function PostComposer({
                       scheduledTime: undefined
                     });
                     
-                    // Show confirmation toast
-                    // If there's a toast mechanism, use it here
-                    alert('All settings have been reset to default values');
+                    // Show confirmation toast if available, otherwise alert
+                    try {
+                      toast({
+                        title: "Settings Reset",
+                        description: "All settings have been reset to default values"
+                      });
+                    } catch (e) {
+                      alert('All settings have been reset to default values');
+                    }
                   }}
                 >
                   Reset All Settings

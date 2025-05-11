@@ -28,7 +28,8 @@ export function SplitWithAIButton({
 }: SplitWithAIButtonProps) {
   const [showSplitPreview, setShowSplitPreview] = useState(false);
 
-  if (!content || content.length === 0) {
+  // Don't render anything if there's no content or we're not exceeding character limits
+  if (!content || content.length === 0 || !isContentTooLong) {
     return null;
   }
 
@@ -38,24 +39,10 @@ export function SplitWithAIButton({
     characterStats[0]
   );
 
-  // Determine button style based on content length
-  const getButtonStyle = () => {
-    if (isContentTooLong) {
-      return {
-        variant: "destructive" as const,
-        Icon: AlertCircle,
-        text: "Split with AI"
-      };
-    }
-    
-    return {
-      variant: "outline" as const,
-      Icon: AlertCircle,
-      text: "Optimize with AI"
-    };
-  };
-
-  const { variant, Icon, text } = getButtonStyle();
+  // Set button style - since we only show this when exceeding limits, we only need one style
+  const variant = "destructive" as const; 
+  const Icon = AlertCircle;
+  const text = "Split with AI";
   
   return (
     <>
