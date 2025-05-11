@@ -45,7 +45,7 @@ export function ThreadPostsManager({
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-2">
           <Badge variant="outline" className="px-3 py-1 text-xs">
-            <UIIcon.Thread className="mr-1 h-3 w-3" />
+            <AlignJustify className="mr-1 h-3 w-3" />
             Thread Mode
           </Badge>
           <Badge variant="secondary" className="px-3 py-1">
@@ -60,12 +60,12 @@ export function ThreadPostsManager({
           >
             {expandedView ? (
               <>
-                <UIIcon.Collapse className="mr-1 h-4 w-4" />
+                <Minimize2 className="mr-1 h-4 w-4" />
                 Collapse
               </>
             ) : (
               <>
-                <UIIcon.Expand className="mr-1 h-4 w-4" />
+                <Maximize2 className="mr-1 h-4 w-4" />
                 Expand
               </>
             )}
@@ -75,7 +75,7 @@ export function ThreadPostsManager({
             size="sm"
             onClick={() => onAddPost()}
           >
-            <UIIcon.Plus className="mr-1 h-4 w-4" />
+            <Plus className="mr-1 h-4 w-4" />
             Add Post
           </Button>
           <Button 
@@ -83,7 +83,7 @@ export function ThreadPostsManager({
             size="sm"
             onClick={onExit}
           >
-            <UIIcon.Exit className="mr-1 h-4 w-4" />
+            <XCircle className="mr-1 h-4 w-4" />
             Exit Thread
           </Button>
         </div>
@@ -130,7 +130,7 @@ export function ThreadPostsManager({
                     className="h-7 w-7"
                     onClick={() => onSwitchPost(index)}
                   >
-                    <UIIcon.Edit className="h-4 w-4" />
+                    <Pencil className="h-4 w-4" />
                     <span className="sr-only">Edit</span>
                   </Button>
                   <Button
@@ -140,7 +140,7 @@ export function ThreadPostsManager({
                     onClick={() => onRemovePost(index)}
                     disabled={threadPosts.length <= 1}
                   >
-                    <UIIcon.Delete className="h-4 w-4" />
+                    <Trash2 className="h-4 w-4" />
                     <span className="sr-only">Delete</span>
                   </Button>
                 </div>
@@ -173,7 +173,7 @@ export function ThreadPostsManager({
               size="sm"
               onClick={() => onRemovePost(activeIndex)}
             >
-              <UIIcon.Delete className="mr-1 h-4 w-4" />
+              <Trash2 className="mr-1 h-4 w-4" />
               Remove This Post
             </Button>
           </div>
@@ -188,7 +188,7 @@ export function ThreadPostsManager({
           disabled={activeIndex === 0}
           onClick={() => onSwitchPost(activeIndex - 1)}
         >
-          <UIIcon.ArrowLeft className="mr-1 h-4 w-4" />
+          <ArrowLeft className="mr-1 h-4 w-4" />
           Previous Post
         </Button>
         <Button
@@ -198,7 +198,7 @@ export function ThreadPostsManager({
           onClick={() => onSwitchPost(activeIndex + 1)}
         >
           Next Post
-          <UIIcon.ArrowRight className="ml-1 h-4 w-4" />
+          <ArrowRight className="ml-1 h-4 w-4" />
         </Button>
       </div>
     </div>
