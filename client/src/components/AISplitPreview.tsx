@@ -67,8 +67,21 @@ export function AISplitPreview({
         setError(null);
         
         try {
+          console.log("Calling splitPost with content:", content.substring(0, 50) + "...");
           const results = await splitPost(content);
-          setSplitResults(results);
+          console.log("Split results received:", results);
+          
+          // Check if results has the expected structure
+          if (results && Object.keys(results).length > 0) {
+            setSplitResults(results);
+          } else {
+            setError("Received empty or invalid results from the server");
+            toast({
+              title: 'Error',
+              description: 'Failed to generate split options. Invalid response format.',
+              variant: 'destructive',
+            });
+          }
         } catch (error: any) {
           console.error('Failed to generate split options:', error);
           setError(error.message || 'Failed to generate split options');
