@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
@@ -6,6 +6,9 @@ import { Card } from "@/components/ui/card";
 import { ThreadPost } from "../types";
 import { AlignJustify, ArrowLeft, ArrowRight, Maximize2, Minimize2, Pencil, Plus, Trash2, XCircle } from "lucide-react";
 import { useToast } from "../hooks/use-toast";
+
+// Add a unique key for local storage
+const THREAD_STORAGE_KEY = "multipost_thread_state";
 
 interface ThreadPostsManagerProps {
   threadPosts: ThreadPost[];
@@ -15,6 +18,12 @@ interface ThreadPostsManagerProps {
   onRemovePost: (index: number) => void;
   onContentChange: (content: string) => void;
   onExit: () => void;
+}
+
+interface ThreadState {
+  posts: ThreadPost[];
+  activeIndex: number;
+  currentContent: string;
 }
 
 export function ThreadPostsManager({
@@ -28,49 +37,88 @@ export function ThreadPostsManager({
 }: ThreadPostsManagerProps) {
   const { toast } = useToast();
   const [expandedView, setExpandedView] = useState(false);
-  const [localPosts, setLocalPosts] = useState<ThreadPost[]>([]);
-  const [localContent, setLocalContent] = useState("");
   
-  // Keep track of our own synchronized copy of the posts
-  useEffect(() => {
-    // Only do a full reset when needed
-    const needsReset = threadPosts.length !== localPosts.length || 
-                       !localPosts[activeIndex] || 
-                       (localPosts[activeIndex] && localPosts[activeIndex].order !== activeIndex);
-    
-    if (needsReset) {
-      console.log("Resetting local posts state", { threadPosts, activeIndex });
-      const freshLocalPosts = JSON.parse(JSON.stringify(threadPosts));
-      setLocalPosts(freshLocalPosts);
-      
-      // Set the local content to match the active post
-      if (freshLocalPosts[activeIndex]) {
-        setLocalContent(freshLocalPosts[activeIndex].content || "");
+  // Initialize or restore thread state from localStorage
+  const initializeThreadState = (): ThreadState => {
+    try {
+      // Try to get stored state
+      const savedState = localStorage.getItem(THREAD_STORAGE_KEY);
+      if (savedState) {
+        const parsedState = JSON.parse(savedState) as ThreadState;
+        
+        // Only use saved state if the post count is the same, otherwise use props
+        if (parsedState.posts.length === threadPosts.length) {
+          console.log("Restored thread state from localStorage");
+          return parsedState;
+        }
       }
+    } catch (error) {
+      console.error("Error retrieving thread state:", error);
+    }
+    
+    // Default to props if no saved state or error
+    return {
+      posts: JSON.parse(JSON.stringify(threadPosts)),
+      activeIndex: activeIndex,
+      currentContent: threadPosts[activeIndex]?.content || ""
+    };
+  };
+  
+  // Unified thread state
+  const [threadState, setThreadState] = useState<ThreadState>(initializeThreadState);
+  
+  // Save thread state to localStorage whenever it changes
+  useEffect(() => {
+    try {
+      localStorage.setItem(THREAD_STORAGE_KEY, JSON.stringify(threadState));
+    } catch (error) {
+      console.error("Error saving thread state:", error);
+    }
+  }, [threadState]);
+  
+  // Handle syncing with parent component
+  useEffect(() => {
+    // Only reset completely if length changes (new thread or exit)
+    if (threadPosts.length !== threadState.posts.length) {
+      console.log("Thread posts count changed, reinitializing", {
+        threadPosts: threadPosts.length,
+        threadState: threadState.posts.length
+      });
+      setThreadState(initializeThreadState());
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [threadPosts, activeIndex]); // Deliberately excluding localPosts to prevent loops
+  }, [threadPosts.length]);
   
   // When switching posts, save content for previous post first
   const handleSwitchPost = (newIndex: number) => {
     try {
-      // Save current content to local posts first
-      const updatedPosts = [...localPosts];
-      if (updatedPosts[activeIndex]) {
-        updatedPosts[activeIndex] = {
-          ...updatedPosts[activeIndex],
-          content: localContent
-        };
+      if (newIndex < 0 || newIndex >= threadState.posts.length) {
+        return; // Invalid index
       }
       
-      // Update local content to the new post
-      const newContent = updatedPosts[newIndex]?.content || "";
-      setLocalContent(newContent);
-      setLocalPosts(updatedPosts);
-      
-      // Notify parent component
-      onContentChange(newContent);
-      onSwitchPost(newIndex);
+      // Update the thread state with current content before switching
+      setThreadState(prev => {
+        const updatedPosts = [...prev.posts];
+        
+        // Save current content to current post
+        updatedPosts[prev.activeIndex] = {
+          ...updatedPosts[prev.activeIndex],
+          content: prev.currentContent
+        };
+        
+        // Get content from target post
+        const newContent = updatedPosts[newIndex].content || "";
+        
+        // Update parent state
+        onContentChange(newContent);
+        onSwitchPost(newIndex);
+        
+        return {
+          posts: updatedPosts,
+          activeIndex: newIndex,
+          currentContent: newContent
+        };
+      });
     } catch (error) {
       console.error("Error switching posts:", error);
       toast({
@@ -85,38 +133,46 @@ export function ThreadPostsManager({
   const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const newContent = e.target.value;
     
-    // Save to local state first
-    setLocalContent(newContent);
-    
-    // Update the local posts array
-    const updatedPosts = [...localPosts];
-    if (updatedPosts[activeIndex]) {
-      updatedPosts[activeIndex] = {
-        ...updatedPosts[activeIndex],
+    // Update thread state with new content
+    setThreadState(prev => {
+      // Also update the posts array
+      const updatedPosts = [...prev.posts];
+      updatedPosts[prev.activeIndex] = {
+        ...updatedPosts[prev.activeIndex],
         content: newContent
       };
-      setLocalPosts(updatedPosts);
-    }
-    
-    // Update the global content state which triggers re-renders
-    onContentChange(newContent);
+      
+      // Update parent state
+      onContentChange(newContent);
+      
+      return {
+        ...prev,
+        posts: updatedPosts,
+        currentContent: newContent
+      };
+    });
   };
   
   // Handle adding a new post with proper data synchronization
   const handleAddPost = () => {
     try {
-      // Save current content first
-      const updatedPosts = [...localPosts];
-      if (updatedPosts[activeIndex]) {
-        updatedPosts[activeIndex] = {
-          ...updatedPosts[activeIndex],
-          content: localContent
+      // Save current state to localStorage before adding new post
+      setThreadState(prev => {
+        const updatedPosts = [...prev.posts];
+        updatedPosts[prev.activeIndex] = {
+          ...updatedPosts[prev.activeIndex],
+          content: prev.currentContent
         };
-      }
-      setLocalPosts(updatedPosts);
-      
-      // Let parent handle the actual post creation
-      onAddPost();
+        
+        // Let parent handle the actual post creation
+        // but pass the current content to ensure it's preserved
+        onAddPost(prev.currentContent);
+        
+        return {
+          ...prev,
+          posts: updatedPosts
+        };
+      });
     } catch (error) {
       console.error("Error adding post:", error);
       toast({
@@ -130,18 +186,22 @@ export function ThreadPostsManager({
   // Handle removing a post with proper data synchronization
   const handleRemovePost = (index: number) => {
     try {
-      // Save current content first
-      const updatedPosts = [...localPosts];
-      if (updatedPosts[activeIndex]) {
-        updatedPosts[activeIndex] = {
-          ...updatedPosts[activeIndex],
-          content: localContent
+      // Save the current state before removing
+      setThreadState(prev => {
+        const updatedPosts = [...prev.posts];
+        updatedPosts[prev.activeIndex] = {
+          ...updatedPosts[prev.activeIndex],
+          content: prev.currentContent
         };
-      }
-      setLocalPosts(updatedPosts);
-      
-      // Let parent handle the post removal
-      onRemovePost(index);
+        
+        // Let parent handle the actual post removal
+        onRemovePost(index);
+        
+        return {
+          ...prev,
+          posts: updatedPosts
+        };
+      });
     } catch (error) {
       console.error("Error removing post:", error);
       toast({
@@ -155,18 +215,30 @@ export function ThreadPostsManager({
   // Handle exiting thread mode with proper data synchronization
   const handleExit = () => {
     try {
-      // Save current content first
-      const updatedPosts = [...localPosts];
-      if (updatedPosts[activeIndex]) {
-        updatedPosts[activeIndex] = {
-          ...updatedPosts[activeIndex],
-          content: localContent
+      // Save the current content before exiting
+      if (threadState.posts[threadState.activeIndex]) {
+        // Create a final snapshot that will be saved to localStorage
+        const finalState = {
+          ...threadState,
+          posts: threadState.posts.map((post, idx) => ({
+            ...post,
+            content: idx === threadState.activeIndex 
+              ? threadState.currentContent 
+              : post.content
+          }))
         };
+        
+        // Save to localStorage before exit
+        localStorage.setItem(THREAD_STORAGE_KEY, JSON.stringify(finalState));
+        
+        // Tell parent the final content to maintain
+        onContentChange(threadState.currentContent);
+        
+        // Now exit
+        onExit();
+      } else {
+        onExit();
       }
-      setLocalPosts(updatedPosts);
-      
-      // Let parent handle exiting thread mode
-      onExit();
     } catch (error) {
       console.error("Error exiting thread mode:", error);
       toast({
@@ -187,7 +259,7 @@ export function ThreadPostsManager({
             Thread Mode
           </Badge>
           <Badge variant="secondary" className="px-3 py-1">
-            {localPosts.length} {localPosts.length === 1 ? 'post' : 'posts'}
+            {threadState.posts.length} {threadState.posts.length === 1 ? 'post' : 'posts'}
           </Badge>
         </div>
         <div className="flex items-center gap-2">
@@ -229,10 +301,10 @@ export function ThreadPostsManager({
       
       {/* Post navigator */}
       <div className="flex items-center gap-2 overflow-x-auto pb-2">
-        {localPosts.map((post, index) => (
+        {threadState.posts.map((post, index) => (
           <Button
             key={`thread-post-${index}`}
-            variant={activeIndex === index ? "default" : "outline"}
+            variant={threadState.activeIndex === index ? "default" : "outline"}
             size="sm"
             className="flex-shrink-0"
             onClick={() => handleSwitchPost(index)}
@@ -241,7 +313,7 @@ export function ThreadPostsManager({
             {index === 0 && (
               <span className="ml-1 text-xs opacity-75">(first)</span>
             )}
-            {index === localPosts.length - 1 && index > 0 && (
+            {index === threadState.posts.length - 1 && index > 0 && (
               <span className="ml-1 text-xs opacity-75">(last)</span>
             )}
           </Button>
@@ -252,14 +324,14 @@ export function ThreadPostsManager({
       {expandedView && (
         <div className="space-y-3 mt-4 rounded-lg border p-4 bg-muted/30">
           <h3 className="text-sm font-medium mb-2">All Posts in Thread</h3>
-          {localPosts.map((post, index) => (
+          {threadState.posts.map((post, index) => (
             <Card 
               key={`expanded-post-${index}`}
-              className={`p-3 relative ${activeIndex === index ? 'border-primary' : ''}`}
+              className={`p-3 relative ${threadState.activeIndex === index ? 'border-primary' : ''}`}
             >
               <div className="flex justify-between items-start mb-2">
-                <Badge variant={activeIndex === index ? "default" : "outline"}>
-                  Post {index + 1}/{localPosts.length}
+                <Badge variant={threadState.activeIndex === index ? "default" : "outline"}>
+                  Post {index + 1}/{threadState.posts.length}
                 </Badge>
                 <div className="flex gap-1">
                   <Button
@@ -276,7 +348,7 @@ export function ThreadPostsManager({
                     size="icon"
                     className="h-7 w-7 text-destructive hover:bg-destructive/10"
                     onClick={() => handleRemovePost(index)}
-                    disabled={localPosts.length <= 1}
+                    disabled={threadState.posts.length <= 1}
                   >
                     <Trash2 className="h-4 w-4" />
                     <span className="sr-only">Delete</span>
@@ -284,7 +356,10 @@ export function ThreadPostsManager({
                 </div>
               </div>
               <div className="text-sm whitespace-pre-wrap break-words">
-                {index === activeIndex ? localContent : (post.content || <span className="text-muted-foreground italic">Empty post</span>)}
+                {index === threadState.activeIndex 
+                  ? threadState.currentContent 
+                  : (post.content || <span className="text-muted-foreground italic">Empty post</span>)
+                }
               </div>
             </Card>
           ))}
@@ -295,21 +370,21 @@ export function ThreadPostsManager({
       <div className="relative">
         <div className="absolute top-2 right-2 z-10">
           <Badge variant="outline" className="bg-background">
-            Editing Post {activeIndex + 1}/{localPosts.length}
+            Editing Post {threadState.activeIndex + 1}/{threadState.posts.length}
           </Badge>
         </div>
         <Textarea
-          value={localContent}
+          value={threadState.currentContent}
           onChange={handleContentChange}
-          placeholder={`Write content for post ${activeIndex + 1}...`}
+          placeholder={`Write content for post ${threadState.activeIndex + 1}...`}
           className="min-h-[150px]"
         />
-        {localPosts.length > 1 && (
+        {threadState.posts.length > 1 && (
           <div className="flex justify-end mt-2">
             <Button
               variant="destructive"
               size="sm"
-              onClick={() => handleRemovePost(activeIndex)}
+              onClick={() => handleRemovePost(threadState.activeIndex)}
             >
               <Trash2 className="mr-1 h-4 w-4" />
               Remove This Post
@@ -323,8 +398,8 @@ export function ThreadPostsManager({
         <Button
           variant="outline"
           size="sm"
-          disabled={activeIndex === 0}
-          onClick={() => handleSwitchPost(activeIndex - 1)}
+          disabled={threadState.activeIndex === 0}
+          onClick={() => handleSwitchPost(threadState.activeIndex - 1)}
         >
           <ArrowLeft className="mr-1 h-4 w-4" />
           Previous Post
@@ -332,8 +407,8 @@ export function ThreadPostsManager({
         <Button
           variant="outline"
           size="sm"
-          disabled={activeIndex >= localPosts.length - 1}
-          onClick={() => handleSwitchPost(activeIndex + 1)}
+          disabled={threadState.activeIndex >= threadState.posts.length - 1}
+          onClick={() => handleSwitchPost(threadState.activeIndex + 1)}
         >
           Next Post
           <ArrowRight className="ml-1 h-4 w-4" />
