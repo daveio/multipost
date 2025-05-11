@@ -125,11 +125,22 @@ export function AISplitPreview({
     
     console.log('Saving config:', newConfig);
     
-    // Get current saved configs or initialize empty array
-    const currentConfigs = advancedOptions.savedSplittingConfigs || [];
+    // Get current saved configs from localStorage directly to ensure we have the latest
+    let currentConfigs: SplittingConfig[] = [];
+    try {
+      const savedConfigsJson = localStorage.getItem('savedSplittingConfigs');
+      if (savedConfigsJson) {
+        currentConfigs = JSON.parse(savedConfigsJson);
+        console.log('Loaded existing configs from localStorage:', currentConfigs);
+      }
+    } catch (error) {
+      console.error('Error loading configs from localStorage:', error);
+      // Fallback to props if localStorage parsing fails
+      currentConfigs = advancedOptions.savedSplittingConfigs || [];
+    }
     
     // Check if a config with this name already exists
-    const existingConfigIndex = currentConfigs.findIndex((config: SplittingConfig) => config.name === name);
+    const existingConfigIndex = currentConfigs.findIndex((config) => config.name === name);
     
     // Update or add the config
     let updatedConfigs: SplittingConfig[];
@@ -137,13 +148,17 @@ export function AISplitPreview({
       // Replace existing config
       updatedConfigs = [...currentConfigs];
       updatedConfigs[existingConfigIndex] = newConfig;
+      console.log('Updated existing config at index', existingConfigIndex);
     } else {
       // Add new config
       updatedConfigs = [...currentConfigs, newConfig];
+      console.log('Added new config, new count:', updatedConfigs.length);
     }
     
     // Save to localStorage
-    localStorage.setItem('savedSplittingConfigs', JSON.stringify(updatedConfigs));
+    const configsJson = JSON.stringify(updatedConfigs);
+    localStorage.setItem('savedSplittingConfigs', configsJson);
+    console.log('Saved configs to localStorage:', configsJson);
     
     // Show toast notification
     toast({
@@ -186,14 +201,30 @@ export function AISplitPreview({
   
   // Delete a saved configuration
   const deleteConfig = (configName: string) => {
-    // Get current saved configs
-    const currentConfigs = advancedOptions.savedSplittingConfigs || [];
+    console.log('Deleting configuration:', configName);
+    
+    // Get current saved configs directly from localStorage
+    let currentConfigs: SplittingConfig[] = [];
+    try {
+      const savedConfigsJson = localStorage.getItem('savedSplittingConfigs');
+      if (savedConfigsJson) {
+        currentConfigs = JSON.parse(savedConfigsJson);
+        console.log('Loaded existing configs for deletion:', currentConfigs);
+      }
+    } catch (error) {
+      console.error('Error loading configs from localStorage for deletion:', error);
+      // Fallback to props if localStorage parsing fails
+      currentConfigs = advancedOptions.savedSplittingConfigs || [];
+    }
     
     // Filter out the config to delete
-    const updatedConfigs = currentConfigs.filter((config: SplittingConfig) => config.name !== configName);
+    const updatedConfigs = currentConfigs.filter((config) => config.name !== configName);
+    console.log(`Filtered configs, removed ${currentConfigs.length - updatedConfigs.length} config(s)`, updatedConfigs);
     
     // Save to localStorage
-    localStorage.setItem('savedSplittingConfigs', JSON.stringify(updatedConfigs));
+    const configsJson = JSON.stringify(updatedConfigs);
+    localStorage.setItem('savedSplittingConfigs', configsJson);
+    console.log('Saved updated configs after deletion:', configsJson);
     
     toast({
       title: "Configuration Deleted",

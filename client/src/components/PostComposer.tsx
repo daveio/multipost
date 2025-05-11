@@ -473,11 +473,28 @@ export function PostComposer({
                       }
                     });
                     
-                    // Clear localStorage settings
-                    localStorage.removeItem('customMastodonLimit');
-                    localStorage.removeItem('showRawJson');
-                    localStorage.removeItem('showReasoning');
-                    localStorage.removeItem('savedSplittingConfigs');
+                    // Clear ALL localStorage settings - complete failsafe reset
+                    console.log('Clearing all localStorage settings...');
+                    
+                    // List of all our localStorage keys
+                    const localStorageKeys = [
+                      'customMastodonLimit', 
+                      'showRawJson', 
+                      'showReasoning', 
+                      'savedSplittingConfigs',
+                      // Add any future localStorage keys here
+                    ];
+                    
+                    // Remove each key
+                    localStorageKeys.forEach(key => {
+                      console.log(`Removing localStorage key: ${key}`);
+                      localStorage.removeItem(key);
+                    });
+                    
+                    // Verify clearance
+                    localStorageKeys.forEach(key => {
+                      console.log(`${key} after removal:`, localStorage.getItem(key));
+                    });
                     
                     // Reset state
                     onAdvancedOptionsChange({

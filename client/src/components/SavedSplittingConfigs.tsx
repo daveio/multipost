@@ -137,11 +137,14 @@ export function SavedSplittingConfigs({
             >
               <span className="truncate max-w-[150px]">{config.name}</span>
               <Button
+                type="button"
                 variant="ghost"
                 size="icon"
                 className="h-5 w-5 rounded-full ml-2 hover:bg-destructive/10 hover:text-destructive"
                 onClick={(e) => {
+                  e.preventDefault(); // Prevent default action
                   e.stopPropagation(); // Prevent parent click
+                  console.log('Deleting config:', config.name);
                   onDeleteConfig(config.name);
                 }}
               >
