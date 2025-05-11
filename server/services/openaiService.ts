@@ -49,13 +49,39 @@ export async function splitPost(
 
     // Parse the response
     const responseContent = response.choices[0].message.content || "{}";
-    const result = JSON.parse(responseContent);
     
-    return {
-      splitText: result.posts || [content],
-      strategy,
-      reasoning: result.reasoning || "No reasoning provided"
-    };
+    try {
+      const result = JSON.parse(responseContent);
+      
+      // Ensure we have an array of posts
+      let splitTextArray: string[];
+      
+      if (result.posts) {
+        if (Array.isArray(result.posts)) {
+          splitTextArray = result.posts;
+        } else if (typeof result.posts === 'string') {
+          splitTextArray = [result.posts];
+        } else {
+          console.warn("Invalid posts format from OpenAI:", result.posts);
+          splitTextArray = [content];
+        }
+      } else {
+        splitTextArray = [content];
+      }
+      
+      return {
+        splitText: splitTextArray,
+        strategy,
+        reasoning: result.reasoning || "Split based on platform character limits"
+      };
+    } catch (parseError) {
+      console.error("Error parsing OpenAI response:", responseContent, parseError);
+      return {
+        splitText: [content],
+        strategy,
+        reasoning: "Error parsing AI response, using original content"
+      };
+    }
   } catch (error: any) {
     console.error("Error splitting post:", error);
     throw new Error(`Failed to split post: ${error.message || "Unknown error"}`);
