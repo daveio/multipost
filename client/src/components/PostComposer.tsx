@@ -85,47 +85,9 @@ export function PostComposer({
             disabled={isPendingPost}
           />
           
-          {/* Start/Continue Thread Button - Only appears when content exceeds character limit */}
-          {isContentTooLong && (
-            <div className="absolute bottom-3 right-3 z-10">
-              <Button
-                variant="secondary"
-                size="sm"
-                onClick={(e) => {
-                  e.preventDefault();
-                  
-                  // Add thread numbering to current content if needed
-                  let updatedContent = content;
-                  const isFirstPost = !content.includes(advancedOptions.threadNotationFormat.replace('x', '1'));
-                  
-                  if (isFirstPost && advancedOptions.useThreadNotation) {
-                    updatedContent = content + '\n\n' + advancedOptions.threadNotationFormat.replace('x', '1').replace('y', '2');
-                  }
-                  
-                  // Create new post with thread numbering
-                  const newPost = advancedOptions.useThreadNotation 
-                    ? advancedOptions.threadNotationFormat.replace('x', '2').replace('y', '2') 
-                    : '';
-                  
-                  // Apply the split
-                  onApplySplit && onApplySplit(
-                    SplittingStrategy.SEMANTIC,
-                    characterStats[0]?.platform || 'bluesky',
-                    [updatedContent, newPost]
-                  );
-                }}
-                type="button"
-              >
-                <UIIcon.Split className="mr-2 h-4 w-4" />
-                {!content.includes(advancedOptions.threadNotationFormat.replace('x', '1')) 
-                  ? "Start Thread" 
-                  : "Continue Thread"}
-              </Button>
-            </div>
-          )}
-          
-          {/* Character Count */}
-          <div className="mt-2 flex justify-between text-sm">
+          {/* Character Count & Controls Row - Must be outside textarea to prevent overlap */}
+          <div className="mt-2 flex flex-wrap justify-between text-sm gap-2 items-center">
+            {/* Left side - Character count */}
             <div className={`
               ${isContentTooLong ? "text-red-500 font-medium" : 
               content.length > 0.8 * Math.min(...characterStats.map(s => s.limit)) ? 
@@ -134,8 +96,46 @@ export function PostComposer({
               {content.length} characters
             </div>
             
-            {/* Post splitting options - AI Button Only */}
-            <div className="flex gap-2">
+            {/* Right side - Action buttons */}
+            <div className="flex flex-wrap gap-2 ml-auto items-center">
+              {/* Start/Continue Thread Button - Only appears when content exceeds character limit */}
+              {isContentTooLong && (
+                <Button
+                  variant="secondary"
+                  size="sm"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    
+                    // Add thread numbering to current content if needed
+                    let updatedContent = content;
+                    const isFirstPost = !content.includes(advancedOptions.threadNotationFormat.replace('x', '1'));
+                    
+                    if (isFirstPost && advancedOptions.useThreadNotation) {
+                      updatedContent = content + '\n\n' + advancedOptions.threadNotationFormat.replace('x', '1').replace('y', '2');
+                    }
+                    
+                    // Create new post with thread numbering
+                    const newPost = advancedOptions.useThreadNotation 
+                      ? advancedOptions.threadNotationFormat.replace('x', '2').replace('y', '2') 
+                      : '';
+                    
+                    // Apply the split
+                    onApplySplit && onApplySplit(
+                      SplittingStrategy.SEMANTIC,
+                      characterStats[0]?.platform || 'bluesky',
+                      [updatedContent, newPost]
+                    );
+                  }}
+                  type="button"
+                  className="flex-shrink-0"
+                >
+                  <UIIcon.Split className="mr-2 h-4 w-4" />
+                  {!content.includes(advancedOptions.threadNotationFormat.replace('x', '1')) 
+                    ? "Start Thread" 
+                    : "Continue Thread"}
+                </Button>
+              )}
+              
               {/* AI Split Button */}
               <SplitWithAIButton 
                 content={content}
