@@ -16,10 +16,11 @@ Multipost is a comprehensive web application for intelligent content sharing acr
 10. [Thread Management](#thread-management)
 11. [Installation & Setup](#installation--setup)
 12. [Configuration](#configuration)
-13. [API Reference](#api-reference)
-14. [Workflow States](#workflow-states)
-15. [Error Handling](#error-handling)
-16. [Screenshots & UI Components](#screenshots--ui-components)
+13. [Theming](#theming)
+14. [API Reference](#api-reference)
+15. [Workflow States](#workflow-states)
+16. [Error Handling](#error-handling)
+17. [Screenshots & UI Components](#screenshots--ui-components)
 
 ## Overview
 
@@ -40,6 +41,7 @@ Multipost enables users to compose and publish content simultaneously to multipl
 - **Media Support**: Upload and attach media files to posts
 - **Draft Saving**: Save posts as drafts for later editing
 - **Platform Account Selection**: Choose which accounts to post to on each platform
+- **Catppuccin Theming**: Four beautiful theme options (Latte, Frappé, Macchiato, Mocha)
 - **Advanced Configuration**: Customize post appearance and behavior
 - **Configuration Persistence**: Save and load splitting configurations
 
@@ -51,6 +53,7 @@ Multipost is built using a modern web stack:
 - **React**: UI component library
 - **TypeScript**: Type-safe JavaScript
 - **TailwindCSS**: Utility-first CSS framework
+- **Catppuccin**: Color palette framework with four theme variants
 - **shadcn/ui**: Component library with a clean, modern design
 - **React Query**: Data fetching and state management
 - **wouter**: Lightweight routing solution
@@ -584,6 +587,50 @@ Advanced options are stored in localStorage:
 - Custom Mastodon character limit
 - Show AI reasoning toggle
 - Raw JSON display toggle
+
+## Theming
+
+The application features a comprehensive theming system based on the Catppuccin color palette:
+
+### Catppuccin Theme Framework
+
+The Catppuccin theme framework provides a cohesive and visually pleasing appearance with four distinct theme flavors:
+
+1. **Latte** - Light theme with soft, warm colors
+2. **Frappé** - Dark theme with medium contrast (default)
+3. **Macchiato** - Dark theme with higher contrast
+4. **Mocha** - Dark theme with rich, saturated colors
+
+### Theme Implementation Details
+
+- **Default Theme**: The application defaults to the Frappé theme (dark mode)
+- **Theme Selection**: Users can switch between themes using the theme selector in the header
+- **Theme Categories**: Themes are organized into Light (Latte) and Dark (Frappé, Macchiato, Mocha) categories
+- **Persistence**: Selected theme preference is saved to localStorage
+- **System Preference**: On first visit, the theme will respect the user's system preference (dark/light)
+
+### Theme Architecture
+
+- **CatppuccinThemeProvider**: Context provider that manages theme state and localStorage persistence
+- **useCatppuccinTheme**: Custom hook to access current theme and theme-switching functions
+- **Theme Variables**: CSS variables defined in `tailwind.config.ts` connected to Catppuccin color values
+- **Theme-Aware Components**: UI components that adapt their appearance based on the active theme
+
+### Color Palette Integration
+
+- **Social Icons**: Platform icons adapt colors based on theme for optimal visibility
+- **Platform Cards**: Backgrounds and text colors adjust based on theme
+- **UI Elements**: All interface elements use theme-aware color variables
+- **Contrast Optimization**: Text and background colors are carefully paired to maintain readability
+
+### Theme Customization
+
+The theme implementation uses Tailwind CSS and CSS variables, allowing for:
+
+1. **Consistent Styling**: All components share the same color definitions
+2. **Easy Extensibility**: New components automatically inherit theme colors
+3. **Accessibility**: Color contrasts meet WCAG guidelines across all themes
+4. **Performance**: Theme switching happens without page reloads
 
 ## API Reference
 
