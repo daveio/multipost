@@ -123,7 +123,35 @@ export async function splitPost(
     }
   } catch (error: any) {
     console.error("Error splitting post:", error);
-    throw new Error(`Failed to split post: ${error.message || "Unknown error"}`);
+    
+    // Enhanced error handling with specific OpenAI error cases
+    let errorMessage = `Failed to split post: ${error.message || "Unknown error"}`;
+    let errorCode = "general_error";
+    
+    // Extract OpenAI specific error codes if available
+    if (error.response?.data?.error) {
+      const openAIError = error.response.data.error;
+      
+      // Map common OpenAI errors to user-friendly messages
+      if (openAIError.type === 'invalid_request_error') {
+        if (openAIError.code === 'invalid_api_key') {
+          errorMessage = "Invalid OpenAI API key provided. Please check your API key.";
+          errorCode = "invalid_api_key";
+        } else if (openAIError.code === 'rate_limit_exceeded') {
+          errorMessage = "OpenAI rate limit exceeded. Please try again after a short wait.";
+          errorCode = "rate_limit_exceeded";
+        } else if (openAIError.code === 'insufficient_quota') {
+          errorMessage = "OpenAI quota exceeded. Please check your OpenAI account billing.";
+          errorCode = "insufficient_quota";
+        }
+      }
+    }
+    
+    // Create an enhanced error object with code and details
+    const enhancedError = new Error(errorMessage);
+    (enhancedError as any).code = errorCode;
+    (enhancedError as any).originalError = error;
+    throw enhancedError;
   }
 }
 
@@ -229,7 +257,35 @@ export async function optimizePost(
     return response.choices[0].message.content?.trim() || "";
   } catch (error: any) {
     console.error("Error optimizing post:", error);
-    throw new Error(`Failed to optimize post: ${error.message || "Unknown error"}`);
+    
+    // Enhanced error handling with specific OpenAI error cases
+    let errorMessage = `Failed to optimize post: ${error.message || "Unknown error"}`;
+    let errorCode = "general_error";
+    
+    // Extract OpenAI specific error codes if available
+    if (error.response?.data?.error) {
+      const openAIError = error.response.data.error;
+      
+      // Map common OpenAI errors to user-friendly messages
+      if (openAIError.type === 'invalid_request_error') {
+        if (openAIError.code === 'invalid_api_key') {
+          errorMessage = "Invalid OpenAI API key provided. Please check your API key.";
+          errorCode = "invalid_api_key";
+        } else if (openAIError.code === 'rate_limit_exceeded') {
+          errorMessage = "OpenAI rate limit exceeded. Please try again after a short wait.";
+          errorCode = "rate_limit_exceeded";
+        } else if (openAIError.code === 'insufficient_quota') {
+          errorMessage = "OpenAI quota exceeded. Please check your OpenAI account billing.";
+          errorCode = "insufficient_quota";
+        }
+      }
+    }
+    
+    // Create an enhanced error object with code and details
+    const enhancedError = new Error(errorMessage);
+    (enhancedError as any).code = errorCode;
+    (enhancedError as any).originalError = error;
+    throw enhancedError;
   }
 }
 

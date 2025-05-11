@@ -312,6 +312,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
         param: error.param || null
       };
       
+      // Add user-friendly suggestion based on error code
+      if (error.code === 'invalid_api_key' || error.code === 'missing_api_key') {
+        errorResponse.suggestion = "Please check that your OpenAI API key is correctly configured.";
+      } else if (error.code === 'rate_limit_exceeded') {
+        errorResponse.suggestion = "Please wait a few moments and try again.";
+      } else if (error.code === 'insufficient_quota') {
+        errorResponse.suggestion = "Please check your OpenAI account billing or usage limits.";
+      }
+      
       // Add specific error handling for common OpenAI API issues
       if (error.response && error.response.status) {
         errorResponse.statusCode = error.response.status;
@@ -337,6 +346,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // AI Post Optimization for specific platform
   app.post(`${API_PREFIX}/optimize-post`, async (req: Request, res: Response) => {
     try {
+      // Verify the OpenAI API key is configured
+      if (!process.env.OPENAI_API_KEY) {
+        return res.status(500).json({
+          message: "OpenAI API key is missing",
+          error: "The OpenAI API key is not configured. Add OPENAI_API_KEY to your environment variables.",
+          code: "missing_api_key",
+          suggestion: "Please check that your OpenAI API key is correctly configured."
+        });
+      }
+      
       const { content, platform, customMastodonLimit } = req.body;
       
       if (!content || typeof content !== 'string') {
@@ -370,6 +389,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
         type: error.type || "SERVER_ERROR",
         param: error.param || null
       };
+      
+      // Add user-friendly suggestion based on error code
+      if (error.code === 'invalid_api_key' || error.code === 'missing_api_key') {
+        errorResponse.suggestion = "Please check that your OpenAI API key is correctly configured.";
+      } else if (error.code === 'rate_limit_exceeded') {
+        errorResponse.suggestion = "Please wait a few moments and try again.";
+      } else if (error.code === 'insufficient_quota') {
+        errorResponse.suggestion = "Please check your OpenAI account billing or usage limits.";
+      }
       
       // Add specific error handling for common OpenAI API issues
       if (error.response && error.response.status) {
