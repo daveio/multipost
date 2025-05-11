@@ -1,6 +1,0 @@
-- content_for :title, "Editing post"
-.w-full{ class: "md:w-2/3" }
-  %h1.font-bold.text-4xl Editing post
-  = render "form", post: @post
-  = link_to "Show this post", @post, class: "ml-2 rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-50 inline-block font-medium"
-  = link_to "Back to posts", posts_path, class: "ml-2 rounded-md px-3.5 py-2.5 bg-gray-100 hover:bg-gray-50 inline-block font-medium"

@@ -1,14 +1,12 @@
 version: 2
 updates:
-  # Configuration for bundler
-  - package-ecosystem: bundler
+  - package-ecosystem: npm
     directory: /
     schedule:
       interval: daily
     open-pull-requests-limit: 10
     assignees:
       - daveio
-  # Configuration for docker
   - package-ecosystem: docker
     directory: /
     schedule:
@@ -16,7 +14,6 @@ updates:
     open-pull-requests-limit: 10
     assignees:
       - daveio
-  # Configuration for github-actions
   - package-ecosystem: github-actions
     directory: /
     schedule:

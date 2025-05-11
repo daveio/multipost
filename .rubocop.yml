@@ -1,2 +1,0 @@
-inherit_from:
-  - .trunk/configs/.rubocop.yml

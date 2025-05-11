@@ -6,31 +6,37 @@
 
 ## Future Features
 
-- Add animated thread navigation indicators
-- Add emoji-based thread mood tagging system
-- Add media transcoding for different platform requirements
-- Add playful loading animations with platform-specific mascots
-- Add subtle micro-interactions for improved user engagement
-- Add subtle micro-interactions for thread navigation
-- Build account management system for multiple accounts per platform
-- Create a configurable notification system for post sharing status
-- Create a mood-based content recommendation system
-- Create a personalized thread recommendation engine
-- Create a thread complexity score visualization
-- Create an elegant onboarding tutorial with interactive walkthrough
+- Add a ‘Connection Health’ widget showing real-time API integration status.
+- Add animated thread navigation indicators.
+- Add emoji-based thread mood tagging system.
+- Add media transcoding for different platform requirements.
+- Add playful loading animations with platform-specific mascots.
+- Add subtle micro-interactions for improved user engagement.
+- Add subtle micro-interactions for thread navigation.
+- Build account management system for multiple accounts per platform.
+- Create a configurable notification system for post sharing status.
+- Create a mood-based content recommendation system.
+- Create a personalized thread recommendation engine.
+- Create a thread complexity score visualization.
+- Create an elegant onboarding tutorial with interactive walkthrough.
+- Create an interactive ‘Platform Compatibility Wizard’ for optimizing cross-platform posts.
 - Create an optional progressive webapp with an interface adjusted for mobile devices.
   - Don’t change the normal desktop interface.
-- Develop a collaborative thread editing mode
-- Develop a color-coded platform compatibility indicator
-- Develop a shareable config export/import feature
-- Develop an accessibility-focused keyboard navigation mode
-- Implement a playful ‘thread mood’ color-coding system
-- Implement a thread preview sharing widget with one-click social share
-- Implement a ‘Copy Thread Preview’ feature
-- Implement a ‘Preview Across Platforms’ visual simulator
-- Implement an intelligent content preview optimization tool
-- Implement responsive design breakpoints for better mobile and tablet UI
-- Integrate with actual social media APIs (Bluesky, Mastodon, Threads, Nostr)
+- Design a subtle toast notification system for API connection events.
+- Develop a collaborative thread editing mode.
+- Develop a color-coded platform compatibility indicator.
+- Develop a shareable config export/import feature.
+- Develop a ‘Social Media Energy Meter’ showing content engagement potential.
+- Develop an accessibility-focused keyboard navigation mode.
+- Don’t change the normal desktop interface.
+- Implement a ‘Copy Thread Preview’ feature.
+- Implement a personalized platform recommendation engine based on content type.
+- Implement a playful ‘thread mood’ color-coding system.
+- Implement a ‘Preview Across Platforms’ visual simulator.
+- Implement a thread preview sharing widget with one-click social share.
+- Implement an intelligent content preview optimization tool.
+- Implement responsive design breakpoints for better mobile and tablet UI.
+- Integrate with actual social media APIs (Bluesky, Mastodon, Threads, Nostr).
 
 ## Review Pass
 

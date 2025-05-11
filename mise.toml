@@ -5,7 +5,8 @@ MULTIPOST_MISE_ACTIVE = 'true'
 env_file = '.env'
 
 [tools]
-ruby = '3.4.3'
+node = '22.15.0'
+bun = '1.2.13'
 
-[tasks]
-dev = ['bin/dev']
+# [tasks]
+# dev = ['bin/dev']
