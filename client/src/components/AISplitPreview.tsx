@@ -146,7 +146,35 @@ export function AISplitPreview({
       let errorMessage = 'Failed to generate split options';
       let technicalDetails = '';
       
-      if (error.response) {
+      if (error.cause) {
+        // Enhanced error with cause data (from our improved error handling)
+        console.log('Enhanced error with cause:', error.cause);
+        
+        const cause = error.cause;
+        
+        // Get more specific error message
+        if (cause.message) {
+          errorMessage = cause.message;
+        }
+        
+        // Get details about specific OpenAI errors
+        if (cause.code) {
+          switch (cause.code) {
+            case 'invalid_api_key':
+              errorMessage = 'OpenAI API key is invalid or missing';
+              break;
+            case 'rate_limit_exceeded':
+              errorMessage = 'OpenAI rate limit exceeded. Please try again in a few moments.';
+              break;
+            case 'insufficient_quota':
+              errorMessage = 'OpenAI API quota exceeded. Please check your usage.';
+              break;
+          }
+        }
+        
+        // Format all technical details
+        technicalDetails = JSON.stringify(cause, null, 2);
+      } else if (error.response) {
         // API error with response
         errorMessage = error.response.data?.error || error.message || errorMessage;
         technicalDetails = JSON.stringify(error.response.data || {}, null, 2);
@@ -611,6 +639,11 @@ export function AISplitPreview({
                   <TooltipContent side="top" className="max-w-sm p-4">
                     <p className="font-medium">{getStrategyName(strategy as SplittingStrategy)}</p>
                     <p className="text-sm mt-1">{getStrategyTooltip(strategy as SplittingStrategy)}</p>
+                    <p className="text-xs text-gray-500 mt-2">{getStrategyDescription(strategy as SplittingStrategy)}</p>
+                    <div className="text-xs bg-blue-50 p-2 rounded mt-2 text-blue-700">
+                      <p className="font-medium">Thread Optimization</p>
+                      <p>All splits include thread optimization with thread numbering using "🧵 x of y" notation.</p>
+                    </div>
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
