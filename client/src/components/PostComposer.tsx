@@ -303,7 +303,12 @@ export function PostComposer({
                         <Button
                           variant="outline"
                           size="sm"
-                          onClick={() => {
+                          type="button" // Explicitly set type to button to prevent form submission
+                          onClick={(e) => {
+                            // Prevent any default actions
+                            e.preventDefault();
+                            e.stopPropagation();
+                            
                             // Get the input element
                             const inputEl = document.getElementById('mastodonCharLimit') as HTMLInputElement;
                             if (inputEl) {
@@ -367,7 +372,12 @@ export function PostComposer({
                 <Button
                   variant="destructive"
                   size="sm"
-                  onClick={() => {
+                  type="button" // Explicitly set type to button to prevent form submission
+                  onClick={(e) => {
+                    // Prevent any default actions
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
                     // Clear localStorage settings
                     localStorage.removeItem('customMastodonLimit');
                     localStorage.removeItem('showRawJson');

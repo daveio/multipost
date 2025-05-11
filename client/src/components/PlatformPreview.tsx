@@ -62,7 +62,7 @@ export function PlatformPreview({
     <>
       <Tabs defaultValue={activeTab} value={activeTab} onValueChange={onTabChange} className="w-full">
         <TabsList className="mb-4 w-full">
-          {["bluesky", "mastodon", "threads", "nostr"].map((platform) => (
+          {["bluesky", "mastodon", "threads"].map((platform) => (
             <TabsTrigger key={platform} value={platform} className="flex-1">
               <SocialIcon platform={platform} className="mr-1" size={14} />
               <span className="ml-1 capitalize">{platform}</span>
@@ -70,7 +70,7 @@ export function PlatformPreview({
           ))}
         </TabsList>
 
-        {["bluesky", "mastodon", "threads", "nostr"].map((platform) => (
+        {["bluesky", "mastodon", "threads"].map((platform) => (
           <TabsContent key={platform} value={platform} className="mt-0">
             <div className="preview-card p-4 border rounded-lg">
               <div className="flex items-start gap-3">
