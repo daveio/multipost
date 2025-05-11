@@ -18,12 +18,24 @@ describe('CharacterStats component', () => {
     expect(screen.getByText('mastodon', { exact: false })).toBeInTheDocument();
     expect(screen.getByText('threads', { exact: false })).toBeInTheDocument();
     
-    // Should show the numerical values
-    expect(screen.getByText('150')).toBeInTheDocument();
-    expect(screen.getByText('300', { exact: false })).toBeInTheDocument();
-    expect(screen.getByText('400')).toBeInTheDocument();
-    expect(screen.getByText('500', { exact: false })).toBeInTheDocument();
-    expect(screen.getByText('550')).toBeInTheDocument();
+    // Get the stat sections to check numbers in context
+    const statSections = document.querySelectorAll('.stat');
+    expect(statSections.length).toBe(3);
+    
+    // Bluesky section (first one)
+    const blueskySection = statSections[0];
+    expect(blueskySection.textContent).toContain('150');
+    expect(blueskySection.textContent).toContain('300');
+    
+    // Mastodon section (second one)
+    const mastodonSection = statSections[1];
+    expect(mastodonSection.textContent).toContain('400');
+    expect(mastodonSection.textContent).toContain('500');
+    
+    // Threads section (third one)
+    const threadsSection = statSections[2];
+    expect(threadsSection.textContent).toContain('550');
+    expect(threadsSection.textContent).toContain('500');
   });
   
   it('should use different indicator classes for progress bars based on usage percentage', () => {
