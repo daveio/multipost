@@ -54,6 +54,7 @@ export function AISplitPreview({
   const [selectedStrategies, setSelectedStrategies] = useState<SplittingStrategy[]>([SplittingStrategy.SEMANTIC]);
   const [splitResults, setSplitResults] = useState<Record<SplittingStrategy, Record<string, SplitPostResult>> | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [errorDetails, setErrorDetails] = useState<string | null>(null);
   
   // Check if any platform needs splitting
   const needsSplitting = characterStats.some(stat => stat.current > stat.limit);
@@ -99,6 +100,7 @@ export function AISplitPreview({
     
     setIsLoading(true);
     setError(null);
+    setErrorDetails(null);
     setSplitResults(null);
     setProgressStage('Initializing AI split');
     setProgressPercent(5);
@@ -140,15 +142,32 @@ export function AISplitPreview({
     } catch (error: any) {
       console.error('Failed to generate split options:', error);
       
-      // Extract detailed error message
-      let errorMessage = error.message || 'Failed to generate split options';
+      // Extract detailed error message from the API response or error object
+      let errorMessage = 'Failed to generate split options';
+      let technicalDetails = '';
+      
+      if (error.response) {
+        // API error with response
+        errorMessage = error.response.data?.error || error.message || errorMessage;
+        technicalDetails = JSON.stringify(error.response.data || {}, null, 2);
+      } else if (error.message) {
+        // Regular error with message
+        errorMessage = error.message;
+        technicalDetails = error.stack || '';
+      }
       
       // Display a detailed error message with helpful debugging info
-      setError(`Error: ${errorMessage}. Please try again with a different strategy.`);
+      setError(`Error: ${errorMessage}`);
+      console.error('Split generation error details:', technicalDetails);
       
       toast({
         title: 'Error Generating Splits',
-        description: errorMessage,
+        description: (
+          <div>
+            <p>{errorMessage}</p>
+            <p className="text-xs text-gray-500 mt-1">Try again or select different splitting strategies.</p>
+          </div>
+        ),
         variant: 'destructive',
       });
     } finally {
@@ -569,6 +588,24 @@ export function AISplitPreview({
           >
             {isLoading ? 'Generating...' : 'Generate Split Options'}
           </Button>
+          
+          {/* Error Display */}
+          {error && (
+            <Alert variant="destructive" className="mb-3">
+              <AlertTriangle className="h-4 w-4" />
+              <AlertDescription className="ml-2">
+                {error}
+                <details className="mt-2 text-xs">
+                  <summary className="cursor-pointer">View Technical Details</summary>
+                  <div className="mt-2 p-2 bg-gray-900 text-gray-100 rounded overflow-x-auto">
+                    <pre className="text-xs whitespace-pre-wrap">
+                      {error}
+                    </pre>
+                  </div>
+                </details>
+              </AlertDescription>
+            </Alert>
+          )}
           
           {/* Strategy Description */}
           <div className="text-sm text-gray-700 bg-gray-50 p-4 rounded-lg border border-gray-100">
