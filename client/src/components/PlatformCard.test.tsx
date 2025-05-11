@@ -1,10 +1,15 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { screen, fireEvent } from '@testing-library/react';
+import { screen, fireEvent, within } from '@testing-library/react';
 import { PlatformCard } from './PlatformCard';
 import { renderWithProviders, mockPlatforms } from '../../../test/test-utils';
 
 describe('PlatformCard component', () => {
-  const mockPlatform = mockPlatforms[0]; // Using the Bluesky platform from test utils
+  // Add isSelected property required by the Platform type
+  const mockPlatform = {
+    ...mockPlatforms[0],
+    isSelected: true,
+    accounts: []
+  };
   const mockToggle = vi.fn();
   
   beforeEach(() => {
@@ -21,11 +26,12 @@ describe('PlatformCard component', () => {
       />
     );
     
-    // Should display the platform name (capitalized)
+    // Should display the platform name
     expect(screen.getByText('Bluesky')).toBeInTheDocument();
     
-    // Should display the character count
-    expect(screen.getByText('100')).toBeInTheDocument();
+    // Should display the character count (look for partial text)
+    const charCountElement = screen.getByText(/100\/300/);
+    expect(charCountElement).toBeInTheDocument();
   });
   
   it('should call onToggle when clicked', () => {
@@ -38,8 +44,8 @@ describe('PlatformCard component', () => {
       />
     );
     
-    // Find the clickable element and click it
-    const card = screen.getByRole('button');
+    // Find the platform card container and click it
+    const card = screen.getByTestId('platform-bluesky');
     fireEvent.click(card);
     
     // Should call the onToggle callback with the platform ID
@@ -57,8 +63,9 @@ describe('PlatformCard component', () => {
       />
     );
     
-    const activeCard = screen.getByRole('button');
-    expect(activeCard).toHaveClass('bg-primary');
+    // Check if the active class is applied to the card
+    const activeCard = screen.getByTestId('platform-bluesky');
+    expect(activeCard).toHaveClass('active');
     
     // Rerender with inactive state
     rerender(
@@ -70,8 +77,9 @@ describe('PlatformCard component', () => {
       />
     );
     
-    const inactiveCard = screen.getByRole('button');
-    expect(inactiveCard).not.toHaveClass('bg-primary');
+    // Check if the active class is not applied
+    const inactiveCard = screen.getByTestId('platform-bluesky');
+    expect(inactiveCard).not.toHaveClass('active');
   });
   
   it('should display a warning when character count exceeds the limit', () => {
@@ -88,8 +96,12 @@ describe('PlatformCard component', () => {
       />
     );
     
-    // Should display a warning
-    const characterCount = screen.getByText(charCount.toString());
-    expect(characterCount).toHaveClass('text-red-500');
+    // Should display a warning - find by partial text and check the class
+    const charCountText = `${charCount}/${mockPlatform.characterLimit}`;
+    const charElement = screen.getByText((content) => {
+      return content.includes(charCountText);
+    });
+    
+    expect(charElement).toHaveClass('char-counter-danger');
   });
 });

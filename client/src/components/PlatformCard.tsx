@@ -45,6 +45,7 @@ export function PlatformCard({ platform, charCount, active, onToggle }: Platform
       )}
       onClick={() => onToggle(platform.id)}
       data-platform={platform.id}
+      data-testid={`platform-${platform.id}`}
     >
       <div className="flex justify-between items-start mb-2">
         <div className={cn("rounded-full p-2", getBgColor(platform.id))}>
