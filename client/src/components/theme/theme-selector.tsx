@@ -1,4 +1,5 @@
 import { useCatppuccinTheme } from "./catppuccin-theme-provider";
+import type { CatppuccinTheme } from "@/lib/theme-utils";
 import { 
   DropdownMenu,
   DropdownMenuContent,

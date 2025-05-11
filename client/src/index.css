@@ -4,55 +4,9 @@
 
 @layer base {
   :root {
-    --background: 210 20% 98%;
-    --foreground: 224 71.4% 4.1%;
-    --muted: 220 14.3% 95.9%;
-    --muted-foreground: 220 8.9% 46.1%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 224 71.4% 4.1%;
-    --card: 0 0% 100%;
-    --card-foreground: 224 71.4% 4.1%;
-    --border: 220 13% 91%;
-    --input: 220 13% 91%;
-    --primary: 244 75% 60%;
-    --primary-foreground: 210 20% 98%;
-    --secondary: 261 51.6% 47.7%;
-    --secondary-foreground: 210 20% 98%;
-    --accent: 327 73% 52%;
-    --accent-foreground: 210 20% 98%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 20% 98%;
-    --ring: 244 75% 60%;
+    /* These variables will be dynamically set by the Catppuccin theme provider */
+    /* Default radius value that won't be changed by theme */
     --radius: 0.5rem;
-
-    /* Chart Colors */
-    --chart-1: 244 75% 60%;
-    --chart-2: 261 51.6% 47.7%;
-    --chart-3: 327 73% 52%;
-    --chart-4: 25 95% 53%;
-    --chart-5: 155 66% 32%;
-  }
-
-  .dark {
-    --background: 224 71.4% 4.1%;
-    --foreground: 210 20% 98%;
-    --muted: 215 27.9% 16.9%;
-    --muted-foreground: 217.9 10.6% 64.9%;
-    --popover: 224 71.4% 4.1%;
-    --popover-foreground: 210 20% 98%;
-    --card: 224 71.4% 4.1%;
-    --card-foreground: 210 20% 98%;
-    --border: 215 27.9% 16.9%;
-    --input: 215 27.9% 16.9%;
-    --primary: 244 75% 60%;
-    --primary-foreground: 210 20% 98%;
-    --secondary: 261 51.6% 47.7%;
-    --secondary-foreground: 210 20% 98%;
-    --accent: 327 73% 52%;
-    --accent-foreground: 210 20% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 20% 98%;
-    --ring: 244 75% 60%;
   }
 }
 
@@ -101,7 +55,7 @@
 
 /* Highlight controls with localStorage settings */
 .local-storage-setting {
-  @apply bg-blue-50 border-blue-200 rounded;
+  @apply bg-primary/5 border-primary/20 rounded;
   transition: background-color 0.5s ease, border-color 0.5s ease;
 }
 
@@ -116,12 +70,12 @@
 
 @keyframes flashGreen {
   0%, 100% { background-color: transparent; }
-  50% { background-color: rgba(132, 204, 22, 0.2); }
+  50% { background-color: rgba(var(--primary)/0.2); }
 }
 
 @keyframes flashRed {
   0%, 100% { background-color: transparent; }
-  50% { background-color: rgba(239, 68, 68, 0.2); }
+  50% { background-color: rgba(var(--destructive)/0.2); }
 }
 
 /* Improve platform tabs responsiveness */

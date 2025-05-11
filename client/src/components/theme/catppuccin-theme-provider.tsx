@@ -80,6 +80,9 @@ export function CatppuccinThemeProvider({
     Object.entries(themeVars).forEach(([key, value]) => {
       document.documentElement.style.setProperty(key, value);
     });
+    
+    // Save to localStorage
+    localStorage.setItem(THEME_STORAGE_KEY, theme);
   }, [theme, mode]);
 
   // Context value
