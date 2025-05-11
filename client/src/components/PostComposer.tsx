@@ -202,7 +202,7 @@ export function PostComposer({
               .filter(p => p.isSelected)
               .map((platform) => (
                 <Badge key={platform.id} variant="outline" className="gap-1">
-                  <UIIcon.Check className="text-success h-3 w-3" />
+                  <UIIcon.Check className="h-3 w-3 text-[var(--Sapphire)]" />
                   <span className="capitalize">{platform.id}</span>
                 </Badge>
               ))}
