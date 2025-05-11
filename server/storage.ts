@@ -184,7 +184,20 @@ export class MemStorage implements IStorage {
   
   async createAccount(account: InsertAccount): Promise<Account> {
     const id = this.currentAccountId++;
-    const newAccount: Account = { ...account, id };
+    // Ensure all fields are properly typed
+    const newAccount: Account = { 
+      ...account, 
+      id,
+      // Make sure nullable fields have proper null values instead of undefined
+      displayName: account.displayName ?? null,
+      instanceUrl: account.instanceUrl ?? null,
+      userId: account.userId ?? null,
+      avatarUrl: account.avatarUrl ?? null,
+      accessToken: account.accessToken ?? null,
+      refreshToken: account.refreshToken ?? null,
+      expiresAt: account.expiresAt ?? null,
+      isActive: account.isActive ?? null
+    };
     this.accounts.set(id, newAccount);
     return newAccount;
   }
@@ -220,7 +233,12 @@ export class MemStorage implements IStorage {
       ...draft, 
       id, 
       createdAt: now,
-      updatedAt: now
+      updatedAt: now,
+      // Ensure required fields are properly set and nullable fields have null rather than undefined
+      content: draft.content,
+      mediaFiles: draft.mediaFiles ?? null,
+      userId: draft.userId ?? null,
+      platforms: draft.platforms ?? null
     };
     this.drafts.set(id, newDraft);
     return newDraft;
