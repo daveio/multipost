@@ -72,7 +72,7 @@ export function PlatformPreview({
 
         {["bluesky", "mastodon", "threads"].map((platform) => (
           <TabsContent key={platform} value={platform} className="mt-0">
-            <div className="preview-card p-4 border rounded-lg">
+            <div className="preview-card p-4 border border-border rounded-lg bg-muted">
               <div className="flex items-start gap-3">
                 <Avatar className="h-10 w-10 flex-shrink-0">
                   {getAvatarUrl(platform) ? (
@@ -81,12 +81,12 @@ export function PlatformPreview({
                     <AvatarFallback>{getAccountInitials(platform)}</AvatarFallback>
                   )}
                 </Avatar>
-                <div className="flex-1 min-w-0 overflow-hidden"> {/* Added overflow-hidden */}
+                <div className="flex-1 min-w-0 overflow-hidden">
                   <div className="flex flex-wrap items-center gap-1 w-full">
-                    <span className="font-semibold truncate max-w-[40%]">{getDisplayName(platform)}</span>
-                    <span className="text-gray-500 text-sm truncate max-w-[55%]">{getUsername(platform)}</span>
+                    <span className="font-semibold truncate max-w-[40%] text-foreground">{getDisplayName(platform)}</span>
+                    <span className="text-muted-foreground text-sm truncate max-w-[55%]">{getUsername(platform)}</span>
                   </div>
-                  <p className="mt-2 text-sm preview-content">{getFormattedContent(platform)}</p>
+                  <p className="mt-2 text-sm preview-content text-foreground">{getFormattedContent(platform)}</p>
                   
                   {/* Media Preview Grid */}
                   {mediaFiles.length > 0 && (
@@ -95,7 +95,7 @@ export function PlatformPreview({
                       mediaFiles.length === 1 ? "grid-cols-1" : "grid-cols-2"
                     )}>
                       {mediaFiles.slice(0, 4).map((file) => (
-                        <div key={file.id} className="overflow-hidden rounded-lg aspect-square">
+                        <div key={file.id} className="overflow-hidden rounded-lg aspect-square bg-card">
                           <img 
                             src={file.previewUrl || file.url} 
                             alt={file.name} 
@@ -107,16 +107,16 @@ export function PlatformPreview({
                   )}
                   
                   {/* Action Buttons */}
-                  <div className="flex flex-wrap gap-4 mt-4 text-gray-500">
-                    <div className="flex items-center gap-1">
+                  <div className="flex flex-wrap gap-4 mt-4 text-muted-foreground">
+                    <div className="flex items-center gap-1 hover:text-primary cursor-pointer">
                       <UIIcon.Reply className="h-4 w-4 flex-shrink-0" />
                       <span className="text-xs">Reply</span>
                     </div>
-                    <div className="flex items-center gap-1">
+                    <div className="flex items-center gap-1 hover:text-primary cursor-pointer">
                       <UIIcon.Refresh className="h-4 w-4 flex-shrink-0" />
                       <span className="text-xs">Repost</span>
                     </div>
-                    <div className="flex items-center gap-1">
+                    <div className="flex items-center gap-1 hover:text-primary cursor-pointer">
                       <UIIcon.Like className="h-4 w-4 flex-shrink-0" />
                       <span className="text-xs">Like</span>
                     </div>

@@ -27,10 +27,10 @@ export function MediaStats({ mediaFiles }: MediaStatsProps) {
       <h2 className="text-lg font-semibold mb-4 text-foreground">Media Status</h2>
       <div className="space-y-4">
         {mediaFiles.map((file) => (
-          <Card key={file.id} className="border">
+          <Card key={file.id} className="border border-border bg-muted">
             <CardContent className="p-4">
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-md overflow-hidden">
+                <div className="w-12 h-12 rounded-md overflow-hidden bg-card">
                   <img 
                     src={file.previewUrl || file.url} 
                     alt={file.name} 
@@ -38,8 +38,8 @@ export function MediaStats({ mediaFiles }: MediaStatsProps) {
                   />
                 </div>
                 <div className="flex-1">
-                  <h3 className="text-sm font-medium">{file.name}</h3>
-                  <p className="text-xs text-gray-500">
+                  <h3 className="text-sm font-medium text-foreground">{file.name}</h3>
+                  <p className="text-xs text-muted-foreground">
                     {formatFileSize(file.size)} • {file.type}
                   </p>
                 </div>
@@ -47,7 +47,7 @@ export function MediaStats({ mediaFiles }: MediaStatsProps) {
               
               {/* Platform Compatibility */}
               <div className="mt-2">
-                <h4 className="text-xs font-medium mb-1">Platform Compatibility</h4>
+                <h4 className="text-xs font-medium mb-1 text-foreground">Platform Compatibility</h4>
                 <div className="flex flex-wrap gap-2">
                   {platforms.map((platform) => (
                     <Badge key={platform} variant="success" className="gap-1 text-xs">
@@ -62,35 +62,34 @@ export function MediaStats({ mediaFiles }: MediaStatsProps) {
         ))}
         
         {/* Platform Media Requirements */}
-        <Accordion type="single" collapsible className="mt-4 border rounded-lg">
+        <Accordion type="single" collapsible className="mt-4 border border-border rounded-lg bg-muted">
           <AccordionItem value="requirements" className="border-0">
-            <AccordionTrigger className="text-sm font-medium px-4">
+            <AccordionTrigger className="text-sm font-medium px-4 text-foreground">
               Platform Media Requirements
             </AccordionTrigger>
             <AccordionContent className="text-xs px-4 pb-4">
               <ul className="space-y-2">
                 <li className="flex items-start gap-2">
-                  <SocialIcon platform="bluesky" className="text-sky-500 mt-1" />
+                  <SocialIcon platform="bluesky" className="text-primary mt-1" />
                   <div>
-                    <span className="font-medium">Bluesky:</span>
-                    <p>Up to 4 images, max 10MB each. JPG, PNG, GIF. No video support.</p>
+                    <span className="font-medium text-foreground">Bluesky:</span>
+                    <p className="text-muted-foreground">Up to 4 images, max 10MB each. JPG, PNG, GIF. No video support.</p>
                   </div>
                 </li>
                 <li className="flex items-start gap-2">
-                  <SocialIcon platform="mastodon" className="text-purple-500 mt-1" />
+                  <SocialIcon platform="mastodon" className="text-secondary mt-1" />
                   <div>
-                    <span className="font-medium">Mastodon:</span>
-                    <p>Up to 4 images, max 16MB each. JPG, PNG, GIF, WebP. Videos up to 40MB.</p>
+                    <span className="font-medium text-foreground">Mastodon:</span>
+                    <p className="text-muted-foreground">Up to 4 images, max 16MB each. JPG, PNG, GIF, WebP. Videos up to 40MB.</p>
                   </div>
                 </li>
                 <li className="flex items-start gap-2">
-                  <SocialIcon platform="threads" className="text-gray-700 mt-1" />
+                  <SocialIcon platform="threads" className="text-accent mt-1" />
                   <div>
-                    <span className="font-medium">Threads:</span>
-                    <p>Up to 10 images, JPG, PNG. Videos up to 2 minutes.</p>
+                    <span className="font-medium text-foreground">Threads:</span>
+                    <p className="text-muted-foreground">Up to 10 images, JPG, PNG. Videos up to 2 minutes.</p>
                   </div>
                 </li>
-
               </ul>
             </AccordionContent>
           </AccordionItem>
