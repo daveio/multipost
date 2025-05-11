@@ -70,6 +70,12 @@ export interface AdvancedOptions {
   customMastodonLimit?: number; // Custom character limit for Mastodon instance
 }
 
+export interface ThreadPost {
+  content: string;
+  order: number;
+  isActive: boolean;
+}
+
 export interface PostFormState {
   content: string;
   mediaFiles: MediaFile[];
@@ -77,4 +83,7 @@ export interface PostFormState {
   advancedOptions: AdvancedOptions;
   characterStats: CharacterStat[];
   activePreviewTab: string;
+  threadPosts: ThreadPost[];
+  isThreadMode: boolean;
+  activeThreadIndex: number;
 }

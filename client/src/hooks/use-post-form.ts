@@ -46,7 +46,10 @@ export function usePostForm({
     selectedPlatforms: initialPlatforms,
     advancedOptions: initialAdvancedOptions,
     characterStats: [],
-    activePreviewTab: DEFAULT_PLATFORMS[0].id
+    activePreviewTab: DEFAULT_PLATFORMS[0].id,
+    threadPosts: [],
+    isThreadMode: false,
+    activeThreadIndex: 0
   });
   
   // Fetch platform character limits
@@ -350,7 +353,10 @@ export function usePostForm({
       selectedPlatforms: DEFAULT_PLATFORMS.map(p => ({ id: p.id, isSelected: p.isSelected })),
       advancedOptions: initialAdvancedOptions,
       characterStats: formState.characterStats,
-      activePreviewTab: formState.activePreviewTab
+      activePreviewTab: formState.activePreviewTab,
+      threadPosts: [],
+      isThreadMode: false,
+      activeThreadIndex: 0
     });
   };
   
@@ -359,6 +365,121 @@ export function usePostForm({
     setFormState(prev => ({
       ...prev,
       activePreviewTab: tab
+    }));
+  };
+  
+  // Set up a thread with the given posts
+  const setupThread = (posts: string[]) => {
+    if (!posts || posts.length === 0) return;
+    
+    // Create thread posts from the array of content strings
+    const threadPosts = posts.map((postContent, index) => ({
+      content: postContent,
+      order: index,
+      isActive: index === 0 // First post is active by default
+    }));
+    
+    // Update content with the first post
+    setFormState(prev => ({
+      ...prev,
+      content: posts[0],
+      threadPosts,
+      isThreadMode: true,
+      activeThreadIndex: 0
+    }));
+    
+    toast({
+      title: "Thread Created",
+      description: `Created a thread with ${posts.length} posts`,
+    });
+  };
+  
+  // Switch to a different post in the thread
+  const switchThreadPost = (index: number) => {
+    if (index < 0 || index >= formState.threadPosts.length) return;
+    
+    // Update the active status
+    const updatedPosts = formState.threadPosts.map((post, i) => ({
+      ...post,
+      isActive: i === index
+    }));
+    
+    // Update the form state
+    setFormState(prev => ({
+      ...prev,
+      content: formState.threadPosts[index].content,
+      threadPosts: updatedPosts,
+      activeThreadIndex: index
+    }));
+  };
+  
+  // Add a new post to the thread
+  const addThreadPost = (content: string = '') => {
+    const newPost: ThreadPost = {
+      content: content || '',
+      order: formState.threadPosts.length,
+      isActive: false
+    };
+    
+    setFormState(prev => ({
+      ...prev,
+      threadPosts: [...prev.threadPosts, newPost]
+    }));
+    
+    toast({
+      title: "Post Added",
+      description: "Added a new post to the thread",
+    });
+  };
+  
+  // Remove a post from the thread
+  const removeThreadPost = (index: number) => {
+    if (formState.threadPosts.length <= 1) {
+      // If this is the only post, exit thread mode
+      setFormState(prev => ({
+        ...prev,
+        isThreadMode: false,
+        threadPosts: []
+      }));
+      return;
+    }
+    
+    // Remove the post and reorder
+    const updatedPosts = formState.threadPosts
+      .filter((_, i) => i !== index)
+      .map((post, i) => ({
+        ...post,
+        order: i,
+        isActive: i === (index === 0 ? 0 : Math.min(formState.activeThreadIndex, formState.threadPosts.length - 2))
+      }));
+    
+    // If we removed the active post, set a new active post
+    const newActiveIndex = index === formState.activeThreadIndex 
+      ? Math.min(index, updatedPosts.length - 1)
+      : index < formState.activeThreadIndex 
+        ? formState.activeThreadIndex - 1 
+        : formState.activeThreadIndex;
+        
+    setFormState(prev => ({
+      ...prev,
+      content: updatedPosts[newActiveIndex].content,
+      threadPosts: updatedPosts,
+      activeThreadIndex: newActiveIndex
+    }));
+    
+    toast({
+      title: "Post Removed",
+      description: "Removed post from thread",
+    });
+  };
+  
+  // Exit thread mode
+  const exitThreadMode = () => {
+    setFormState(prev => ({
+      ...prev,
+      isThreadMode: false,
+      threadPosts: [],
+      activeThreadIndex: 0
     }));
   };
   
@@ -381,6 +502,11 @@ export function usePostForm({
     loadDraft,
     deleteDraft,
     resetForm,
-    setActivePreviewTab
+    setActivePreviewTab,
+    setupThread,
+    switchThreadPost,
+    addThreadPost,
+    removeThreadPost,
+    exitThreadMode
   };
 }
