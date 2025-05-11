@@ -227,20 +227,20 @@ export function AISplitPreview({
       {/* Select Platform Tabs */}
       <div className="mb-4">
         <h3 className="text-sm font-medium mb-2">Platform Requiring Split:</h3>
-        <TabsList className="w-full">
-          {platformsNeedingSplit.map(platformId => (
-            <TabsTrigger
-              key={platformId}
-              value={platformId}
-              className="flex-1"
-              onClick={() => setActivePlatform(platformId)}
-              data-active={activePlatform === platformId}
-            >
-              <SocialIcon platform={platformId} className="mr-1" size={14} />
-              <span className="ml-1">{getPlatformName(platformId)}</span>
-            </TabsTrigger>
-          ))}
-        </TabsList>
+        <Tabs value={activePlatform} onValueChange={(value) => setActivePlatform(value)}>
+          <TabsList className="w-full">
+            {platformsNeedingSplit.map(platformId => (
+              <TabsTrigger
+                key={platformId}
+                value={platformId}
+                className="flex-1"
+              >
+                <SocialIcon platform={platformId} className="mr-1" size={14} />
+                <span className="ml-1">{getPlatformName(platformId)}</span>
+              </TabsTrigger>
+            ))}
+          </TabsList>
+        </Tabs>
       </div>
       
       {/* Select Strategy Tabs */}
