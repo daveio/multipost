@@ -645,14 +645,24 @@ export function AISplitPreview({
                     <Button 
                       variant="outline" 
                       size="sm"
-                      onClick={resetToDefault}
+                      type="button"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        resetToDefault();
+                      }}
                     >
                       Reset
                     </Button>
                     <Button 
                       variant="outline" 
                       size="sm"
-                      onClick={selectAllStrategies}
+                      type="button"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        selectAllStrategies();
+                      }}
                     >
                       Select All
                     </Button>
@@ -677,7 +687,12 @@ export function AISplitPreview({
                             <Button
                               variant={selectedStrategies.includes(strategy) ? "default" : "outline"}
                               size="sm"
-                              onClick={() => toggleStrategy(strategy)}
+                              type="button"
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                toggleStrategy(strategy);
+                              }}
                               className={`relative ${selectedStrategies.includes(strategy) ? "border-primary" : "opacity-70"}`}
                             >
                               {getStrategyName(strategy)}
@@ -698,7 +713,12 @@ export function AISplitPreview({
                 {/* Generate button */}
                 <div className="mt-4 flex justify-end">
                   <Button 
-                    onClick={generateSplitOptions}
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      generateSplitOptions();
+                    }}
                     disabled={isLoading || selectedStrategies.length === 0}
                     className="px-4"
                   >
