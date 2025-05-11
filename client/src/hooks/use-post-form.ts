@@ -16,13 +16,15 @@ import { DEFAULT_PLATFORMS, PLATFORM_CHARACTER_LIMITS } from '../lib/platform-co
 
 // Load settings from localStorage if available
 const savedShowRawJson = localStorage.getItem('showRawJson');
+const savedSplittingConfigs = localStorage.getItem('savedSplittingConfigs');
 
 const initialAdvancedOptions: AdvancedOptions = {
   useThreadNotation: false,
   threadNotationFormat: "🧵 x of y", // Default to new format
   schedulePost: false,
   scheduledTime: undefined,
-  showRawJson: savedShowRawJson ? JSON.parse(savedShowRawJson) : false // Default to false, but load from localStorage if available
+  showRawJson: savedShowRawJson ? JSON.parse(savedShowRawJson) : false, // Default to false, but load from localStorage if available
+  savedSplittingConfigs: savedSplittingConfigs ? JSON.parse(savedSplittingConfigs) : [] // Load saved configurations from localStorage
 };
 
 export function usePostForm({ 

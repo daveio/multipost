@@ -53,12 +53,19 @@ export interface UsePostFormProps {
   initialPlatforms?: { id: string; isSelected: boolean; accounts?: number[] }[];
 }
 
+export interface SplittingConfig {
+  name: string;
+  strategies: string[]; // Array of selected strategies
+  createdAt: Date;
+}
+
 export interface AdvancedOptions {
   useThreadNotation: boolean;
   threadNotationFormat: string; // Format for thread notation: "🧵 x/y" or "🧵 x of y"
   schedulePost: boolean;
   scheduledTime?: Date;
   showRawJson: boolean; // Option to show raw JSON from OpenAI API responses
+  savedSplittingConfigs?: SplittingConfig[]; // Saved splitting configurations for quick reuse
 }
 
 export interface PostFormState {

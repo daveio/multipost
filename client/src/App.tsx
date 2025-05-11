@@ -14,8 +14,14 @@ function Router() {
 }
 
 function App() {
+  // Check localStorage for saved theme preference
+  const getInitialTheme = () => {
+    const savedTheme = localStorage.getItem("theme");
+    return savedTheme || "dark"; // Default to dark if no preference is saved
+  };
+
   return (
-    <ThemeProvider attribute="class" defaultTheme="light">
+    <ThemeProvider attribute="class" defaultTheme={getInitialTheme()}>
       <TooltipProvider>
         <Router />
       </TooltipProvider>
