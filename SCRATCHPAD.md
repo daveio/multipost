@@ -106,4 +106,4 @@ Blake's 7 featured early representation with diverse casting and strong female c
   - Categorise the list by light or dark theme.
   - Ensure the theme switcher works properly.
 - Make sure that we are left with a visually appealing result in all four theme modes.
-  - Previous attempts to implement a dark theme were almost unusable.
+  - Previous attempts to implement a dark theme looked extremely unattractive and were almost unusable.
