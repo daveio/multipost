@@ -52,6 +52,17 @@
   color: var(--Sapphire);
 }
 
+/* Target all check icons in buttons */
+button svg.lucide-check,
+button [data-lucide="check"] {
+  color: var(--Sapphire) !important;
+}
+
+/* Target specifically the platform selection buttons */
+[data-platform] svg.lucide-check {
+  color: var(--Sapphire) !important;
+}
+
 .preview-card { 
   @apply max-h-96 overflow-y-auto overflow-x-hidden; 
 }
