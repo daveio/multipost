@@ -48,3 +48,7 @@ server/public
 # Build artifacts
 vite.config.ts.*
 *.tar.gz
+
+
+#Ignore cursor AI rules
+.cursor/rules/codacy.mdc
