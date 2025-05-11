@@ -54,9 +54,8 @@ export interface UsePostFormProps {
 }
 
 export interface AdvancedOptions {
-  useAiOptimization: boolean;
-  autoSplitLongPosts: boolean;
   useThreadNotation: boolean;
+  threadNotationFormat: string; // Format for thread notation: "🧵 x/y" or "🧵 x of y"
   schedulePost: boolean;
   scheduledTime?: Date;
 }

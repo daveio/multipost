@@ -13,9 +13,8 @@ import {
 import { DEFAULT_PLATFORMS, PLATFORM_CHARACTER_LIMITS } from '../lib/platform-config';
 
 const initialAdvancedOptions: AdvancedOptions = {
-  useAiOptimization: false,
-  autoSplitLongPosts: false,
   useThreadNotation: false,
+  threadNotationFormat: "🧵 x of y", // Default to new format
   schedulePost: false,
   scheduledTime: undefined
 };

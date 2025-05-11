@@ -159,42 +159,6 @@ export function PostComposer({
               <div className="space-y-4">
                 <div className="flex items-start space-x-2">
                   <Checkbox 
-                    id="useAiOptimization"
-                    checked={advancedOptions.useAiOptimization}
-                    onCheckedChange={(checked) => 
-                      onAdvancedOptionsChange({ useAiOptimization: checked as boolean })
-                    }
-                  />
-                  <div className="grid gap-1.5 leading-none">
-                    <label
-                      htmlFor="useAiOptimization"
-                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                    >
-                      Use AI to optimize for each platform
-                    </label>
-                  </div>
-                </div>
-                
-                <div className="flex items-start space-x-2">
-                  <Checkbox 
-                    id="autoSplitLongPosts"
-                    checked={advancedOptions.autoSplitLongPosts}
-                    onCheckedChange={(checked) => 
-                      onAdvancedOptionsChange({ autoSplitLongPosts: checked as boolean })
-                    }
-                  />
-                  <div className="grid gap-1.5 leading-none">
-                    <label
-                      htmlFor="autoSplitLongPosts"
-                      className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                    >
-                      Auto-split long posts with AI
-                    </label>
-                  </div>
-                </div>
-                
-                <div className="flex items-start space-x-2">
-                  <Checkbox 
                     id="useThreadNotation"
                     checked={advancedOptions.useThreadNotation}
                     onCheckedChange={(checked) => 
@@ -206,8 +170,11 @@ export function PostComposer({
                       htmlFor="useThreadNotation"
                       className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                     >
-                      Use thread notation (🧵 x/y)
+                      Use thread notation ({advancedOptions.threadNotationFormat})
                     </label>
+                    <p className="text-xs text-gray-500 mt-1">
+                      Adds thread numbering to each post. When using AI splitting, this will be handled automatically.
+                    </p>
                   </div>
                 </div>
                 

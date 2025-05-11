@@ -4,8 +4,7 @@ export enum SplittingStrategy {
   SEMANTIC = "semantic", 
   SENTENCE = "sentence", 
   RETAIN_HASHTAGS = "retain_hashtags", 
-  PRESERVE_MENTIONS = "preserve_mentions", 
-  THREAD_OPTIMIZED = "thread_optimized",
+  PRESERVE_MENTIONS = "preserve_mentions",
 }
 
 export interface SplitPostResult {

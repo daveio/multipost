@@ -1,0 +1,32 @@
+Some UI improvements:
+
+- Remove the configuration settings we don't need any more:
+  - `Use AI to optimize for each platform`
+  - `Auto-split long posts with AI`
+- Remove 'optimize with AI'. We have a different flow for splitting now.
+  - I still want to see the 'split with AI' button when needed.
+- When the splitting has been completed, the main post page doesn't have any UI support for a thread of multiple posts.
+  - It only displays the first post in the thread.
+  - Add support for manual threading, and the output of splitting.
+    - Add another text box when I hit the character limit to allow me to manually thread if I don't want to use AI.
+- Remove the 'thread-optimized' splitting mode.
+  - Always thread optimize.
+  - Use the syntax of two newlines, then a 🧵 emoji, then `x of y` where `x` is the post number and `y` is the number of posts in the thread.
+  - Disable `Use thread notation (🧵 x/y)` when AI has added threading syntax.
+    - Replace it with `Use thread notation (🧵 x of y)` to match our new format. Remember to add two newlines before the emoji and count.
+- Improve the multi-strategy selector for AI splitting strategies
+  - The current description of the strategies doesn't change when the strategies change
+    - It always says `Splits by semantic units, preserving complete thoughts and topics.`
+  - Use tooltips explaining each AI splitting strategy, which are always displayed and not only on hover
+  - Add general improvements
+- Create an elegant loading animation for long-running AI operations
+  - Improve the progress indicator for AI post splitting to show real-time processing steps
+  - Maybe show the JSON received at each stage - it won't be useful, but it might be aesthetically pleasing
+- Develop a 'Save Splitting Configurations' feature for quick reuse
+  - Also add a 'Reset Splitting Configurations' feature for quick reset to defaults
+- Add a dark mode
+  - Add a toggle to switch between light, dark, and system mode
+  - Add a button to reset the theme to the default
+  - Load the theme settings from `localStorage`
+  - Save the theme settings to `localStorage`
+  - Default to dark mode
