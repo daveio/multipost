@@ -652,7 +652,7 @@ export function AISplitPreview({
                   <div className="flex gap-1.5">
                     <Button 
                       variant="ghost" 
-                      size="xs"
+                      size="sm"
                       onClick={resetToDefault}
                       className="h-7 text-xs"
                     >
@@ -660,7 +660,7 @@ export function AISplitPreview({
                     </Button>
                     <Button 
                       variant="ghost" 
-                      size="xs"
+                      size="sm"
                       onClick={selectAllStrategies}
                       className="h-7 text-xs"
                     >

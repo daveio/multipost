@@ -135,6 +135,7 @@ export function PostComposer({
                 isContentTooLong={isContentTooLong}
                 accounts={accounts}
                 characterStats={characterStats}
+                advancedOptions={advancedOptions}
                 onApplySplit={onApplySplit || (() => {})}
               />
             </div>

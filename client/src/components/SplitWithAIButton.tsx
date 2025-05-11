@@ -12,6 +12,10 @@ interface SplitWithAIButtonProps {
   accounts: Account[];
   characterStats: CharacterStat[];
   onApplySplit: (strategy: SplittingStrategy, platformId: string, splitText: string[]) => void;
+  advancedOptions?: {
+    showRawJson?: boolean;
+    [key: string]: any;
+  };
 }
 
 export function SplitWithAIButton({
@@ -19,7 +23,8 @@ export function SplitWithAIButton({
   isContentTooLong,
   accounts,
   characterStats,
-  onApplySplit
+  onApplySplit,
+  advancedOptions = { showRawJson: false }
 }: SplitWithAIButtonProps) {
   const [showSplitPreview, setShowSplitPreview] = useState(false);
 
@@ -93,6 +98,7 @@ export function SplitWithAIButton({
           isOpen={showSplitPreview}
           accounts={accounts}
           characterStats={characterStats}
+          advancedOptions={advancedOptions}
           onClose={() => setShowSplitPreview(false)}
           onApplySplit={(strategy, platformId, splitText) => {
             onApplySplit(strategy, platformId, splitText);
