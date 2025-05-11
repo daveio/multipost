@@ -90,7 +90,13 @@ export function ThreadPostsManager({
   }, [threadPosts.length]);
   
   // When switching posts, save content for previous post first
-  const handleSwitchPost = (newIndex: number) => {
+  const handleSwitchPost = (newIndex: number, event?: React.MouseEvent) => {
+    // Prevent default action to stop form submission
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+    
     try {
       if (newIndex < 0 || newIndex >= threadState.posts.length) {
         return; // Invalid index
@@ -109,9 +115,12 @@ export function ThreadPostsManager({
         // Get content from target post
         const newContent = updatedPosts[newIndex].content || "";
         
-        // Update parent state
-        onContentChange(newContent);
-        onSwitchPost(newIndex);
+        // First set content in our local state
+        setTimeout(() => {
+          // Then update parent state - the delay prevents form submission
+          onContentChange(newContent);
+          onSwitchPost(newIndex);
+        }, 0);
         
         return {
           posts: updatedPosts,
@@ -307,7 +316,7 @@ export function ThreadPostsManager({
             variant={threadState.activeIndex === index ? "default" : "outline"}
             size="sm"
             className="flex-shrink-0"
-            onClick={() => handleSwitchPost(index)}
+            onClick={(e) => handleSwitchPost(index, e)}
           >
             Post {index + 1}
             {index === 0 && (
@@ -338,7 +347,7 @@ export function ThreadPostsManager({
                     variant="ghost"
                     size="icon"
                     className="h-7 w-7"
-                    onClick={() => handleSwitchPost(index)}
+                    onClick={(e) => handleSwitchPost(index, e)}
                   >
                     <Pencil className="h-4 w-4" />
                     <span className="sr-only">Edit</span>
@@ -399,7 +408,7 @@ export function ThreadPostsManager({
           variant="outline"
           size="sm"
           disabled={threadState.activeIndex === 0}
-          onClick={() => handleSwitchPost(threadState.activeIndex - 1)}
+          onClick={(e) => handleSwitchPost(threadState.activeIndex - 1, e)}
         >
           <ArrowLeft className="mr-1 h-4 w-4" />
           Previous Post
@@ -408,7 +417,7 @@ export function ThreadPostsManager({
           variant="outline"
           size="sm"
           disabled={threadState.activeIndex >= threadState.posts.length - 1}
-          onClick={() => handleSwitchPost(threadState.activeIndex + 1)}
+          onClick={(e) => handleSwitchPost(threadState.activeIndex + 1, e)}
         >
           Next Post
           <ArrowRight className="ml-1 h-4 w-4" />
