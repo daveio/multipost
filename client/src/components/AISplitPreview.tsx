@@ -542,6 +542,24 @@ export function AISplitPreview({
           </div>
         )}
         
+        {/* Show reasoning if enabled in advanced options */}
+        {advancedOptions.showReasoning && result.reasoning && (
+          <div className="mb-4 p-4 bg-amber-50 border border-amber-200 text-amber-800 rounded-md shadow-sm">
+            <div className="flex justify-between items-center mb-2">
+              <h4 className="text-sm font-medium flex items-center">
+                <HelpCircle className="h-4 w-4 mr-1.5 text-amber-600" />
+                AI Reasoning Behind This Split
+              </h4>
+              <Badge variant="outline" className="text-xs text-amber-700 bg-amber-100 border-amber-200">
+                Explanation
+              </Badge>
+            </div>
+            <p className="text-sm whitespace-pre-wrap">
+              {result.reasoning}
+            </p>
+          </div>
+        )}
+        
         {/* Thread strategy indicator */}
         <div className="flex justify-between items-center text-sm">
           <div className="flex items-center gap-2">
