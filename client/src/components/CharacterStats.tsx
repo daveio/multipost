@@ -22,7 +22,7 @@ export function CharacterStats({ stats }: CharacterStatsProps) {
             <div className="stat-title capitalize">{stat.platform}</div>
             <div className="stat-value text-lg">
               <span>{stat.current}</span>
-              <span className="text-gray-500 text-sm">/{stat.limit}</span>
+              <span className="text-muted-foreground text-sm">/{stat.limit}</span>
             </div>
             <div className="stat-desc mt-1">
               <Progress 
