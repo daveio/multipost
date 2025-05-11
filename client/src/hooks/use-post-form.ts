@@ -10,7 +10,8 @@ import {
   PostFormState, 
   AdvancedOptions,
   Account,
-  Draft
+  Draft,
+  ThreadPost
 } from '../types';
 import { DEFAULT_PLATFORMS, PLATFORM_CHARACTER_LIMITS, getCharacterLimit } from '../lib/platform-config';
 

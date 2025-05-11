@@ -21,7 +21,14 @@ import {
   AlertCircle,
   AlertTriangle,
   Scissors,
-  SplitSquareVertical
+  SplitSquareVertical,
+  ArrowLeft,
+  ArrowRight,
+  AlignJustify,
+  Maximize2,
+  Minimize2,
+  XCircle,
+  Pencil
 } from "lucide-react";
 
 type SocialIconProps = {
@@ -80,5 +87,13 @@ export const UIIcon = {
   Warning: AlertCircle,
   Alert: AlertTriangle,
   Split: SplitSquareVertical,
-  Cut: Scissors
+  Cut: Scissors,
+  ArrowLeft: ArrowLeft,
+  ArrowRight: ArrowRight,
+  Thread: AlignJustify,
+  Expand: Maximize2,
+  Collapse: Minimize2,
+  Exit: XCircle,
+  Edit: Pencil,
+  Plus: Plus
 };
