@@ -8,6 +8,7 @@ import { UIIcon, SocialIcon } from "./SocialIcons";
 import { MediaUploader } from "./MediaUploader";
 import { PlatformCard } from "./PlatformCard";
 import { SplitWithAIButton } from "./SplitWithAIButton";
+import { ThreadPostsManager } from "./ThreadPostsManager";
 import { 
   Accordion, 
   AccordionContent, 
@@ -15,7 +16,7 @@ import {
   AccordionTrigger 
 } from "@/components/ui/accordion";
 import { DEFAULT_PLATFORMS } from "../lib/platform-config";
-import { Platform, CharacterStat, MediaFile, AdvancedOptions } from "../types";
+import { Platform, CharacterStat, MediaFile, AdvancedOptions, ThreadPost } from "../types";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { SplittingStrategy } from "@/lib/aiService";
 import { useToast } from "@/hooks/use-toast";
@@ -30,6 +31,9 @@ interface PostComposerProps {
   isPendingPost: boolean;
   isPendingUpload: boolean;
   isFormValid: boolean;
+  threadPosts: ThreadPost[];
+  isThreadMode: boolean;
+  activeThreadIndex: number;
   onContentChange: (content: string) => void;
   onTogglePlatform: (platformId: string) => void;
   onAdvancedOptionsChange: (options: Partial<AdvancedOptions>) => void;
@@ -38,6 +42,10 @@ interface PostComposerProps {
   onSaveAsDraft: () => void;
   onSubmitPost: () => void;
   onResetForm: () => void;
+  onSwitchThreadPost: (index: number) => void;
+  onAddThreadPost: (content?: string) => void;
+  onRemoveThreadPost: (index: number) => void;
+  onExitThreadMode: () => void;
   onApplySplit?: (strategy: SplittingStrategy, platformId: string, splitText: string[]) => void;
   accounts?: any[]; // We'll need this for the AI split preview
 }
@@ -52,6 +60,9 @@ export function PostComposer({
   isPendingPost,
   isPendingUpload,
   isFormValid,
+  threadPosts,
+  isThreadMode,
+  activeThreadIndex,
   onContentChange,
   onTogglePlatform,
   onAdvancedOptionsChange,
@@ -60,6 +71,10 @@ export function PostComposer({
   onSaveAsDraft,
   onSubmitPost,
   onResetForm,
+  onSwitchThreadPost,
+  onAddThreadPost,
+  onRemoveThreadPost,
+  onExitThreadMode,
   onApplySplit,
   accounts = []
 }: PostComposerProps) {
@@ -79,14 +94,26 @@ export function PostComposer({
       <form onSubmit={handleFormSubmit}>
         {/* Text Area for Post */}
         <div className="form-control mb-4 relative">
-          <Textarea 
-            id="postContent" 
-            value={content}
-            onChange={(e) => onContentChange(e.target.value)}
-            className="resize-none h-40"
-            placeholder="What's on your mind? Type your message here to post across multiple platforms..."
-            disabled={isPendingPost}
-          />
+          {isThreadMode ? (
+            <ThreadPostsManager
+              threadPosts={threadPosts}
+              activeIndex={activeThreadIndex}
+              onSwitchPost={onSwitchThreadPost}
+              onAddPost={onAddThreadPost}
+              onRemovePost={onRemoveThreadPost}
+              onContentChange={onContentChange}
+              onExit={onExitThreadMode}
+            />
+          ) : (
+            <Textarea 
+              id="postContent" 
+              value={content}
+              onChange={(e) => onContentChange(e.target.value)}
+              className="resize-none h-40"
+              placeholder="What's on your mind? Type your message here to post across multiple platforms..."
+              disabled={isPendingPost}
+            />
+          )}
           
           {/* Character Count & Controls Row - Must be outside textarea to prevent overlap */}
           <div className="mt-2 flex flex-wrap justify-between text-sm gap-2 items-center">
@@ -96,7 +123,9 @@ export function PostComposer({
               content.length > 0.8 * Math.min(...characterStats.map(s => s.limit)) ? 
                 "text-amber-500" : "text-gray-500"}
             `}>
-              {content.length} characters
+              {isThreadMode ? 
+                `Thread: ${threadPosts.length} posts (${content.length} characters in current post)` : 
+                `${content.length} characters`}
             </div>
             
             {/* Right side - Action buttons */}

@@ -31,7 +31,12 @@ export default function Home() {
     loadDraft,
     deleteDraft,
     resetForm,
-    setActivePreviewTab
+    setActivePreviewTab,
+    setupThread,
+    switchThreadPost,
+    addThreadPost,
+    removeThreadPost,
+    exitThreadMode
   } = usePostForm();
   
   // Explicitly type accounts and drafts
@@ -108,6 +113,9 @@ export default function Home() {
               isPendingPost={isPendingPost}
               isPendingUpload={isPendingUpload}
               isFormValid={isFormValid}
+              threadPosts={formState.threadPosts}
+              isThreadMode={formState.isThreadMode}
+              activeThreadIndex={formState.activeThreadIndex}
               onContentChange={updateContent}
               onTogglePlatform={togglePlatform}
               onAdvancedOptionsChange={updateAdvancedOptions}
@@ -116,6 +124,10 @@ export default function Home() {
               onSaveAsDraft={saveAsDraft}
               onSubmitPost={submitPost}
               onResetForm={resetForm}
+              onSwitchThreadPost={switchThreadPost}
+              onAddThreadPost={addThreadPost}
+              onRemoveThreadPost={removeThreadPost}
+              onExitThreadMode={exitThreadMode}
               onApplySplit={handleApplySplit}
               accounts={accounts}
             />
