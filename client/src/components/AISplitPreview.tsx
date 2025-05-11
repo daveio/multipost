@@ -18,9 +18,10 @@ import {
   getStrategyDescription,
   getStrategyTooltip
 } from "@/lib/aiService";
-import { Account, CharacterStat } from "../types";
+import { Account, CharacterStat, SplittingConfig } from "../types";
 import { getPlatformName } from '@/lib/platform-config';
 import { Progress } from "@/components/ui/progress";
+import { SavedSplittingConfigs } from "./SavedSplittingConfigs";
 import {
   Tooltip,
   TooltipContent,
@@ -48,7 +49,7 @@ export function AISplitPreview({
   characterStats,
   onClose,
   onApplySplit,
-  advancedOptions = { showRawJson: false }
+  advancedOptions = { showRawJson: false, savedSplittingConfigs: [] }
 }: AISplitPreviewProps) {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
@@ -108,6 +109,69 @@ export function AISplitPreview({
       SplittingStrategy.RETAIN_HASHTAGS,
       SplittingStrategy.PRESERVE_MENTIONS
     ]);
+  };
+  
+  // Save the current configuration
+  const saveConfig = (name: string) => {
+    // Create a new config object
+    const newConfig: SplittingConfig = {
+      name,
+      strategies: selectedStrategies,
+      createdAt: new Date()
+    };
+    
+    // Get current saved configs or initialize empty array
+    const currentConfigs = advancedOptions.savedSplittingConfigs || [];
+    
+    // Check if a config with this name already exists
+    const existingConfigIndex = currentConfigs.findIndex((config: SplittingConfig) => config.name === name);
+    
+    // Update or add the config
+    let updatedConfigs: SplittingConfig[];
+    if (existingConfigIndex !== -1) {
+      // Replace existing config
+      updatedConfigs = [...currentConfigs];
+      updatedConfigs[existingConfigIndex] = newConfig;
+    } else {
+      // Add new config
+      updatedConfigs = [...currentConfigs, newConfig];
+    }
+    
+    // Save to localStorage
+    localStorage.setItem('savedSplittingConfigs', JSON.stringify(updatedConfigs));
+    
+    // Show toast notification
+    toast({
+      title: "Configuration Saved",
+      description: `Your splitting configuration "${name}" has been saved.`,
+    });
+  };
+  
+  // Load a saved configuration
+  const loadConfig = (config: SplittingConfig) => {
+    setSelectedStrategies(config.strategies as SplittingStrategy[]);
+    
+    toast({
+      title: "Configuration Loaded",
+      description: `Loaded splitting configuration "${config.name}".`,
+    });
+  };
+  
+  // Delete a saved configuration
+  const deleteConfig = (configName: string) => {
+    // Get current saved configs
+    const currentConfigs = advancedOptions.savedSplittingConfigs || [];
+    
+    // Filter out the config to delete
+    const updatedConfigs = currentConfigs.filter((config: SplittingConfig) => config.name !== configName);
+    
+    // Save to localStorage
+    localStorage.setItem('savedSplittingConfigs', JSON.stringify(updatedConfigs));
+    
+    toast({
+      title: "Configuration Deleted",
+      description: `Splitting configuration "${configName}" has been removed.`,
+    });
   };
   
   // Generate AI splitting options
@@ -649,7 +713,7 @@ export function AISplitPreview({
                     <p className="text-xs text-gray-500">Select one or more strategies to generate splits</p>
                   </div>
                   
-                  <div className="flex gap-1.5">
+                  <div className="flex flex-wrap gap-1.5">
                     <Button 
                       variant="ghost" 
                       size="sm"
@@ -666,6 +730,15 @@ export function AISplitPreview({
                     >
                       Select All
                     </Button>
+                    
+                    {/* Saved Configurations Component */}
+                    <SavedSplittingConfigs
+                      selectedStrategies={selectedStrategies}
+                      savedConfigs={advancedOptions.savedSplittingConfigs || []}
+                      onSaveConfig={saveConfig}
+                      onLoadConfig={loadConfig}
+                      onDeleteConfig={deleteConfig}
+                    />
                   </div>
                 </div>
                 
