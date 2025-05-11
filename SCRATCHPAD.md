@@ -65,7 +65,7 @@
 
 ## Threading Indicator Fixes
 
-- Whenever threading indicatorrs are used, make sure two newlines are used beforehand.
+- Whenever threading indicators are used, make sure two newlines are used beforehand.
 
 ### Good
 
@@ -84,3 +84,23 @@ Blake's 7 featured early representation with diverse casting and strong female c
 - Update the tests if neceesary, run them, and make sure they pass.
   - If they don't, fix the code or the tests until they do.
 - Document all of your changes, design, code, and tests, in `README.md`.
+
+## Theming
+
+- Use the `catppuccin` theme framework for the look and feel of the site.
+- Implementation details can be found in:
+  - The `@catppuccin/palette` `npm` package.
+  - Elsewhere in the [`catppuccin`](https://github.com/catppuccin) GitHub organisation.
+  - Feel free to install this package and reference it for the colours.
+- Implement the four theme options:
+  - Light theme:
+    - `latte`
+  - Dark theme:
+    - `frappé`
+    - `macchiato`
+    - `mocha`
+- Create a switcher utility in the top right which will let us switch between the four of them.
+  - Categorise the list by light or dark theme.
+  - Ensure the theme switcher works properly.
+- Make sure that we are left with a visually appealing result in all four theme modes.
+  - Previous attempts to implement a dark theme were almost unusable.
