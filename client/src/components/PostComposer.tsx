@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { UIIcon, SocialIcon } from "./SocialIcons";
 import { MediaUploader } from "./MediaUploader";
 import { PlatformCard } from "./PlatformCard";
+import { SplitWithAIButton } from "./SplitWithAIButton";
 import { 
   Accordion, 
   AccordionContent, 
@@ -16,6 +17,7 @@ import {
 import { DEFAULT_PLATFORMS } from "../lib/platform-config";
 import { Platform, CharacterStat, MediaFile, AdvancedOptions } from "../types";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { SplittingStrategy } from "@/lib/aiService";
 
 interface PostComposerProps {
   content: string;
@@ -35,6 +37,8 @@ interface PostComposerProps {
   onSaveAsDraft: () => void;
   onSubmitPost: () => void;
   onResetForm: () => void;
+  onApplySplit?: (strategy: SplittingStrategy, platformId: string, splitText: string[]) => void;
+  accounts?: any[]; // We'll need this for the AI split preview
 }
 
 export function PostComposer({
@@ -54,7 +58,9 @@ export function PostComposer({
   onRemoveMediaFile,
   onSaveAsDraft,
   onSubmitPost,
-  onResetForm
+  onResetForm,
+  onApplySplit,
+  accounts = []
 }: PostComposerProps) {
   const handleFormSubmit = (e: FormEvent) => {
     e.preventDefault();
@@ -88,14 +94,15 @@ export function PostComposer({
             }>
               {content.length} characters
             </div>
-            {isContentTooLong && (
-              <Alert className="py-1 px-2 h-auto bg-amber-50 border-amber-200">
-                <AlertDescription className="flex items-center text-xs text-amber-700">
-                  <UIIcon.Settings className="mr-1 h-4 w-4" />
-                  Post too long for some platforms. AI splitting recommended.
-                </AlertDescription>
-              </Alert>
-            )}
+            
+            {/* AI Split Button - replaces the alert */}
+            <SplitWithAIButton 
+              content={content}
+              isContentTooLong={isContentTooLong}
+              accounts={accounts}
+              characterStats={characterStats}
+              onApplySplit={onApplySplit || (() => {})}
+            />
           </div>
         </div>
         
