@@ -57,6 +57,10 @@ export function AISplitPreview({
   const [progressPercent, setProgressPercent] = useState<number>(0);
   const [activePlatform, setActivePlatform] = useState<string>('');
   const [activeStrategy, setActiveStrategy] = useState<SplittingStrategy>(SplittingStrategy.SEMANTIC);
+  
+  // Manage local state for configs
+  const [savedConfigs, setSavedConfigs] = useState<SplittingConfig[]>([]);
+  
   // Enable multiple strategies by default
   const [selectedStrategies, setSelectedStrategies] = useState<SplittingStrategy[]>([
     SplittingStrategy.SEMANTIC,
@@ -82,6 +86,24 @@ export function AISplitPreview({
       setActivePlatform(platformsNeedingSplit[0]);
     }
   }, [platformsNeedingSplit, activePlatform]);
+  
+  // Load saved configurations from localStorage when component mounts
+  useEffect(() => {
+    try {
+      const storedConfigs = localStorage.getItem('savedSplittingConfigs');
+      if (storedConfigs) {
+        const parsedConfigs = JSON.parse(storedConfigs);
+        console.log('Loading saved configs from localStorage on mount:', parsedConfigs);
+        setSavedConfigs(parsedConfigs);
+      } else {
+        console.log('No saved configs found in localStorage');
+        setSavedConfigs([]);
+      }
+    } catch (error) {
+      console.error('Error loading configs from localStorage:', error);
+      setSavedConfigs([]);
+    }
+  }, []);
   
   // Toggle a strategy selection
   const toggleStrategy = (strategy: SplittingStrategy) => {
@@ -135,8 +157,8 @@ export function AISplitPreview({
       }
     } catch (error) {
       console.error('Error loading configs from localStorage:', error);
-      // Fallback to props if localStorage parsing fails
-      currentConfigs = advancedOptions.savedSplittingConfigs || [];
+      // Fallback to our component state
+      currentConfigs = savedConfigs;
     }
     
     // Check if a config with this name already exists
@@ -159,6 +181,9 @@ export function AISplitPreview({
     const configsJson = JSON.stringify(updatedConfigs);
     localStorage.setItem('savedSplittingConfigs', configsJson);
     console.log('Saved configs to localStorage:', configsJson);
+    
+    // Update component state
+    setSavedConfigs(updatedConfigs);
     
     // Show toast notification
     toast({
@@ -213,8 +238,8 @@ export function AISplitPreview({
       }
     } catch (error) {
       console.error('Error loading configs from localStorage for deletion:', error);
-      // Fallback to props if localStorage parsing fails
-      currentConfigs = advancedOptions.savedSplittingConfigs || [];
+      // Fallback to component state
+      currentConfigs = savedConfigs;
     }
     
     // Filter out the config to delete
@@ -225,6 +250,9 @@ export function AISplitPreview({
     const configsJson = JSON.stringify(updatedConfigs);
     localStorage.setItem('savedSplittingConfigs', configsJson);
     console.log('Saved updated configs after deletion:', configsJson);
+    
+    // Update component state
+    setSavedConfigs(updatedConfigs);
     
     toast({
       title: "Configuration Deleted",
@@ -746,7 +774,7 @@ export function AISplitPreview({
                     {/* Saved Configurations Component */}
                     <SavedSplittingConfigs
                       selectedStrategies={selectedStrategies}
-                      savedConfigs={advancedOptions.savedSplittingConfigs || []}
+                      savedConfigs={savedConfigs}
                       onSaveConfig={saveConfig}
                       onLoadConfig={loadConfig}
                       onDeleteConfig={deleteConfig}
