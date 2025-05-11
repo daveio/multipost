@@ -17,7 +17,9 @@ import {
   X,
   ChevronDown,
   Plus,
-  Trash
+  Trash,
+  AlertCircle,
+  AlertTriangle
 } from "lucide-react";
 
 type SocialIconProps = {
@@ -74,5 +76,7 @@ export const UIIcon = {
   Delete: Trash,
   Account: UserCheck,
   Server: Server,
-  Refresh: RefreshCw
+  Refresh: RefreshCw,
+  Warning: AlertCircle,
+  Alert: AlertTriangle
 };
