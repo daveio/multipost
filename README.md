@@ -431,6 +431,33 @@ The application uses OpenAI's GPT-4o model to split and optimize content:
 5. The AI provides reasoning for its splits which can be displayed to the user
 6. Multiple splitting options can be saved and loaded
 
+### OpenAI API Integration
+
+The application uses OpenAI's GPT-4o model for several key features:
+
+1. **API Key Management**:
+   - The application checks for the presence of the OpenAI API key at server startup
+   - Key validation happens before making API requests
+   - Detailed error messages for missing or invalid keys
+
+2. **Error Handling**:
+   - Comprehensive error handling for OpenAI API responses
+   - User-friendly error messages with suggestions for resolution
+   - Specific handling for common errors (rate limits, quota exceeded)
+   - Detailed error logging for debugging
+
+3. **GPT-4o Prompt Engineering**:
+   - Structured system prompts that combine multiple splitting strategies
+   - JSON response formatting for consistent parsing
+   - Thread optimization instructions built into every prompt
+   - Character limit enforcement based on platform requirements
+ 
+4. **Response Validation**:
+   - Safety checks for malformed API responses
+   - Handling for unexpected response formats
+   - Fallback mechanisms for failed requests
+   - Structured error propagation to client
+
 ## State Management
 
 Post form state is managed through the `usePostForm` hook, which handles:
@@ -471,6 +498,7 @@ Thread functionality includes:
 ### Prerequisites
 - Node.js (v14+)
 - npm (v6+)
+- OpenAI API key (for AI-powered features)
 
 ### Installation Steps
 1. Clone the repository
@@ -483,10 +511,28 @@ Thread functionality includes:
      ```
      OPENAI_API_KEY=your_openai_api_key
      ```
+   - Or use Replit's Secrets management to add the OPENAI_API_KEY
 4. Start the development server:
    ```
    npm run dev
    ```
+
+### OpenAI API Key
+The application requires an OpenAI API key for AI-powered features:
+- Post splitting based on character limits
+- Content optimization for different platforms
+
+If the OpenAI API key is missing or invalid, the application will:
+1. Log an error message on the server
+2. Return detailed error responses from API endpoints
+3. Display user-friendly error messages in the UI
+4. Include suggestions for fixing the issue
+
+To obtain an OpenAI API key:
+1. Create an account at [OpenAI](https://openai.com/)
+2. Navigate to API key management
+3. Generate a new API key
+4. Add it to your environment as OPENAI_API_KEY
 
 ## Configuration
 
@@ -532,11 +578,12 @@ Request:
 ```json
 {
   "content": "Long post content to split...",
-  "strategies": ["semantic", "sentence", "retain_hashtags", "preserve_mentions"]
+  "strategies": ["semantic", "sentence", "retain_hashtags", "preserve_mentions"],
+  "customMastodonLimit": 500
 }
 ```
 
-Response:
+Success Response:
 ```json
 {
   "semantic": {
@@ -554,6 +601,51 @@ Response:
   "sentence": {
     // Similar structure
   }
+}
+```
+
+Error Response:
+```json
+{
+  "message": "Failed to split post",
+  "error": "Invalid OpenAI API key provided. Please check your API key.",
+  "code": "invalid_api_key",
+  "suggestion": "Please check that your OpenAI API key is correctly configured."
+}
+```
+
+Error codes include:
+- `invalid_api_key`: The OpenAI API key is invalid
+- `missing_api_key`: The OpenAI API key is not configured
+- `rate_limit_exceeded`: Too many requests to OpenAI API in a short time
+- `insufficient_quota`: OpenAI API usage quota has been exceeded
+
+### POST /api/optimize-post
+Optimize a post for a specific platform.
+
+Request:
+```json
+{
+  "content": "Long post content to optimize...",
+  "platform": "bluesky",
+  "customMastodonLimit": 500
+}
+```
+
+Success Response:
+```json
+{
+  "optimized": "Optimized content for the specified platform..."
+}
+```
+
+Error Response:
+```json
+{
+  "message": "Failed to optimize post",
+  "error": "OpenAI rate limit exceeded. Please try again after a short wait.",
+  "code": "rate_limit_exceeded",
+  "suggestion": "Please wait a few moments and try again."
 }
 ```
 
@@ -594,10 +686,18 @@ The application includes a workflow named 'Start application' that runs `npm run
 The application provides comprehensive error handling:
 
 1. **API Errors**: Detailed error messages from the backend
-2. **OpenAI Errors**: Specific error handling for API key issues, rate limits, etc.
+2. **OpenAI Errors**: Enhanced error handling for API key issues, rate limits, etc.
+   - Missing API key detection
+   - Invalid API key handling
+   - Rate limit exceeded notifications
+   - Quota exceeded warnings
+   - Detailed error explanations with suggestions
 3. **Validation Errors**: Form validation using Zod schemas
 4. **UI Feedback**: Toast notifications for success/error states
 5. **Thread Navigation**: Safe handling of thread state to prevent data loss
+   - Event propagation control (preventDefault, stopPropagation)
+   - Timeout separation between content updates and form submissions
+   - Explicit button type declarations
 
 ## Screenshots & UI Components
 
