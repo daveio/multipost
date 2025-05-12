@@ -15,9 +15,11 @@ Ruby (`gem`):
 
 - `catppuccin`: [catppuccin/ruby](https://github.com/catppuccin/ruby)
 
-I want you to configure Tailwind 4 and DaisyUI to use the Catppuccin theme.
+Now that we have Tailwind 4 and DaisyUI via PostCSS, I want you to configure Tailwind 4 and DaisyUI to use the Catppuccin theme.
 
 Use whichever packages make the most sense. I initially suspect that using `@catppuccin/daisyui` for DaisyUI and `@catppuccin/tailwindcss` for all other Tailwind theming might be a good idea, but you can decide on your approach.
+
+Any CSS changes should involve PostCSS where appropriate.
 
 Also configure Ruby tooling and backend to use the theme where possible.
 
