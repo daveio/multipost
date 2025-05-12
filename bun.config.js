@@ -1,5 +1,5 @@
-import fs from 'fs'
-import path from 'path'
+import fs from 'node:fs'
+import path from 'node:path'
 
 const config = {
   sourcemap: 'external',
@@ -17,9 +17,8 @@ const build = async (config) => {
         console.error(message)
       }
       return
-    } else {
-      throw new AggregateError(result.logs, 'Build failed')
     }
+    throw new AggregateError(result.logs, 'Build failed')
   }
 }
 ;(async () => {
