@@ -1,0 +1,6 @@
+# linear cli
+# https://github.com/schpet/linear-cli
+
+workspace = "dave-io"
+team_id = "GEN"
+issue_sort = "priority"
