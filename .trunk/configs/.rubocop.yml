@@ -1,7 +1,44 @@
-inherit_gem:
-  rubocop-rails-omakase: rubocop.yml
+# inherit_gem:
+#   rubocop-rails-omakase: rubocop.yml
+plugins:
+  - rubocop-capybara
+  - rubocop-minitest
+  - rubocop-performance
+  - rubocop-rails
+  - rubocop-rake
+  - rubocop-rspec
+  - rubocop-sorbet
+  - rubocop-thread_safety
 AllCops:
   TargetRubyVersion: 3.4
   Exclude:
     - .vscode/**
     - .git/**
+Style/StringLiterals:
+  Enabled: true
+  EnforcedStyle: double_quotes
+Style/StringLiteralsInInterpolation:
+  Enabled: true
+  EnforcedStyle: double_quotes
+Layout/LineLength:
+  Max: 120
+Metrics/MethodLength:
+  Max: 20
+Metrics/AbcSize:
+  Max: 50
+Metrics/CyclomaticComplexity:
+  Max: 10
+Metrics/PerceivedComplexity:
+  Max: 10
+Metrics/BlockLength:
+  # Configuration parameters: CountComments, CountAsOne, AllowedMethods, AllowedPatterns.
+  # AllowedMethods: refine
+  Max: 117
+Style/Documentation:
+  # Configuration parameters: AllowedConstants.
+  Exclude:
+    - app/controllers/application_controller.rb
+    - app/helpers/application_helper.rb
+    - app/mailers/application_mailer.rb
+    - app/models/application_record.rb
+    - config/application.rb

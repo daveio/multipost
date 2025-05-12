@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 source "https://rubygems.org"
 
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
@@ -23,12 +25,12 @@ gem "jbuilder"
 # gem "bcrypt", "~> 3.1.7"
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
-gem "tzinfo-data", platforms: %i[ windows jruby ]
+gem "tzinfo-data", platforms: %i[windows jruby]
 
 # Use the database-backed adapters for Rails.cache, Active Job, and Action Cable
+gem "solid_cable"
 gem "solid_cache"
 gem "solid_queue"
-gem "solid_cable"
 
 # Reduces boot times through caching; required in config/boot.rb
 gem "bootsnap", require: false
@@ -44,7 +46,7 @@ gem "thruster", require: false
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
-  gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"
+  gem "debug", platforms: %i[mri windows], require: "debug/prelude"
 
   # Static analysis for security vulnerabilities [https://brakemanscanner.org/]
   gem "brakeman", require: false
@@ -65,9 +67,19 @@ group :test do
 end
 
 gem "devise", "~> 4.9"
-gem "dotenv-rails", "~> 3.1"
-gem "sorbet-static-and-runtime", "~> 0.5.12087"
-gem "rubocop-sorbet", "~> 0.10.0"
-gem "rubocop", "~> 1.75"
 gem "devise-argon2", "~> 2.0"
 gem "devise_zxcvbn", "~> 6.0"
+gem "dotenv-rails", "~> 3.1"
+gem "rubocop", "~> 1.75"
+gem "rubocop-sorbet", "~> 0.10.0"
+gem "sorbet-static-and-runtime", "~> 0.5.12087"
+
+gem "rubocop-performance", "~> 1.25"
+
+gem "rubocop-capybara", "~> 2.22"
+
+gem "rubocop-minitest", "~> 0.38.0", group: :development
+gem "rubocop-rails", "~> 2.31", group: :development
+gem "rubocop-rake", "~> 0.7.1", group: :development
+gem "rubocop-rspec", "~> 3.6", group: :development
+gem "rubocop-thread_safety", "~> 0.7.2", group: :development

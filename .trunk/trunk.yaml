@@ -55,12 +55,11 @@ lint:
     - linters:
         - shellcheck
       paths:
-        - bin/mise
         - bin/docker-entrypoint
     - linters:
         - ALL
       paths:
-        - _tickets/**
+        - bin/mise
         - "**/*.zst"
   enabled:
     - trunk-toolbox@0.5.4
@@ -80,8 +79,15 @@ lint:
     - oxipng@9.1.5
     - rubocop:
         packages:
+          - rubocop-capybara
+          - rubocop-minitest
+          - rubocop-performance
           - rubocop-rails
           - rubocop-rails-omakase
+          - rubocop-rake
+          - rubocop-rspec
+          - rubocop-sorbet
+          - rubocop-thread_safety
     - shellcheck@0.10.0
     - shfmt@3.6.0
     - svgo@3.3.2
