@@ -5,5 +5,3 @@ AllCops:
   Exclude:
     - .vscode/**
     - .git/**
-    - _old-articles-views/**
-    - _old-test/**

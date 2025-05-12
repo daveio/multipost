@@ -1,5 +1,8 @@
 {
-  "$schema": "biome_schema.json",
+  "$schema": "./biome_schema.json",
+  "files": {
+    "ignore": ["../../.trunk"]
+  },
   "css": {
     "formatter": {
       "quoteStyle": "single"

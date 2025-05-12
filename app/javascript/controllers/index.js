@@ -4,29 +4,5 @@
 
 import { application } from './application'
 
-import CharacterCounterController from './character_counter_controller'
-application.register('character-counter', CharacterCounterController)
-
-import DropdownController from './dropdown_controller'
-application.register('dropdown', DropdownController)
-
 import HelloController from './hello_controller'
 application.register('hello', HelloController)
-
-import MediaUploadController from './media_upload_controller'
-application.register('media-upload', MediaUploadController)
-
-import ModalController from './modal_controller'
-application.register('modal', ModalController)
-
-import PlatformSelectorController from './platform_selector_controller'
-application.register('platform-selector', PlatformSelectorController)
-
-import PostComposerController from './post_composer_controller'
-application.register('post-composer', PostComposerController)
-
-import ThemeSwitcherController from './theme_switcher_controller'
-application.register('theme-switcher', ThemeSwitcherController)
-
-import ThreadManagerController from './thread_manager_controller'
-application.register('thread-manager', ThreadManagerController)
