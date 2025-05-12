@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html data-theme="frappe" data-controller="theme">
+<html data-theme="frappe" data-controller="theme synthwave">
 
 <head>
   <title>Multipost</title>
@@ -36,7 +36,16 @@
         <option value="frappe">Frappe (Dark)</option>
         <option value="macchiato">Macchiato (Darker)</option>
         <option value="mocha">Mocha (Darkest)</option>
+        <% if Rails.env.development? || Rails.env.test? %>
+        <option value="synthwave84">Synthwave '84</option>
+        <% end %>
       </select>
+      <% if Rails.env.development? %>
+      <div class="text-xs opacity-70 mt-1">
+        <span class="block">Easter egg: Use Konami code to activate Synthwave '84</span>
+        <span class="block text-center">↑↑↓↓←→←→BA</span>
+      </div>
+      <% end %>
     </div>
   </div>
 
