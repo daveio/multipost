@@ -10,18 +10,16 @@ module.exports = {
     extend: {},
   },
   plugins: [
-    require('@catppuccin/tailwindcss')({
-      defaultFlavor: 'frappe'
-    }),
-    require('daisyui')
+    require('daisyui'),
+    // require('@catppuccin/tailwindcss')({
+    //   defaultFlavor: 'frappe'
+    // })
   ],
   daisyui: {
     themes: [
+      "light",
+      "dark",
       {
-        latte: require('@catppuccin/daisyui').latte,
-        frappe: require('@catppuccin/daisyui').frappe,
-        macchiato: require('@catppuccin/daisyui').macchiato,
-        mocha: require('@catppuccin/daisyui').mocha,
         synthwave84: {
           primary: "#f92aad",
           "primary-focus": "#fa1a9e",
@@ -56,8 +54,11 @@ module.exports = {
           error: "#f97e72",
           "error-content": "#ffffff"
         }
-      },
+      }
     ],
-    darkTheme: "frappe",
+    darkTheme: "dark",
+    base: true,
+    styled: true,
+    utils: true,
   },
 }

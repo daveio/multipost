@@ -13,7 +13,7 @@ export default class extends Controller {
     // Skip toggle if we're in synthwave mode - that's handled by synthwave controller
     if (currentTheme === 'synthwave84') { return }
 
-    const newTheme = currentTheme === 'frappe' ? 'latte' : 'frappe'
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark'
 
     this.applyTheme(newTheme)
     localStorage.setItem('theme', newTheme)
@@ -41,8 +41,7 @@ export default class extends Controller {
   }
 
   loadThemePreference() {
-    // Default to frappe (dark) unless explicitly set to light
-    const savedTheme = localStorage.getItem('theme') || 'frappe'
+    const savedTheme = localStorage.getItem('theme') || 'dark'
     this.applyTheme(savedTheme)
 
     // Update selector if it exists
@@ -56,7 +55,7 @@ export default class extends Controller {
 
     // Update any toggle buttons
     if (this.hasToggleTarget) {
-      const isDark = theme === 'frappe' || theme === 'macchiato' || theme === 'mocha' || theme === 'synthwave84'
+      const isDark = theme === 'dark' || theme === 'synthwave84'
       this.toggleTargets.forEach(target => {
         target.setAttribute('aria-checked', isDark.toString())
       })
