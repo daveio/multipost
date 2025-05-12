@@ -5,9 +5,9 @@ gem "rails", "~> 8.0.2"
 # The modern asset pipeline for Rails [https://github.com/rails/propshaft]
 gem "propshaft"
 # Use sqlite3 as the database for Active Record
-gem "sqlite3", ">= 2.1"
+gem "sqlite3"
 # Use the Puma web server [https://github.com/puma/puma]
-gem "puma", ">= 5.0"
+gem "puma"
 # Bundle and transpile JavaScript [https://github.com/rails/jsbundling-rails]
 gem "jsbundling-rails"
 # Hotwire's SPA-like page accelerator [https://turbo.hotwired.dev]
@@ -20,13 +20,15 @@ gem "cssbundling-rails"
 gem "jbuilder"
 
 # Use Active Model has_secure_password [https://guides.rubyonrails.org/active_model_basics.html#securepassword]
-# gem "bcrypt", "~> 3.1.7"
+gem "bcrypt"
 
 # Use Devise for authentication
-gem "devise", "~> 4.9.3"
+gem "devise"
+gem "devise-argon2"
+gem "devise_zxcvbn"
 
 # Use Ruby OpenAI for AI integration
-gem "ruby-openai", "~> 6.3.1"
+gem "ruby-openai"
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem "tzinfo-data", platforms: %i[ windows jruby ]
@@ -46,7 +48,9 @@ gem "kamal", require: false
 gem "thruster", require: false
 
 # Use Active Storage variants [https://guides.rubyonrails.org/active_storage_overview.html#transforming-images]
-# gem "image_processing", "~> 1.2"
+gem "image_processing"
+
+gem "foreman", require: false
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
@@ -55,13 +59,25 @@ group :development, :test do
   # Static analysis for security vulnerabilities [https://brakemanscanner.org/]
   gem "brakeman", require: false
 
+  gem "solargraph", require: false
+
   # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
+  gem "rubocop", require: false
   gem "rubocop-rails-omakase", require: false
+
+  # Pry console [https://github.com/pry/pry]
+  gem "pry", require: false
+
+  # Pry themes [https://github.com/pry/pry-theme]
+  gem "pry-theme", require: false
 end
 
 group :development do
   # Use console on exceptions pages [https://github.com/rails/web-console]
   gem "web-console"
+
+  # Livereload for Hotwire [https://github.com/hotwired/hotwire-livereload]
+  gem "hotwire-livereload"
 end
 
 group :test do
@@ -74,9 +90,9 @@ group :test do
   gem "simplecov-html", require: false
 
   # Visual regression testing
-  gem "percy-capybara", "~> 5.0", require: false
+  gem "percy-capybara", require: false
 
   # Database cleanliness
-  gem "database_cleaner-active_record", "~> 2.1"
-  gem "database_cleaner-redis", "~> 2.0"
+  gem "database_cleaner-active_record"
+  gem "database_cleaner-redis"
 end

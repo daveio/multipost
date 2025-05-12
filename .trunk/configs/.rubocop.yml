@@ -1,0 +1,9 @@
+inherit_gem:
+  rubocop-rails-omakase: rubocop.yml
+AllCops:
+  TargetRubyVersion: 3.4
+  Exclude:
+    - .vscode/**
+    - .git/**
+    - _old-articles-views/**
+    - _old-test/**
