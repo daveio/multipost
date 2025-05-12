@@ -2,5 +2,5 @@
 # https://github.com/schpet/linear-cli
 
 workspace = "dave-io"
-team_id = "GEN"
+team_id = "MUL"
 issue_sort = "priority"
