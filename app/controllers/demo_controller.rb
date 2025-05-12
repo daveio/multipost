@@ -16,8 +16,6 @@ class DemoController < ApplicationController
   private
 
   def require_development_mode
-    unless Rails.env.development?
-      render plain: "This page is only available in development mode", status: :forbidden
-    end
+    render plain: "This page is only available in development mode", status: :forbidden unless Rails.env.development?
   end
 end
