@@ -62,9 +62,13 @@ node_modules/
 pickle-email-*.html
 rerun.txt
 yarn-debug.log*
+!.env.example
 !/app/assets/builds/.keep
 !/log/.keep
 !/storage/.keep
 !/tmp/.keep
 !/tmp/pids/.keep
 !/tmp/storage/.keep
+
+#Ignore cursor AI rules
+.cursor/rules/codacy.mdc

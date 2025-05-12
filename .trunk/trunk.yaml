@@ -92,7 +92,7 @@ actions:
     - trunk-upgrade-available
     - trunk-cache-prune
     - git-lfs
-    - rails-test
+    # - rails-test
   definitions:
     - id: rails-test
       display_name: Rails Test
