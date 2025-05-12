@@ -31,13 +31,11 @@ Default to dark mode; making `frappe` the default
 
 I would also like to add another theme option for the site, ie DaisyUI and Tailwind 4.
 
-I don't want you to use the DaisyUI `synthwave` theme as it doesn't have all the nice effects and makes other design decisions I don't like.
-
-We also have some theming infrastructure for Ruby: add it to that, too, if you can.
+I don't want you to use the DaisyUI `synthwave` theme as it doesn't have all the nice effects, and makes other design decisions I don't like.
 
 The theme is `Synthwave '84`, available at [robb0wen/synthwave-vscode](https://github.com/robb0wen/synthwave-vscode).
 
-It is more than just colours: it includes effects like glow and (maybe) scanlines.
+It is more than just colours: it includes effects like glow and (maybe) scanlines, and possibly more. I want them implemented too.
 
 You will have to read and interpret the theme and then reimplement it for CSS, JavaScript, and Ruby. The theme is presented as the source code for a Visual Studio Code plugin.
 
@@ -48,3 +46,5 @@ Remember to involve PostCSS where appropriate in any CSS changes.
 Don't change the default theme: it should say as Catppuccin Frappé.
 
 Eventually, this theme will be added as available through a 'cheat code' as an easter egg. For now, it should appear as an option in any theme switchers.
+
+We also have some theming infrastructure for Ruby: add it to that, too, if you can.
