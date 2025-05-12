@@ -6,6 +6,7 @@ ruby "3.4.3"
 
 gem "bcrypt", "~> 3.1.20" # https://guides.rubyonrails.org/active_model_basics.html#securepassword
 gem "bootsnap", "~> 1.18.4", require: false
+gem "catppuccin", "~> 0.1.2"
 gem "cssbundling-rails", "~> 1.4.3" # https://github.com/rails/cssbundling-rails
 gem "image_processing", "~> 1.14.0" # https://guides.rubyonrails.org/active_storage_overview.html#transforming-images
 gem "jbuilder", "~> 2.13.0" # https://github.com/rails/jbuilder
