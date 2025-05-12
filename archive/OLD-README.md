@@ -260,7 +260,7 @@ This architecture emphasizes unidirectional data flow, clear separation between 
 
 ## Directory Structure
 
-```
+```plaintext
 ├── client/                  # Frontend code
 │   ├── src/
 │   │   ├── components/      # UI components
@@ -635,7 +635,7 @@ Manages toast notifications.
 
 The `openaiService.ts` handles AI-powered post splitting and optimization.
 
-#### Main Functions:
+#### Main Functions
 
 - **splitPost**: Splits a post into multiple posts based on selected strategies
 - **generateSplittingOptions**: Generates different splitting options
@@ -734,7 +734,7 @@ Thread indicators follow a consistent formatting rule to ensure readability:
 - This formatting is applied automatically whether using manual thread creation or AI-based splitting
 - Example of proper thread formatting:
 
-  ```
+  ```plaintext
   Blake's 7 featured early representation with diverse casting and strong female characters. Its finale is one of TV's most shocking. Available on streaming platforms—give it three episodes. Fair warning: don't get attached to anyone.
 
   🧵 2 of 3
@@ -752,17 +752,17 @@ Thread indicators follow a consistent formatting rule to ensure readability:
 
 1. Clone the repository
 2. Install dependencies:
-   ```
+   ```bash
    npm install
    ```
 3. Set up environment variables:
    - Create a `.env` file with the following:
-     ```
+     ```bash
      OPENAI_API_KEY=your_openai_api_key
      ```
    - Or use Replit's Secrets management to add the OPENAI_API_KEY
 4. Start the development server:
-   ```
+   ```bash
    npm run dev
    ```
 
@@ -782,7 +782,8 @@ If the OpenAI API key is missing or invalid, the application will:
 
 To obtain an OpenAI API key:
 
-1. Create an account at [OpenAI](https://openai.com/)
+<!-- trunk-ignore(markdown-link-check/403) -->
+1. Create an account at [OpenAI](https://openai.com)
 2. Navigate to API key management
 3. Generate a new API key
 4. Add it to your environment as OPENAI_API_KEY
