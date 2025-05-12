@@ -60,6 +60,10 @@ export default class extends Controller {
   }
 
   activateTheme() {
+    // Display console message when activated
+    console.log('%c🌌 SYNTHWAVE\'84 ACTIVATED! 🌌', 'color: #ffffff; font-size: 20px; font-weight: bold; text-shadow: 0 0 10px #f72c88, 0 0 20px #f72c88; background: linear-gradient(90deg, #0b1e3a, #471458); padding: 10px; border-radius: 5px;');
+    console.log('%c🎮 Press the Konami code again to deactivate 🎮', 'color: #03edf9; font-size: 14px; font-style: italic;');
+
     // Save the previous theme if not coming from synthwave already
     const currentTheme = document.documentElement.getAttribute('data-theme')
     if (currentTheme !== 'synthwave84') {
@@ -96,6 +100,10 @@ export default class extends Controller {
   }
 
   deactivateTheme() {
+    // Display console message when deactivated
+    console.log('%c🔌 SYNTHWAVE\'84 DEACTIVATED 🔌', 'color: #03edf9; font-size: 20px; font-weight: bold; text-shadow: 0 0 10px #03edf9; background: #1a1a1a; padding: 10px; border-radius: 5px;');
+    console.log('%c👋 See you in the future...', 'color: #f72c88; font-size: 14px; font-style: italic;');
+
     // Restore previous theme (if stored, otherwise default to dark)
     const previousTheme = localStorage.getItem('previousTheme') || 'dark'
     document.documentElement.setAttribute('data-theme', previousTheme)
@@ -137,11 +145,9 @@ export default class extends Controller {
     // Create a new observer
     this.observer = new MutationObserver((mutations) => {
       mutations.forEach(mutation => {
-        if (mutation.addedNodes.length) {
+        if (mutation.addedNodes.length && document.documentElement.getAttribute('data-theme') === 'synthwave84') {
           // When new nodes are added, apply glow effects if we're in Synthwave mode
-          if (document.documentElement.getAttribute('data-theme') === 'synthwave84') {
-            this.applyGlowEffects()
-          }
+          this.applyGlowEffects()
         }
       })
     })

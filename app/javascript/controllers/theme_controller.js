@@ -42,12 +42,10 @@ export default class extends Controller {
       if (selectedTheme === 'synthwave84') {
         const event = new CustomEvent('synthwave:activate')
         window.dispatchEvent(event)
-      } else {
+      } else if (currentTheme === 'synthwave84') {
         // If switching from synthwave84, dispatch deactivate event
-        if (currentTheme === 'synthwave84') {
-          const event = new CustomEvent('synthwave:deactivate')
-          window.dispatchEvent(event)
-        }
+        const event = new CustomEvent('synthwave:deactivate')
+        window.dispatchEvent(event)
       }
     }
   }
