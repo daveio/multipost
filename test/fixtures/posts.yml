@@ -1,0 +1,52 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+john_post:
+  user: john
+  content: This is a standalone post by John
+  status: published
+  thread_index: 0
+  platform_selections: <%= [{ id: 'bluesky', isSelected: true }, { id: 'mastodon', isSelected: true }].to_json %>
+
+john_thread_parent:
+  user: john
+  content: This is the first post in a thread by John
+  status: published
+  thread_index: 0
+  platform_selections: <%= [{ id: 'bluesky', isSelected: true }].to_json %>
+
+john_thread_child_1:
+  user: john
+  content: This is the second post in a thread by John
+  status: published
+  thread_index: 1
+  thread_parent: john_thread_parent
+  platform_selections: <%= [{ id: 'bluesky', isSelected: true }].to_json %>
+
+john_thread_child_2:
+  user: john
+  content: This is the third post in a thread by John
+  status: published
+  thread_index: 2
+  thread_parent: john_thread_parent
+  platform_selections: <%= [{ id: 'bluesky', isSelected: true }].to_json %>
+
+jane_post:
+  user: jane
+  content: This is a standalone post by Jane
+  status: published
+  thread_index: 0
+  platform_selections: <%= [{ id: 'threads', isSelected: true }].to_json %>
+
+jane_pending_post:
+  user: jane
+  content: This is a pending post by Jane
+  status: pending
+  thread_index: 0
+  platform_selections: <%= [{ id: 'threads', isSelected: true }].to_json %>
+
+jane_failed_post:
+  user: jane
+  content: This is a failed post by Jane
+  status: failed
+  thread_index: 0
+  platform_selections: <%= [{ id: 'threads', isSelected: true }, { id: 'bluesky', isSelected: true }].to_json %>

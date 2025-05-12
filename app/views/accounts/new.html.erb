@@ -1,0 +1,74 @@
+<div class="max-w-md mx-auto">
+  <div class="mb-6">
+    <h1 class="text-2xl font-bold text-primary">Connect a New Account</h1>
+    <p class="text-secondary">Add your social media account to Multipost</p>
+  </div>
+  
+  <div class="bg-surface0 rounded-lg shadow p-6">
+    <%= form_with(model: @account, class: "space-y-6") do |form| %>
+      <% if @account.errors.any? %>
+        <div class="bg-surface1 border-l-4 border-red p-4 mb-4 rounded">
+          <h2 class="text-lg font-medium mb-2 text-primary"><%= pluralize(@account.errors.count, "error") %> prevented this account from being saved:</h2>
+          <ul class="list-disc pl-5 text-primary">
+            <% @account.errors.each do |error| %>
+              <li><%= error.full_message %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+      
+      <div>
+        <%= form.label :platform_id, "Platform", class: "block text-sm font-medium text-secondary mb-2" %>
+        <div class="grid grid-cols-3 gap-4">
+          <% Platform.all.each do |platform| %>
+            <label class="relative flex items-center p-3 rounded-lg border border-subtle <%= @platform == platform.name ? 'border-accent bg-surface1' : 'hover:bg-surface1' %> transition-colors cursor-pointer">
+              <%= form.radio_button :platform_id, platform.name, checked: (@platform == platform.name), class: "sr-only" %>
+              <div class="platform-icon platform-icon-small <%= platform.name %> mr-2"></div>
+              <span class="text-primary"><%= platform.name.capitalize %></span>
+              <% if @platform == platform.name %>
+                <div class="absolute top-1 right-1 text-accent">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="w-5 h-5">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z" clip-rule="evenodd" />
+                  </svg>
+                </div>
+              <% end %>
+            </label>
+          <% end %>
+        </div>
+      </div>
+      
+      <% if @platform == 'mastodon' %>
+        <div>
+          <%= form.label :instance_url, "Mastodon Instance", class: "block text-sm font-medium text-secondary mb-2" %>
+          <%= form.text_field :instance_url, class: "w-full rounded-md bg-surface1 border-subtle text-primary focus:ring-accent focus:border-accent", placeholder: "mastodon.social" %>
+          <p class="text-xs text-tertiary mt-1">Enter your Mastodon instance URL, e.g. mastodon.social</p>
+        </div>
+      <% end %>
+      
+      <div>
+        <%= form.label :username, "Username", class: "block text-sm font-medium text-secondary mb-2" %>
+        <%= form.text_field :username, class: "w-full rounded-md bg-surface1 border-subtle text-primary focus:ring-accent focus:border-accent", placeholder: "Enter your username" %>
+      </div>
+      
+      <div>
+        <%= form.label :display_name, "Display Name", class: "block text-sm font-medium text-secondary mb-2" %>
+        <%= form.text_field :display_name, class: "w-full rounded-md bg-surface1 border-subtle text-primary focus:ring-accent focus:border-accent", placeholder: "Enter your display name" %>
+      </div>
+      
+      <div>
+        <%= form.label :access_token, "API Key / Access Token", class: "block text-sm font-medium text-secondary mb-2" %>
+        <%= form.text_field :access_token, class: "w-full rounded-md bg-surface1 border-subtle text-primary focus:ring-accent focus:border-accent", placeholder: "Enter your access token" %>
+        <p class="text-xs text-tertiary mt-1">You can find this in your account settings on <%= @platform ? @platform.capitalize : 'the platform' %></p>
+      </div>
+      
+      <%= form.hidden_field :is_active, value: true %>
+      
+      <div class="pt-4">
+        <div class="flex justify-end space-x-4">
+          <%= link_to "Cancel", accounts_path, class: "bg-surface1 hover:bg-surface2 text-primary py-2 px-4 rounded-lg" %>
+          <%= form.submit "Connect Account", class: "bg-accent hover:bg-accent-hover text-white py-2 px-4 rounded-lg" %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

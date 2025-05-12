@@ -1,0 +1,16 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+john_semantic_config:
+  user: john
+  name: Semantic splitting
+  strategies: <%= ['semantic'].to_json %>
+
+john_complex_config:
+  user: john
+  name: Full thread splitting
+  strategies: <%= ['semantic', 'retain_hashtags', 'preserve_mentions'].to_json %>
+
+jane_config:
+  user: jane
+  name: Sentence-based splitting
+  strategies: <%= ['sentence'].to_json %>

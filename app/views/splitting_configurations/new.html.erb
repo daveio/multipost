@@ -1,0 +1,80 @@
+<div class="max-w-md mx-auto">
+  <div class="mb-6">
+    <h1 class="text-2xl font-bold text-primary">New AI Splitting Configuration</h1>
+    <p class="text-secondary">Create a custom configuration for AI-powered content splitting</p>
+  </div>
+  
+  <div class="bg-surface0 rounded-lg shadow p-6">
+    <%= form_with(model: @config, class: "space-y-6") do |form| %>
+      <% if @config.errors.any? %>
+        <div class="bg-surface1 border-l-4 border-red p-4 mb-4 rounded">
+          <h2 class="text-lg font-medium mb-2 text-primary"><%= pluralize(@config.errors.count, "error") %> prevented this configuration from being saved:</h2>
+          <ul class="list-disc pl-5 text-primary">
+            <% @config.errors.each do |error| %>
+              <li><%= error.full_message %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+      
+      <div>
+        <%= form.label :name, "Configuration Name", class: "block text-sm font-medium text-secondary mb-2" %>
+        <%= form.text_field :name, class: "w-full rounded-md bg-surface1 border-subtle text-primary focus:ring-accent focus:border-accent", placeholder: "E.g., Default, Semantic, Sentence-based..." %>
+      </div>
+      
+      <div>
+        <h3 class="block text-sm font-medium text-secondary mb-2">Splitting Strategies</h3>
+        <p class="text-xs text-tertiary mb-4">Choose how your content should be split into multiple posts.</p>
+        
+        <div class="space-y-3">
+          <div class="flex items-start">
+            <div class="flex items-center h-5">
+              <%= check_box_tag "config[strategies][]", "semantic", @config.strategies&.include?("semantic"), class: "h-4 w-4 text-accent bg-surface1 border-subtle rounded focus:ring-accent" %>
+            </div>
+            <div class="ml-3 text-sm">
+              <%= label_tag "config_strategies_semantic", "Semantic Splitting", class: "font-medium text-primary" %>
+              <p class="text-tertiary">Split content by meaning to keep related thoughts together.</p>
+            </div>
+          </div>
+          
+          <div class="flex items-start">
+            <div class="flex items-center h-5">
+              <%= check_box_tag "config[strategies][]", "sentence", @config.strategies&.include?("sentence"), class: "h-4 w-4 text-accent bg-surface1 border-subtle rounded focus:ring-accent" %>
+            </div>
+            <div class="ml-3 text-sm">
+              <%= label_tag "config_strategies_sentence", "Sentence-based Splitting", class: "font-medium text-primary" %>
+              <p class="text-tertiary">Split at natural sentence boundaries when possible.</p>
+            </div>
+          </div>
+          
+          <div class="flex items-start">
+            <div class="flex items-center h-5">
+              <%= check_box_tag "config[strategies][]", "retain_hashtags", @config.strategies&.include?("retain_hashtags"), class: "h-4 w-4 text-accent bg-surface1 border-subtle rounded focus:ring-accent" %>
+            </div>
+            <div class="ml-3 text-sm">
+              <%= label_tag "config_strategies_retain_hashtags", "Hashtag Retention", class: "font-medium text-primary" %>
+              <p class="text-tertiary">Keep hashtags intact and consider including them in the final post.</p>
+            </div>
+          </div>
+          
+          <div class="flex items-start">
+            <div class="flex items-center h-5">
+              <%= check_box_tag "config[strategies][]", "preserve_mentions", @config.strategies&.include?("preserve_mentions"), class: "h-4 w-4 text-accent bg-surface1 border-subtle rounded focus:ring-accent" %>
+            </div>
+            <div class="ml-3 text-sm">
+              <%= label_tag "config_strategies_preserve_mentions", "Mention Preservation", class: "font-medium text-primary" %>
+              <p class="text-tertiary">Keep mentions intact, especially at the beginning of threads.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="pt-4">
+        <div class="flex justify-end space-x-4">
+          <%= link_to "Cancel", splitting_configurations_path, class: "bg-surface1 hover:bg-surface2 text-primary py-2 px-4 rounded-lg" %>
+          <%= form.submit "Save Configuration", class: "bg-accent hover:bg-accent-hover text-white py-2 px-4 rounded-lg" %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+</div>

@@ -1,0 +1,13 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+bluesky:
+  name: bluesky
+  character_limit: 300
+
+mastodon:
+  name: mastodon
+  character_limit: 500
+
+threads:
+  name: threads
+  character_limit: 500

@@ -1,0 +1,209 @@
+<div class="bg-surface0 rounded-lg shadow p-6" 
+     data-controller="post-composer"
+     data-action="character-counter:count->post-composer#handleCharCount">
+  
+  <%= form_with(model: post, html: { class: "space-y-6", id: "post-form", data: { post_composer_target: "submitForm" } }) do |form| %>
+    <% if post.errors.any? %>
+      <div class="bg-surface1 border-l-4 border-red p-4 mb-4 rounded">
+        <h2 class="text-lg font-medium mb-2 text-primary"><%= pluralize(post.errors.count, "error") %> prevented this post from being saved:</h2>
+        <ul class="list-disc pl-5 text-primary">
+          <% post.errors.each do |error| %>
+            <li><%= error.full_message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <div class="space-y-4">
+      <div>
+        <div class="flex justify-between mb-2">
+          <label for="post_content" class="block text-sm font-medium text-secondary">Content</label>
+          <div class="flex">
+            <span id="character-count" class="text-sm text-secondary mr-4" data-post-composer-target="charStats">0 characters</span>
+          </div>
+        </div>
+        
+        <div class="relative">
+          <%= form.text_area :content, 
+              class: "w-full h-32 rounded-md bg-surface1 border-subtle text-primary resize-y focus:ring-accent focus:border-accent", 
+              placeholder: "What's on your mind?", 
+              data: { 
+                post_composer_target: "content",
+                action: "input->post-composer#contentChanged input->character-counter#update",
+                character_counter_target: "input"
+              } %>
+          
+          <div class="absolute bottom-3 right-3 flex space-x-2">
+            <button type="button" 
+                    class="p-2 rounded-full bg-surface2 text-primary hover:bg-surface1"
+                    data-action="click->media-upload#triggerFileInput">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 15.75l5.159-5.159a2.25 2.25 0 013.182 0l5.159 5.159m-1.5-1.5l1.409-1.409a2.25 2.25 0 013.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 001.5-1.5V6a1.5 1.5 0 00-1.5-1.5H3.75A1.5 1.5 0 002.25 6v12a1.5 1.5 0 001.5 1.5zm10.5-11.25h.008v.008h-.008V8.25zm.375 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z" />
+              </svg>
+            </button>
+            
+            <button type="button" 
+                    class="p-2 rounded-full bg-surface2 text-primary hover:bg-surface1"
+                    data-action="click->post-composer#createThread">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 12h16.5m-16.5 3.75h16.5M3.75 19.5h16.5M5.625 4.5h12.75a1.875 1.875 0 010 3.75H5.625a1.875 1.875 0 010-3.75z" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Media Upload Zone -->
+      <%= render 'posts/media_upload_zone' %>
+
+      <!-- Character counters for each platform -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <% Platform.all.each do |platform| %>
+          <div class="relative"
+               data-controller="character-counter"
+               data-character-counter-platform-value="<%= platform.name %>"
+               data-character-counter-max-length-value="<%= platform.character_limit %>"
+               data-character-counter-warning-threshold-value="80">
+            <div class="flex justify-between">
+              <div class="flex items-center mb-1">
+                <span class="platform-icon <%= platform.name %> mr-2"></span>
+                <span class="text-sm font-medium text-secondary"><%= platform.name.capitalize %></span>
+              </div>
+              <div class="text-xs text-tertiary">
+                <span data-character-counter-target="counter">0</span>/<span data-character-counter-target="limit"><%= platform.character_limit %></span>
+              </div>
+            </div>
+            <div class="w-full h-2 bg-surface1 rounded-full overflow-hidden">
+              <div class="h-full bg-green rounded-full" style="width: 0%;" data-character-counter-target="progress"></div>
+            </div>
+          </div>
+        <% end %>
+      </div>
+
+      <!-- Platform Selection -->
+      <div class="border-t border-subtle pt-4" data-controller="platform-selector">
+        <h3 class="text-sm font-medium text-secondary mb-3">Post to:</h3>
+        
+        <div class="flex flex-wrap gap-3">
+          <% Platform.all.each do |platform| %>
+            <div class="bg-surface1 border border-subtle rounded-lg p-3 cursor-pointer hover:bg-surface2 transition-colors <%= platform == Platform.first ? 'selected' : '' %>"
+                 data-platform-id="<%= platform.name %>"
+                 data-platform-selector-target="platform"
+                 data-action="click->platform-selector#toggle">
+              <div class="flex items-center">
+                <span class="platform-icon <%= platform.name %> mr-2"></span>
+                <span class="text-primary"><%= platform.name.capitalize %></span>
+              </div>
+            </div>
+          <% end %>
+        </div>
+
+        <%= form.hidden_field :platform_selections, data: { platform_selector_target: "hiddenInput" } %>
+        
+        <!-- Platform Account Selection Lists (initially hidden) -->
+        <% Platform.all.each do |platform| %>
+          <div id="<%= platform.name %>-accounts" 
+               class="mt-3 bg-surface0 rounded p-3 <%= platform == Platform.first ? '' : 'hidden' %>"
+               data-platform-selector-target="accountsList">
+            <h4 class="text-sm text-secondary mb-2">Select accounts:</h4>
+            <div class="space-y-2">
+              <% current_user.accounts.where(platform_id: platform.name).each do |account| %>
+                <div class="flex items-center">
+                  <input type="checkbox" 
+                         id="account-<%= account.id %>" 
+                         value="<%= account.id %>" 
+                         class="w-4 h-4 text-accent bg-surface1 border-subtle rounded focus:ring-accent" 
+                         data-action="change->platform-selector#updateHiddenInput"
+                         <%= platform == Platform.first ? 'checked' : '' %>>
+                  <label for="account-<%= account.id %>" class="ml-2 text-sm text-primary">
+                    <%= account.display_name %> (@<%= account.username %>)
+                  </label>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+      
+      <!-- AI Split Button (initially hidden, shown when content exceeds limits) -->
+      <div class="hidden" data-post-composer-target="splitButton">
+        <button type="button" 
+                class="flex items-center justify-center px-4 py-2 bg-accent hover:bg-accent-hover text-white rounded-lg w-full"
+                data-action="click->post-composer#splitPost">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 mr-2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 00-2.456 2.456zM16.894 20.567L16.5 21.75l-.394-1.183a2.25 2.25 0 00-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 001.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 001.423 1.423l1.183.394-1.183.394a2.25 2.25 0 00-1.423 1.423z" />
+          </svg>
+          Split with AI
+        </button>
+      </div>
+
+      <!-- Scheduling Options -->
+      <div class="border-t border-subtle pt-4 space-y-4" data-controller="scheduler">
+        <div class="flex items-center">
+          <input type="checkbox" id="enable_scheduling" class="w-4 h-4 text-accent bg-surface1 border-subtle rounded focus:ring-accent"
+                 data-action="change->scheduler#toggleScheduling">
+          <label for="enable_scheduling" class="ml-2 text-sm text-primary">Schedule for later</label>
+        </div>
+
+        <div class="hidden space-y-4" data-scheduler-target="options">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label for="scheduled_at" class="block text-sm font-medium text-secondary mb-1">Date and Time</label>
+              <input type="datetime-local" id="scheduled_at" name="scheduled_at"
+                     class="w-full rounded-md bg-surface1 border-subtle text-primary focus:ring-accent focus:border-accent">
+            </div>
+
+            <div>
+              <div class="flex items-center mb-1">
+                <input type="checkbox" id="staggered" name="staggered" value="1" class="w-4 h-4 text-accent bg-surface1 border-subtle rounded focus:ring-accent"
+                       data-action="change->scheduler#toggleStaggering">
+                <label for="staggered" class="ml-2 text-sm text-primary">Stagger across platforms</label>
+              </div>
+
+              <div class="hidden" data-scheduler-target="staggerOptions">
+                <label for="stagger_interval" class="block text-sm font-medium text-secondary mb-1">Seconds between platforms</label>
+                <input type="number" id="stagger_interval" name="stagger_interval" min="10" max="3600" value="30"
+                       class="w-full rounded-md bg-surface1 border-subtle text-primary focus:ring-accent focus:border-accent">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Submit and Save buttons -->
+      <div class="flex space-x-3">
+        <%= form.submit "Post", class: "flex-1 bg-accent hover:bg-accent-hover text-white py-2 px-4 rounded-lg disabled:opacity-50 disabled:cursor-not-allowed", data: { post_composer_target: "submitButton" } %>
+
+        <button type="button"
+                class="bg-surface1 hover:bg-surface2 text-primary py-2 px-4 rounded-lg"
+                data-action="click->post-composer#saveAsDraft">
+          Save as draft
+        </button>
+      </div>
+    </div>
+  <% end %>
+  
+  <!-- Platform Preview Tabs (Hidden in mobile) -->
+  <div class="hidden md:block mt-6 border-t border-subtle pt-4">
+    <h3 class="text-sm font-medium text-secondary mb-3">Preview:</h3>
+    
+    <div class="border border-subtle rounded-lg overflow-hidden">
+      <div class="flex border-b border-subtle">
+        <% Platform.all.each_with_index do |platform, index| %>
+          <button class="px-4 py-2 text-sm font-medium <%= index == 0 ? 'bg-surface1 text-primary' : 'bg-surface0 text-secondary' %>"
+                  data-post-composer-target="previewTab"
+                  data-tab-id="<%= platform.name %>"
+                  data-action="click->post-composer#switchPreviewTab"
+                  aria-selected="<%= index == 0 %>">
+            <%= platform.name.capitalize %>
+          </button>
+        <% end %>
+      </div>
+      
+      <div class="p-4 bg-surface0 min-h-[200px]" data-post-composer-target="preview">
+        <!-- Preview content will be inserted here -->
+        <p class="text-tertiary">Your post preview will appear here...</p>
+      </div>
+    </div>
+  </div>
+</div>

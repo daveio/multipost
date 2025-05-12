@@ -1,0 +1,14 @@
+[env]
+MULTIPOST_MISE_ACTIVE = 'true'
+
+[settings]
+env_file = '.env'
+
+[tools]
+bun = { version = '1.2.13' }
+node = { version = '22.15.0' }
+ruby = { version = '3.4.3' }
+
+[tasks]
+'dev' = { run = 'bin/dev' }
+'setup' = { run = 'bin/setup' }

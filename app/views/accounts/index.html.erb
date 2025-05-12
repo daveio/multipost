@@ -1,0 +1,87 @@
+<div class="max-w-4xl mx-auto">
+  <div class="flex justify-between items-center mb-6">
+    <div>
+      <h1 class="text-2xl font-bold text-primary">Your Connected Accounts</h1>
+      <p class="text-secondary">Manage your social media connections</p>
+    </div>
+    
+    <%= link_to new_account_path, class: "bg-accent hover:bg-accent-hover text-white py-2 px-4 rounded-lg flex items-center" do %>
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 mr-2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+      </svg>
+      Connect Account
+    <% end %>
+  </div>
+  
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <% Platform.all.each do |platform| %>
+      <div class="bg-surface0 rounded-lg shadow overflow-hidden">
+        <div class="p-4 border-b border-subtle">
+          <div class="flex items-center">
+            <div class="platform-icon platform-icon-large <%= platform.name %> mr-3"></div>
+            <h2 class="text-xl font-medium text-primary"><%= platform.name.capitalize %></h2>
+          </div>
+        </div>
+        
+        <% user_accounts = current_user.accounts.where(platform_id: platform.name) %>
+        
+        <% if user_accounts.any? %>
+          <div class="divide-y divide-subtle">
+            <% user_accounts.each do |account| %>
+              <div class="p-4">
+                <div class="flex items-center">
+                  <% if account.avatar_url.present? %>
+                    <img src="<%= account.avatar_url %>" alt="<%= account.display_name %>" class="w-10 h-10 rounded-full mr-3">
+                  <% else %>
+                    <div class="w-10 h-10 rounded-full bg-surface1 flex items-center justify-center mr-3">
+                      <span class="text-primary font-bold"><%= account.display_name.first.upcase %></span>
+                    </div>
+                  <% end %>
+                  
+                  <div>
+                    <div class="font-medium text-primary"><%= account.display_name %></div>
+                    <div class="text-sm text-tertiary">@<%= account.username %></div>
+                    <% if platform.name == 'mastodon' && account.instance_url.present? %>
+                      <div class="text-xs text-tertiary"><%= account.instance_url %></div>
+                    <% end %>
+                  </div>
+                  
+                  <div class="ml-auto flex items-center">
+                    <div class="form-switch mr-3">
+                      <%= check_box_tag "account_active_#{account.id}", "1", account.is_active, 
+                          class: "w-10 h-5 bg-surface1 rounded-full appearance-none focus:outline-none focus:ring-2 focus:ring-accent cursor-pointer 
+                                checked:bg-accent relative transition-colors ease-in-out duration-200
+                                before:absolute before:h-4 before:w-4 before:rounded-full before:bg-white before:shadow before:transform before:top-[2px] before:left-[2px] 
+                                before:transition-transform before:duration-200 
+                                checked:before:translate-x-5" %>
+                    </div>
+                    
+                    <div class="dropdown">
+                      <button class="p-2 text-tertiary hover:text-primary rounded-full hover:bg-surface2">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5">
+                          <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 12.75a.75.75 0 110-1.5.75.75 0 010 1.5zM12 18.75a.75.75 0 110-1.5.75.75 0 010 1.5z" />
+                        </svg>
+                      </button>
+                      <!-- Dropdown menu would go here -->
+                    </div>
+                  </div>
+                </div>
+              </div>
+            <% end %>
+          </div>
+        <% else %>
+          <div class="p-6 text-center">
+            <p class="text-secondary mb-4">No connected <%= platform.name.capitalize %> accounts</p>
+            
+            <%= link_to new_account_path(platform: platform.name), class: "bg-surface1 hover:bg-surface2 text-primary py-2 px-4 rounded-lg inline-flex items-center" do %>
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-5 h-5 mr-2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
+              </svg>
+              Connect <%= platform.name.capitalize %>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+</div>

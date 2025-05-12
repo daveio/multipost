@@ -1,0 +1,16 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+john_draft:
+  user: john
+  content: This is a draft post by John that's not yet published
+  platform_selections: <%= [{ id: 'bluesky', isSelected: true }, { id: 'mastodon', isSelected: true }].to_json %>
+
+jane_draft:
+  user: jane
+  content: This is a draft post by Jane that's not yet published
+  platform_selections: <%= [{ id: 'threads', isSelected: true }].to_json %>
+
+john_empty_draft:
+  user: john
+  content: ""
+  platform_selections: <%= [].to_json %>

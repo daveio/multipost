@@ -1,0 +1,49 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+john_bluesky:
+  user: john
+  platform_id: bluesky
+  username: johndoe
+  display_name: John Doe
+  avatar_url: https://example.com/avatar.jpg
+  instance_url: https://bsky.app
+  access_token: bluesky_access_token_123
+  refresh_token: bluesky_refresh_token_123
+  expires_at: <%= 1.week.from_now %>
+  is_active: true
+
+john_mastodon:
+  user: john
+  platform_id: mastodon
+  username: johndoe
+  display_name: John Doe
+  avatar_url: https://example.com/avatar.jpg
+  instance_url: https://mastodon.social
+  access_token: mastodon_access_token_123
+  refresh_token: mastodon_refresh_token_123
+  expires_at: <%= 1.week.from_now %>
+  is_active: true
+
+jane_threads:
+  user: jane
+  platform_id: threads
+  username: janedoe
+  display_name: Jane Doe
+  avatar_url: https://example.com/jane-avatar.jpg
+  instance_url: https://threads.net
+  access_token: threads_access_token_123
+  refresh_token: threads_refresh_token_123
+  expires_at: <%= 1.week.from_now %>
+  is_active: true
+
+jane_bluesky_inactive:
+  user: jane
+  platform_id: bluesky
+  username: janedoe_old
+  display_name: Jane Old
+  avatar_url: https://example.com/jane-old-avatar.jpg
+  instance_url: https://bsky.app
+  access_token: bluesky_access_token_456
+  refresh_token: bluesky_refresh_token_456
+  expires_at: <%= 1.week.from_now %>
+  is_active: false
