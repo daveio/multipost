@@ -21,6 +21,21 @@
   <%# Color scheme meta tag for browsers %>
   <meta name="color-scheme" content="dark light">
 
+  <%# Apply theme immediately to prevent flash of unstyled content %>
+  <script>
+    (function() {
+      // Get saved theme or use catppuccin as default
+      const savedTheme = localStorage.getItem('theme') || 'catppuccin';
+      // Apply theme to html element
+      document.documentElement.setAttribute('data-theme', savedTheme);
+      // Set color scheme meta
+      const isLight = ['light'].includes(savedTheme);
+      document.querySelector('meta[name="color-scheme"]').setAttribute(
+        'content', isLight ? 'light dark' : 'dark light'
+      );
+    })();
+  </script>
+
   <%# Includes all stylesheet files in app/assets/stylesheets %>
   <%= stylesheet_link_tag "application" %>
   <%= javascript_include_tag "application", defer: true %>
@@ -30,6 +45,7 @@
   <div class="fixed top-4 right-4 z-50">
     <div class="p-2 bg-base-200 rounded-lg shadow-lg">
       <select data-theme-target="selector" data-action="change->theme#select" class="select select-sm select-bordered" aria-label="Select theme">
+        <option value="catppuccin">Catppuccin</option>
         <option value="light">Light</option>
         <option value="dark">Dark</option>
         <% if Rails.env.development? || Rails.env.test? %>

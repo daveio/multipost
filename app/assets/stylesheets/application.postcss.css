@@ -2,15 +2,11 @@
 
 @import "tailwindcss";
 @import "synthwave84.css";
+@import "catppuccin.css";
 
 @plugin "daisyui";
 
 /* Then apply Tailwind utilities */
 @tailwind utilities;
-
-/* Set root properties */
-:root {
-  color-scheme: dark;
-}
 
 /* Custom styles below this line */

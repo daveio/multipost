@@ -11,14 +11,17 @@ module.exports = {
   },
   plugins: [
     require('daisyui'),
-    // require('@catppuccin/tailwindcss')({
-    //   defaultFlavor: 'frappe'
-    // })
+    require('@catppuccin/tailwindcss')({
+      defaultFlavour: 'frappe'
+    })
   ],
   daisyui: {
     themes: [
       "light",
       "dark",
+      {
+        "catppuccin": require('@catppuccin/daisyui').frappe
+      },
       {
         synthwave84: {
           primary: "#f92aad",

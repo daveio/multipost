@@ -13,7 +13,13 @@ export default class extends Controller {
     // Skip toggle if we're in synthwave mode - that's handled by synthwave controller
     if (currentTheme === 'synthwave84') { return }
 
-    const newTheme = currentTheme === 'dark' ? 'light' : 'dark'
+    // Toggle between light and dark themes
+    let newTheme
+    if (this.isLightTheme(currentTheme)) {
+      newTheme = 'dark'
+    } else {
+      newTheme = 'light'
+    }
 
     this.applyTheme(newTheme)
     localStorage.setItem('theme', newTheme)
@@ -47,7 +53,15 @@ export default class extends Controller {
   }
 
   loadThemePreference() {
-    const savedTheme = localStorage.getItem('theme') || 'dark'
+    // Default to catppuccin if no theme is set
+    const savedTheme = localStorage.getItem('theme') || 'catppuccin'
+
+    // Ensure we're setting the meta color-scheme correctly at page load
+    if (this.isLightTheme(savedTheme)) {
+      document.querySelector('meta[name="color-scheme"]').setAttribute('content', 'light dark')
+    } else {
+      document.querySelector('meta[name="color-scheme"]').setAttribute('content', 'dark light')
+    }
 
     // If the saved theme is synthwave84, let the synthwave controller handle it
     if (savedTheme === 'synthwave84') {
@@ -73,11 +87,12 @@ export default class extends Controller {
       return
     }
 
+    // Always remove any previously applied theme classes
     document.documentElement.setAttribute('data-theme', theme)
 
     // Update any toggle buttons
     if (this.hasToggleTarget) {
-      const isDark = theme === 'dark'
+      const isDark = this.isDarkTheme(theme)
       this.toggleTargets.forEach(target => {
         target.setAttribute('aria-checked', isDark.toString())
       })
@@ -87,5 +102,24 @@ export default class extends Controller {
     if (this.hasSelectorTarget) {
       this.selectorTarget.value = theme
     }
+
+    // Update browser color-scheme
+    if (this.isLightTheme(theme)) {
+      document.querySelector('meta[name="color-scheme"]').setAttribute('content', 'light dark')
+    } else {
+      document.querySelector('meta[name="color-scheme"]').setAttribute('content', 'dark light')
+    }
+  }
+
+  // Helper method to check if theme is dark
+  isDarkTheme(theme) {
+    return theme === 'dark' ||
+           theme === 'catppuccin' ||
+           theme === 'synthwave84'
+  }
+
+  // Helper method to check if theme is light
+  isLightTheme(theme) {
+    return theme === 'light'
   }
 }
