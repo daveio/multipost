@@ -11,7 +11,7 @@ export default class extends Controller {
     const currentTheme = document.documentElement.getAttribute('data-theme')
 
     // Skip toggle if we're in synthwave mode - that's handled by synthwave controller
-    if (currentTheme === 'synthwave84') return
+    if (currentTheme === 'synthwave84') { return }
 
     const newTheme = currentTheme === 'frappe' ? 'latte' : 'frappe'
 
