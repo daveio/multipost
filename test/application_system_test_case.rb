@@ -6,8 +6,8 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
   include VisualRegressionHelper
 
   # Use these class variables to control Percy integration
-  @@percy_enabled = ENV['PERCY_ENABLED'] == 'true'
-  @@screenshot_dir = Rails.root.join('tmp', 'screenshots')
+  @@percy_enabled = ENV["PERCY_ENABLED"] == "true"
+  @@screenshot_dir = Rails.root.join("tmp", "screenshots")
 
   setup do
     # Configure DatabaseCleaner for system tests (use truncation strategy)

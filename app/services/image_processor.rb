@@ -1,5 +1,5 @@
 class ImageProcessor
-  require 'fileutils'
+  require "fileutils"
 
   # Process an uploaded image, creating a preview version
   # @param uploaded_file [ActionDispatch::Http::UploadedFile] The uploaded file
@@ -8,10 +8,10 @@ class ImageProcessor
     # Generate a unique filename
     extension = File.extname(uploaded_file.original_filename).downcase
     filename = "#{SecureRandom.uuid}#{extension}"
-    relative_dir = File.join('uploads')
+    relative_dir = File.join("uploads")
 
     # Create paths
-    upload_dir = Rails.root.join('public', relative_dir)
+    upload_dir = Rails.root.join("public", relative_dir)
     original_path = File.join(upload_dir, filename)
     preview_path = File.join(upload_dir, "preview_#{filename}")
 
@@ -19,7 +19,7 @@ class ImageProcessor
     FileUtils.mkdir_p(upload_dir) unless File.directory?(upload_dir)
 
     # Save the original file
-    File.open(original_path, 'wb') do |file|
+    File.open(original_path, "wb") do |file|
       file.write(uploaded_file.read)
     end
 
@@ -28,7 +28,7 @@ class ImageProcessor
     preview_url = nil
 
     # Check if it's an image
-    if uploaded_file.content_type.start_with?('image/')
+    if uploaded_file.content_type.start_with?("image/")
       # Create a preview version
       create_preview(original_path, preview_path)
       preview_url = "/#{relative_dir}/preview_#{filename}"
@@ -48,10 +48,10 @@ class ImageProcessor
   # @param max_filesize [Integer] The maximum file size in bytes (optional)
   # @return [MediaFile] The processed media file (may be the same file if no processing was needed)
   def self.resize(media_file, max_dimension: nil, max_filesize: nil)
-    return media_file unless media_file.file_type.start_with?('image/')
+    return media_file unless media_file.file_type.start_with?("image/")
 
     # Get the file path from the URL
-    file_path = Rails.root.join('public', media_file.url.sub(/^\//, ''))
+    file_path = Rails.root.join("public", media_file.url.sub(/^\//, ""))
     return media_file unless File.exist?(file_path)
 
     # Generate a unique filename for the processed version
@@ -94,11 +94,11 @@ class ImageProcessor
     return false unless url.present?
 
     # Convert URL to file path
-    file_path = Rails.root.join('public', url.sub(/^\//, ''))
+    file_path = Rails.root.join("public", url.sub(/^\//, ""))
 
     # Check if it's a preview or processed
-    is_preview = File.basename(url).start_with?('preview_')
-    is_processed = File.basename(url).include?('_processed')
+    is_preview = File.basename(url).start_with?("preview_")
+    is_processed = File.basename(url).include?("_processed")
 
     # Calculate related paths
     base_name = File.basename(file_path)
@@ -106,7 +106,7 @@ class ImageProcessor
 
     if is_preview || is_processed
       # If this is a preview or processed version, clean up the original
-      original_name = base_name.sub('preview_', '').sub('_processed', '')
+      original_name = base_name.sub("preview_", "").sub("_processed", "")
       original_path = File.join(dir_name, original_name)
 
       # Delete the original if it exists

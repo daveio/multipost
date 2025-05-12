@@ -49,12 +49,12 @@ class UserTest < ActiveSupport::TestCase
 
   test "platform_accounts returns active accounts for the platform" do
     user = users(:john)
-    bluesky_accounts = user.platform_accounts('bluesky')
+    bluesky_accounts = user.platform_accounts("bluesky")
     assert_equal 1, bluesky_accounts.count
     assert_includes bluesky_accounts, accounts(:john_bluesky)
 
     user = users(:jane)
-    bluesky_accounts = user.platform_accounts('bluesky')
+    bluesky_accounts = user.platform_accounts("bluesky")
     assert_equal 0, bluesky_accounts.count # Jane has an inactive bluesky account
   end
 

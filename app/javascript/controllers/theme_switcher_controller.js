@@ -1,4 +1,4 @@
-import { Controller } from "@hotwired/stimulus"
+import { Controller } from '@hotwired/stimulus'
 
 export default class extends Controller {
   connect() {
@@ -9,9 +9,9 @@ export default class extends Controller {
     this.setTheme({ currentTarget: { dataset: { setTheme: savedTheme } } })
 
     // Listen for system theme changes
-    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', e => {
+    window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
       if (!localStorage.getItem('theme')) {
-        const newTheme = e.matches ? "frappe" : "latte"
+        const newTheme = e.matches ? 'frappe' : 'latte'
         this.setTheme({ currentTarget: { dataset: { setTheme: newTheme } } })
       }
     })

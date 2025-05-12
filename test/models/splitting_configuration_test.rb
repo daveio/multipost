@@ -5,7 +5,7 @@ class SplittingConfigurationTest < ActiveSupport::TestCase
     config = SplittingConfiguration.new(
       user: users(:john),
       name: "Test Configuration",
-      strategies: ['semantic', 'retain_hashtags'].to_json
+      strategies: [ "semantic", "retain_hashtags" ].to_json
     )
     assert config.valid?
   end
@@ -13,7 +13,7 @@ class SplittingConfigurationTest < ActiveSupport::TestCase
   test "configuration requires name" do
     config = SplittingConfiguration.new(
       user: users(:john),
-      strategies: ['semantic'].to_json
+      strategies: [ "semantic" ].to_json
     )
     assert_not config.valid?
     assert_includes config.errors[:name], "can't be blank"
@@ -31,7 +31,7 @@ class SplittingConfigurationTest < ActiveSupport::TestCase
   test "configuration requires user" do
     config = SplittingConfiguration.new(
       name: "Test Configuration",
-      strategies: ['semantic'].to_json
+      strategies: [ "semantic" ].to_json
     )
     assert_not config.valid?
     assert_includes config.errors[:user], "must exist"
@@ -43,10 +43,10 @@ class SplittingConfigurationTest < ActiveSupport::TestCase
   end
 
   test "STRATEGIES constant contains correct values" do
-    assert_equal 'semantic', SplittingConfiguration::STRATEGIES[:semantic]
-    assert_equal 'sentence', SplittingConfiguration::STRATEGIES[:sentence]
-    assert_equal 'retain_hashtags', SplittingConfiguration::STRATEGIES[:retain_hashtags]
-    assert_equal 'preserve_mentions', SplittingConfiguration::STRATEGIES[:preserve_mentions]
+    assert_equal "semantic", SplittingConfiguration::STRATEGIES[:semantic]
+    assert_equal "sentence", SplittingConfiguration::STRATEGIES[:sentence]
+    assert_equal "retain_hashtags", SplittingConfiguration::STRATEGIES[:retain_hashtags]
+    assert_equal "preserve_mentions", SplittingConfiguration::STRATEGIES[:preserve_mentions]
   end
 
   test "strategy_names returns empty array when strategies is empty" do
@@ -68,10 +68,10 @@ class SplittingConfigurationTest < ActiveSupport::TestCase
     config = SplittingConfiguration.new(
       user: users(:john),
       name: "Custom Config",
-      strategies: ['custom_strategy'].to_json
+      strategies: [ "custom_strategy" ].to_json
     )
 
-    assert_equal ["Custom strategy"], config.strategy_names
+    assert_equal [ "Custom strategy" ], config.strategy_names
   end
 
   test "serializes strategies as JSON" do
@@ -80,8 +80,8 @@ class SplittingConfigurationTest < ActiveSupport::TestCase
 
     assert_instance_of Array, strategies
     assert_equal 3, strategies.size
-    assert_includes strategies, 'semantic'
-    assert_includes strategies, 'retain_hashtags'
-    assert_includes strategies, 'preserve_mentions'
+    assert_includes strategies, "semantic"
+    assert_includes strategies, "retain_hashtags"
+    assert_includes strategies, "preserve_mentions"
   end
 end

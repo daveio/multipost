@@ -9,9 +9,9 @@ class Account < ApplicationRecord
 
   def platform_name
     case platform_id
-    when 'bluesky' then 'Bluesky'
-    when 'mastodon' then 'Mastodon'
-    when 'threads' then 'Threads'
+    when "bluesky" then "Bluesky"
+    when "mastodon" then "Mastodon"
+    when "threads" then "Threads"
     else platform_id.to_s.humanize
     end
   end

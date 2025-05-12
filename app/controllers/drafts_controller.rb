@@ -1,7 +1,7 @@
 class DraftsController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_draft, only: [:show, :edit, :update, :destroy]
-  before_action :set_platforms, only: [:new, :edit, :create, :update]
+  before_action :set_draft, only: [ :show, :edit, :update, :destroy ]
+  before_action :set_platforms, only: [ :new, :edit, :create, :update ]
 
   def index
     @drafts = current_user.drafts.order(updated_at: :desc)
@@ -18,7 +18,7 @@ class DraftsController < ApplicationController
     @draft = current_user.drafts.new(draft_params)
 
     if @draft.save
-      redirect_to drafts_path, notice: 'Draft was successfully saved.'
+      redirect_to drafts_path, notice: "Draft was successfully saved."
     else
       render :new, status: :unprocessable_entity
     end
@@ -29,7 +29,7 @@ class DraftsController < ApplicationController
 
   def update
     if @draft.update(draft_params)
-      redirect_to drafts_path, notice: 'Draft was successfully updated.'
+      redirect_to drafts_path, notice: "Draft was successfully updated."
     else
       render :edit, status: :unprocessable_entity
     end
@@ -37,7 +37,7 @@ class DraftsController < ApplicationController
 
   def destroy
     @draft.destroy
-    redirect_to drafts_path, notice: 'Draft was successfully deleted.'
+    redirect_to drafts_path, notice: "Draft was successfully deleted."
   end
 
   private

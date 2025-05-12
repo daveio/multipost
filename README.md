@@ -136,6 +136,7 @@ This organization improves readability, reduces duplication, and makes tests mor
 - **System Tests**: Test the full application flow with browser simulation
 
 #### Model Tests
+
 - User model tests
 - Post model tests
 - MediaFile model tests
@@ -145,6 +146,7 @@ This organization improves readability, reduces duplication, and makes tests mor
 - SplittingConfiguration model tests
 
 #### Controller Tests
+
 - Posts controller
 - Drafts controller
 - MediaFiles controller
@@ -153,6 +155,7 @@ This organization improves readability, reduces duplication, and makes tests mor
 - SplittingConfigurations controller
 
 #### System Tests
+
 - Authentication workflow
 - Post creation and threading
 - Media uploads

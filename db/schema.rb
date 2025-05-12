@@ -24,7 +24,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_11_224826) do
     t.boolean "is_active"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["user_id"], name: "index_accounts_on_user_id"
+    t.index [ "user_id" ], name: "index_accounts_on_user_id"
   end
 
   create_table "drafts", force: :cascade do |t|
@@ -34,7 +34,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_11_224826) do
     t.boolean "is_thread", default: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["user_id"], name: "index_drafts_on_user_id"
+    t.index [ "user_id" ], name: "index_drafts_on_user_id"
   end
 
   create_table "media_files", force: :cascade do |t|
@@ -47,7 +47,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_11_224826) do
     t.integer "uploadable_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["uploadable_type", "uploadable_id"], name: "index_media_files_on_uploadable"
+    t.index [ "uploadable_type", "uploadable_id" ], name: "index_media_files_on_uploadable"
   end
 
   create_table "platforms", force: :cascade do |t|
@@ -66,8 +66,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_11_224826) do
     t.text "platform_selections"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["thread_parent_id"], name: "index_posts_on_thread_parent_id"
-    t.index ["user_id"], name: "index_posts_on_user_id"
+    t.index [ "thread_parent_id" ], name: "index_posts_on_thread_parent_id"
+    t.index [ "user_id" ], name: "index_posts_on_user_id"
   end
 
   create_table "splitting_configurations", force: :cascade do |t|
@@ -76,7 +76,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_11_224826) do
     t.text "strategies"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["user_id"], name: "index_splitting_configurations_on_user_id"
+    t.index [ "user_id" ], name: "index_splitting_configurations_on_user_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -87,8 +87,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_05_11_224826) do
     t.datetime "remember_created_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["email"], name: "index_users_on_email", unique: true
-    t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
+    t.index [ "email" ], name: "index_users_on_email", unique: true
+    t.index [ "reset_password_token" ], name: "index_users_on_reset_password_token", unique: true
   end
 
   add_foreign_key "accounts", "users"

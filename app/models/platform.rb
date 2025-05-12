@@ -4,10 +4,10 @@ class Platform < ApplicationRecord
 
   # Define default platform character limits
   PLATFORM_CHARACTER_LIMITS = {
-    'bluesky' => 300,
-    'mastodon' => 500,
-    'threads' => 500,
-    'nostr' => 5000
+    "bluesky" => 300,
+    "mastodon" => 500,
+    "threads" => 500,
+    "nostr" => 5000
   }.freeze
 
   def self.default_platforms

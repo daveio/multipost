@@ -8,7 +8,7 @@ class PostTest < ActiveSupport::TestCase
       content: "Test post content",
       status: "pending",
       thread_index: 0,
-      platform_selections: [{ id: 'bluesky', isSelected: true }].to_json
+      platform_selections: [ { id: "bluesky", isSelected: true } ].to_json
     )
     assert post.valid?
   end
@@ -127,7 +127,7 @@ class PostTest < ActiveSupport::TestCase
 
   test "selected_platforms returns array of selected platform ids" do
     post = posts(:john_post)
-    assert_equal ['bluesky', 'mastodon'], post.selected_platforms
+    assert_equal [ "bluesky", "mastodon" ], post.selected_platforms
   end
 
   test "selected_platforms returns empty array when platform_selections is empty" do

@@ -27,7 +27,7 @@ class PostsControllerTest < ActionDispatch::IntegrationTest
       post posts_path, params: {
         post: {
           content: "New post content",
-          platform_selections: [{ id: "bluesky", isSelected: true }].to_json
+          platform_selections: [ { id: "bluesky", isSelected: true } ].to_json
         }
       }
     end
@@ -61,7 +61,7 @@ class PostsControllerTest < ActionDispatch::IntegrationTest
     post split_posts_path, params: {
       content: "This is a long post that needs to be split into multiple parts.",
       platform_id: "bluesky",
-      strategies: ["semantic"]
+      strategies: [ "semantic" ]
     }, as: :json
     assert_response :success
     assert_equal "application/json", @response.media_type

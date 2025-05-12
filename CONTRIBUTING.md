@@ -61,7 +61,7 @@ class UserTest < ActiveSupport::TestCase
     assert_not user.valid?
     assert_includes user.errors[:email], "can't be blank"
   end
-  
+
   # More tests...
 end
 ```
@@ -93,7 +93,7 @@ class PostsControllerTest < ActionDispatch::IntegrationTest
     get posts_path
     assert_response :success
   end
-  
+
   # More tests...
 end
 ```
@@ -116,7 +116,7 @@ require "application_system_test_case"
 class PostsTest < ApplicationSystemTestCase
   setup do
     @user = users(:john)
-    
+
     # Log in with Devise
     visit new_user_session_path
     fill_in "Email", with: @user.email
@@ -126,14 +126,14 @@ class PostsTest < ApplicationSystemTestCase
 
   test "creating a new post" do
     visit new_post_path
-    
+
     fill_in "Content", with: "Test post content"
     check "Bluesky"
     click_on "Create Post"
-    
+
     assert_text "Post was successfully created"
   end
-  
+
   # More tests...
 end
 ```
@@ -281,6 +281,7 @@ We use DatabaseCleaner to ensure tests run in isolation. When writing tests:
 We use contexts and shared examples to organize tests. When writing tests:
 
 1. **Use Contexts for Related Tests**:
+
    ```ruby
    context "when user is logged in" do
      setup do
@@ -306,6 +307,7 @@ We use contexts and shared examples to organize tests. When writing tests:
    ```
 
 2. **Use Shared Examples for Common Behavior**:
+
    ```ruby
    shared_examples_for "a validated model" do |model_class|
      test "requires name" do

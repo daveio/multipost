@@ -1,16 +1,16 @@
 class MediaFilesController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_media_file, only: [:destroy]
+  before_action :set_media_file, only: [ :destroy ]
 
   def create
     # Check file presence
     unless params[:file].present?
-      return render json: { success: false, errors: ['File is required'] }, status: :bad_request
+      return render json: { success: false, errors: [ "File is required" ] }, status: :bad_request
     end
-    
+
     # Process the uploaded file
     file_data = ImageProcessor.process(params[:file])
-    
+
     # Create the media file record
     @media_file = MediaFile.new(
       name: params[:file].original_filename,
@@ -46,7 +46,7 @@ class MediaFilesController < ApplicationController
     else
       # Delete uploaded files if record creation fails
       ImageProcessor.delete(file_data[:original_url]) if file_data[:original_url].present?
-      
+
       render json: { success: false, errors: @media_file.errors.full_messages }, status: :unprocessable_entity
     end
   end
@@ -56,12 +56,12 @@ class MediaFilesController < ApplicationController
     if can_manage_media_file?
       # Delete the actual files
       ImageProcessor.delete(@media_file.url) if @media_file.url.present?
-      
+
       # Remove the database record
       @media_file.destroy
       render json: { success: true }
     else
-      render json: { success: false, error: 'Not authorized' }, status: :unauthorized
+      render json: { success: false, error: "Not authorized" }, status: :unauthorized
     end
   end
 
@@ -70,11 +70,11 @@ class MediaFilesController < ApplicationController
   def set_media_file
     @media_file = MediaFile.find(params[:id])
   end
-  
+
   # Check if current user can manage this media file
   def can_manage_media_file?
     return false unless @media_file
-    
+
     if @media_file.uploadable.nil?
       # Orphaned media file, check if it was previously owned by this user
       return true if @media_file.created_by_id == current_user.id
@@ -87,7 +87,7 @@ class MediaFilesController < ApplicationController
         return @media_file.uploadable.user_id == current_user.id
       end
     end
-    
+
     false
   end
 end

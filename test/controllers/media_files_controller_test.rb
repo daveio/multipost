@@ -9,7 +9,7 @@ class MediaFilesControllerTest < ActionDispatch::IntegrationTest
 
   test "should create media file" do
     # Create a test file
-    file = fixture_file_upload('files/test_image.jpg', 'image/jpeg')
+    file = fixture_file_upload("files/test_image.jpg", "image/jpeg")
 
     assert_difference("MediaFile.count") do
       post media_files_path, params: { file: file }, as: :json
@@ -27,7 +27,7 @@ class MediaFilesControllerTest < ActionDispatch::IntegrationTest
 
   test "requires authentication" do
     sign_out @user
-    post media_files_path, params: { file: fixture_file_upload('files/test_image.jpg', 'image/jpeg') }, as: :json
+    post media_files_path, params: { file: fixture_file_upload("files/test_image.jpg", "image/jpeg") }, as: :json
     assert_redirected_to new_user_session_path
   end
 end

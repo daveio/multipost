@@ -1,6 +1,6 @@
 # Start SimpleCov at the very beginning of the test process
-require 'simplecov'
-SimpleCov.start 'rails' do
+require "simplecov"
+SimpleCov.start "rails" do
   # Add groups for better organization in the coverage report
   add_group "Services", "app/services"
   add_group "Helpers", "app/helpers"
@@ -17,14 +17,14 @@ SimpleCov.start 'rails' do
   minimum_coverage 80
 
   # Coverage directory
-  coverage_dir 'coverage'
+  coverage_dir "coverage"
 end
 
 ENV["RAILS_ENV"] ||= "test"
 require_relative "../config/environment"
 require "rails/test_help"
 require "database_cleaner-active_record"
-require "database_cleaner-redis" if Object.const_defined?('Redis')
+require "database_cleaner-redis" if Object.const_defined?("Redis")
 
 # Require test support files
 Dir[Rails.root.join("test/support/**/*.rb")].each { |f| require f }
@@ -68,7 +68,7 @@ module Devise
   module Test
     module IntegrationHelpers
       def sign_in(user)
-        post user_session_path, params: { user: { email: user.email, password: 'password123' } }
+        post user_session_path, params: { user: { email: user.email, password: "password123" } }
       end
 
       def sign_out(user)

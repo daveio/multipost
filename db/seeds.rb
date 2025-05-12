@@ -77,12 +77,12 @@ if Rails.env.development?
   unless user.splitting_configurations.exists?
     user.splitting_configurations.create!(
       name: 'Default Configuration',
-      strategies: ['semantic', 'retain_hashtags']
+      strategies: [ 'semantic', 'retain_hashtags' ]
     )
 
     user.splitting_configurations.create!(
       name: 'All Strategies',
-      strategies: ['semantic', 'sentence', 'retain_hashtags', 'preserve_mentions']
+      strategies: [ 'semantic', 'sentence', 'retain_hashtags', 'preserve_mentions' ]
     )
   end
 end

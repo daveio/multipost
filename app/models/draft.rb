@@ -8,7 +8,7 @@ class Draft < ApplicationRecord
 
   def selected_platforms
     return [] unless platform_selections.present?
-    platform_selections.select { |p| p['isSelected'] }.map { |p| p['id'] }
+    platform_selections.select { |p| p["isSelected"] }.map { |p| p["id"] }
   end
 
   def to_post

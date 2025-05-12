@@ -10,10 +10,10 @@ module ApiTestHelper
         password: password
       }
     }
-    
+
     response.headers["Authorization"]
   end
-  
+
   # Make a GET request to an API endpoint
   # @param endpoint [String] the API endpoint
   # @param token [String] the authentication token
@@ -24,10 +24,10 @@ module ApiTestHelper
       "Authorization" => token,
       "Accept" => "application/json"
     }
-    
+
     JSON.parse(response.body) if response.body.present? && response.content_type.include?("application/json")
   end
-  
+
   # Make a POST request to an API endpoint
   # @param endpoint [String] the API endpoint
   # @param token [String] the authentication token
@@ -38,10 +38,10 @@ module ApiTestHelper
       "Authorization" => token,
       "Accept" => "application/json"
     }
-    
+
     JSON.parse(response.body) if response.body.present? && response.content_type.include?("application/json")
   end
-  
+
   # Make a PATCH request to an API endpoint
   # @param endpoint [String] the API endpoint
   # @param token [String] the authentication token
@@ -52,10 +52,10 @@ module ApiTestHelper
       "Authorization" => token,
       "Accept" => "application/json"
     }
-    
+
     JSON.parse(response.body) if response.body.present? && response.content_type.include?("application/json")
   end
-  
+
   # Make a DELETE request to an API endpoint
   # @param endpoint [String] the API endpoint
   # @param token [String] the authentication token
@@ -65,10 +65,10 @@ module ApiTestHelper
       "Authorization" => token,
       "Accept" => "application/json"
     }
-    
+
     JSON.parse(response.body) if response.body.present? && response.content_type.include?("application/json")
   end
-  
+
   # Assert that an API response contains the expected keys
   # @param response [Hash] the JSON response
   # @param keys [Array<String>] the expected keys
@@ -77,7 +77,7 @@ module ApiTestHelper
       assert_includes response.keys, key, "Response is missing expected key: #{key}"
     end
   end
-  
+
   # Assert that an API response matches the expected attributes
   # @param response [Hash] the JSON response
   # @param attributes [Hash] the expected attributes
@@ -86,18 +86,18 @@ module ApiTestHelper
       assert_equal value, response[key.to_s], "Response attribute #{key} does not match expected value"
     end
   end
-  
+
   # Assert that an API response contains validation errors
   # @param response [Hash] the JSON response
   # @param fields [Array<String>] the fields expected to have errors
   def assert_api_has_validation_errors(response, fields)
     assert_includes response.keys, "errors", "Response does not contain errors key"
-    
+
     fields.each do |field|
       assert_includes response["errors"].keys, field, "Response is missing validation error for field: #{field}"
     end
   end
-  
+
   # Assert that an API endpoint is protected
   # @param endpoint [String] the API endpoint
   # @param method [Symbol] the HTTP method (:get, :post, :patch, :delete)
@@ -113,10 +113,10 @@ module ApiTestHelper
     when :delete
       delete endpoint, headers: { "Accept" => "application/json" }
     end
-    
+
     assert_response :unauthorized, "API endpoint #{method.to_s.upcase} #{endpoint} is not protected"
   end
-  
+
   # Assert that an API endpoint enforces authorization
   # @param endpoint [String] the API endpoint
   # @param token [String] a valid token for a non-authorized user
@@ -145,7 +145,7 @@ module ApiTestHelper
         "Accept" => "application/json"
       }
     end
-    
+
     assert_response :forbidden, "API endpoint #{method.to_s.upcase} #{endpoint} does not enforce authorization"
   end
 end

@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 /* Catppuccin Theme Variables */
 @layer base {
@@ -33,7 +33,8 @@
   }
 
   /* Frappé is the default theme (dark mode) */
-  :root, .theme-frappe {
+  :root,
+  .theme-frappe {
     --color-rosewater: #f2d5cf;
     --color-flamingo: #eebebe;
     --color-pink: #f4b8e4;
@@ -127,7 +128,7 @@
     --accent-color: var(--color-blue);
     --accent-color-hover: var(--color-sapphire);
   }
-  
+
   /* Platform-specific accent colors */
   .platform-bluesky {
     --platform-color: var(--color-sky);
@@ -145,7 +146,7 @@
     --platform-color: var(--color-mauve);
     --platform-color-hover: var(--color-pink);
   }
-  
+
   /* Transitions for theme switching */
   body {
     transition-property: color, background-color, border-color;

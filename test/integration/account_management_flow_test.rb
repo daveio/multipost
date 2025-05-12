@@ -11,7 +11,7 @@ class AccountManagementFlowTest < ActionDispatch::IntegrationTest
     get accounts_path
     assert_response :success
     assert_select "h1", "Connected Accounts"
-    
+
     # Should see existing accounts
     assert_select ".account-item", minimum: 2
     assert_select "td", accounts(:john_bluesky).username
@@ -23,7 +23,7 @@ class AccountManagementFlowTest < ActionDispatch::IntegrationTest
     get new_account_path
     assert_response :success
     assert_select "h1", "New Account"
-    
+
     # Step 2: Submit new account form
     assert_difference("Account.count") do
       post accounts_path, params: {
@@ -36,23 +36,23 @@ class AccountManagementFlowTest < ActionDispatch::IntegrationTest
         }
       }
     end
-    
+
     # Step 3: Follow redirect to index page
     follow_redirect!
     assert_response :success
-    
+
     # Should see new account in list
     assert_select "td", "john_threads"
   end
 
   test "can edit an existing account" do
     account = accounts(:john_bluesky)
-    
+
     # Step 1: Navigate to edit form
     get edit_account_path(account)
     assert_response :success
     assert_select "h1", "Edit Account"
-    
+
     # Step 2: Submit changes
     patch account_path(account), params: {
       account: {
@@ -60,44 +60,44 @@ class AccountManagementFlowTest < ActionDispatch::IntegrationTest
         display_name: "John Updated"
       }
     }
-    
+
     # Step 3: Follow redirect and verify changes
     follow_redirect!
     assert_response :success
-    
+
     # Updated information should be visible
     assert_select "td", "john_updated"
   end
 
   test "can deactivate and reactivate account" do
     account = accounts(:john_bluesky)
-    
+
     # Step 1: Deactivate account
     patch account_path(account), params: {
       account: {
         is_active: false
       }
     }
-    
+
     # Step 2: Verify account is inactive
     follow_redirect!
     assert_response :success
-    
+
     # Reload account and check status
     account.reload
     assert_not account.is_active?
-    
+
     # Step 3: Reactivate account
     patch account_path(account), params: {
       account: {
         is_active: true
       }
     }
-    
+
     # Step 4: Verify account is active again
     follow_redirect!
     assert_response :success
-    
+
     # Reload account and check status
     account.reload
     assert account.is_active?
@@ -105,16 +105,16 @@ class AccountManagementFlowTest < ActionDispatch::IntegrationTest
 
   test "can delete an account" do
     account = accounts(:john_bluesky)
-    
+
     # Delete the account
     assert_difference("Account.count", -1) do
       delete account_path(account)
     end
-    
+
     # Should redirect to index
     follow_redirect!
     assert_response :success
-    
+
     # Account should no longer be visible
     assert_no_match(/#{account.username}/, @response.body)
   end
@@ -123,11 +123,11 @@ class AccountManagementFlowTest < ActionDispatch::IntegrationTest
     # Try to create account with missing required fields
     post accounts_path, params: {
       account: {
-        platform_id: "threads",
+        platform_id: "threads"
         # Missing username and access_token
       }
     }
-    
+
     # Should not redirect, but render new template with errors
     assert_response :unprocessable_entity
     assert_select ".alert", /Username can't be blank/
@@ -138,14 +138,14 @@ class AccountManagementFlowTest < ActionDispatch::IntegrationTest
     # Navigate to accounts index with platform filter
     get accounts_path(platform: "bluesky")
     assert_response :success
-    
+
     # Should only see accounts for that platform
     assert_select ".account-item" do |elements|
       elements.each do |element|
         assert_match(/bluesky/i, element.text)
       end
     end
-    
+
     # Should not see accounts for other platforms
     assert_no_match(/mastodon/i, @response.body)
   end

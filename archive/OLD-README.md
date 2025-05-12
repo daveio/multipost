@@ -452,7 +452,11 @@ interface PostComposerProps {
   onAddThreadPost: (content?: string) => void;
   onRemoveThreadPost: (index: number) => void;
   onExitThreadMode: () => void;
-  onApplySplit?: (strategy: SplittingStrategy, platformId: string, splitText: string[]) => void;
+  onApplySplit?: (
+    strategy: SplittingStrategy,
+    platformId: string,
+    splitText: string[],
+  ) => void;
   accounts?: Account[];
 }
 ```
@@ -484,7 +488,11 @@ interface AISplitPreviewProps {
   accounts: Account[];
   characterStats: CharacterStat[];
   onClose: () => void;
-  onApplySplit: (strategy: SplittingStrategy, platformId: string, splitText: string[]) => void;
+  onApplySplit: (
+    strategy: SplittingStrategy,
+    platformId: string,
+    splitText: string[],
+  ) => void;
   advancedOptions?: {
     showRawJson?: boolean;
     [key: string]: any;
@@ -529,7 +537,11 @@ interface SplitWithAIButtonProps {
   isContentTooLong: boolean;
   accounts: Account[];
   characterStats: CharacterStat[];
-  onApplySplit: (strategy: SplittingStrategy, platformId: string, splitText: string[]) => void;
+  onApplySplit: (
+    strategy: SplittingStrategy,
+    platformId: string,
+    splitText: string[],
+  ) => void;
   advancedOptions?: {
     showRawJson?: boolean;
     [key: string]: any;
@@ -868,7 +880,12 @@ Request:
 ```json
 {
   "content": "Long post content to split...",
-  "strategies": ["semantic", "sentence", "retain_hashtags", "preserve_mentions"],
+  "strategies": [
+    "semantic",
+    "sentence",
+    "retain_hashtags",
+    "preserve_mentions"
+  ],
   "customMastodonLimit": 500
 }
 ```

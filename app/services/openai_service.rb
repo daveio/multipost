@@ -1,21 +1,21 @@
 class OpenaiService
-  require 'net/http'
-  require 'uri'
-  require 'json'
+  require "net/http"
+  require "uri"
+  require "json"
 
   def initialize(api_key = nil)
-    @api_key = api_key || ENV['OPENAI_API_KEY']
-    @api_url = 'https://api.openai.com/v1/chat/completions'
+    @api_key = api_key || ENV["OPENAI_API_KEY"]
+    @api_url = "https://api.openai.com/v1/chat/completions"
   end
 
   def split_post(content, platform_name, strategies = [])
     # Validate input
-    return { success: false, error: 'Content is required' } if content.blank?
-    return { success: false, error: 'Platform is required' } if platform_name.blank?
+    return { success: false, error: "Content is required" } if content.blank?
+    return { success: false, error: "Platform is required" } if platform_name.blank?
 
     # Get platform character limit
     platform = Platform.find_by(name: platform_name)
-    return { success: false, error: 'Invalid platform' } unless platform
+    return { success: false, error: "Invalid platform" } unless platform
 
     # Prepare the prompt
     prompt = build_split_prompt(content, platform, strategies)
@@ -28,33 +28,33 @@ class OpenaiService
       begin
         # Parse the response to extract split posts
         result = JSON.parse(response[:content])
-        
+
         # Ensure the result has the expected format
-        if result.is_a?(Hash) && result['splits'].is_a?(Array)
-          return {
+        if result.is_a?(Hash) && result["splits"].is_a?(Array)
+          {
             success: true,
-            splits: result['splits'],
-            reasoning: result['reasoning']
+            splits: result["splits"],
+            reasoning: result["reasoning"]
           }
         else
-          return { success: false, error: 'Invalid response format from AI' }
+          { success: false, error: "Invalid response format from AI" }
         end
       rescue JSON::ParserError
-        return { success: false, error: 'Failed to parse AI response' }
+        { success: false, error: "Failed to parse AI response" }
       end
     else
-      return { success: false, error: response[:error] }
+      { success: false, error: response[:error] }
     end
   end
 
   def optimize_post(content, platform_name)
     # Validate input
-    return { success: false, error: 'Content is required' } if content.blank?
-    return { success: false, error: 'Platform is required' } if platform_name.blank?
+    return { success: false, error: "Content is required" } if content.blank?
+    return { success: false, error: "Platform is required" } if platform_name.blank?
 
     # Get platform information
     platform = Platform.find_by(name: platform_name)
-    return { success: false, error: 'Invalid platform' } unless platform
+    return { success: false, error: "Invalid platform" } unless platform
 
     # Prepare the prompt
     prompt = build_optimization_prompt(content, platform)
@@ -67,22 +67,22 @@ class OpenaiService
       begin
         # Parse the response to extract optimized content
         result = JSON.parse(response[:content])
-        
+
         # Ensure the result has the expected format
-        if result.is_a?(Hash) && result['optimized_content'].is_a?(String)
-          return {
+        if result.is_a?(Hash) && result["optimized_content"].is_a?(String)
+          {
             success: true,
-            optimized_content: result['optimized_content'],
-            reasoning: result['reasoning']
+            optimized_content: result["optimized_content"],
+            reasoning: result["reasoning"]
           }
         else
-          return { success: false, error: 'Invalid response format from AI' }
+          { success: false, error: "Invalid response format from AI" }
         end
       rescue JSON::ParserError
-        return { success: false, error: 'Failed to parse AI response' }
+        { success: false, error: "Failed to parse AI response" }
       end
     else
-      return { success: false, error: response[:error] }
+      { success: false, error: response[:error] }
     end
   end
 
@@ -91,17 +91,17 @@ class OpenaiService
   def chat_completion(prompt)
     uri = URI.parse(@api_url)
     request = Net::HTTP::Post.new(uri)
-    request['Content-Type'] = 'application/json'
-    request['Authorization'] = "Bearer #{@api_key}"
+    request["Content-Type"] = "application/json"
+    request["Authorization"] = "Bearer #{@api_key}"
 
     request.body = {
-      model: 'gpt-4',
+      model: "gpt-4",
       messages: [
-        { role: 'system', content: 'You are a helpful assistant skilled in optimizing social media content.' },
-        { role: 'user', content: prompt }
+        { role: "system", content: "You are a helpful assistant skilled in optimizing social media content." },
+        { role: "user", content: prompt }
       ],
       temperature: 0.7,
-      response_format: { type: 'json_object' }
+      response_format: { type: "json_object" }
     }.to_json
 
     begin
@@ -109,31 +109,31 @@ class OpenaiService
         http.request(request)
       end
 
-      if response.code == '200'
+      if response.code == "200"
         parsed_response = JSON.parse(response.body)
-        content = parsed_response['choices'][0]['message']['content']
-        return { success: true, content: content }
+        content = parsed_response["choices"][0]["message"]["content"]
+        { success: true, content: content }
       else
-        return { success: false, error: "API request failed with status #{response.code}" }
+        { success: false, error: "API request failed with status #{response.code}" }
       end
     rescue => e
-      return { success: false, error: "API request error: #{e.message}" }
+      { success: false, error: "API request error: #{e.message}" }
     end
   end
 
   def build_split_prompt(content, platform, strategies)
     # Format strategies for inclusion in the prompt
     strategy_descriptions = []
-    if strategies.include?('semantic')
+    if strategies.include?("semantic")
       strategy_descriptions << "- Split by meaning to keep related content together (semantic splitting)"
     end
-    if strategies.include?('sentence')
+    if strategies.include?("sentence")
       strategy_descriptions << "- Split at natural sentence boundaries when possible"
     end
-    if strategies.include?('retain_hashtags')
+    if strategies.include?("retain_hashtags")
       strategy_descriptions << "- Keep hashtags intact and consider including them in the final post of the thread"
     end
-    if strategies.include?('preserve_mentions')
+    if strategies.include?("preserve_mentions")
       strategy_descriptions << "- Keep mentions intact, especially at the beginning of the thread"
     end
 
@@ -143,7 +143,7 @@ class OpenaiService
     end
 
     <<~PROMPT
-      I need to split a post into multiple parts for a thread on #{platform.name.capitalize}. 
+      I need to split a post into multiple parts for a thread on #{platform.name.capitalize}.#{' '}
       Each post must be under #{platform.character_limit} characters.
 
       Original content:
@@ -156,7 +156,7 @@ class OpenaiService
 
       Please split this content into appropriate-sized posts for #{platform.name.capitalize}.
       Include thread numbering automatically (1/X, 2/X, etc.) at the end of each post.
-      
+
       Return your response as a JSON object with the following format:
       {
         "splits": [
@@ -184,7 +184,7 @@ class OpenaiService
       - Maintain hashtags and mentions
       - For Bluesky/Mastodon, take advantage of longer post limits if needed
       - For Threads, optimize for short, engaging content under 500 characters
-      
+
       Return your response as a JSON object with the following format:
       {
         "optimized_content": "The optimized post content...",

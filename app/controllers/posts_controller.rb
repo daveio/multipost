@@ -1,7 +1,7 @@
 class PostsController < ApplicationController
   before_action :authenticate_user!
-  before_action :set_post, only: [:show, :edit, :update, :destroy]
-  before_action :set_platforms, only: [:new, :edit, :create, :update]
+  before_action :set_post, only: [ :show, :edit, :update, :destroy ]
+  before_action :set_platforms, only: [ :new, :edit, :create, :update ]
 
   def index
     @posts = current_user.posts.root_posts.order(created_at: :desc)
@@ -25,7 +25,7 @@ class PostsController < ApplicationController
   def create
     @post = current_user.posts.new(post_params)
     scheduled_at = params[:scheduled_at].present? ? Time.zone.parse(params[:scheduled_at]) : nil
-    staggered = params[:staggered] == '1'
+    staggered = params[:staggered] == "1"
     stagger_interval = params[:stagger_interval].present? ? params[:stagger_interval].to_i : 30
 
     if @post.save
@@ -47,13 +47,13 @@ class PostsController < ApplicationController
           message += " Publishing will be staggered across platforms." if staggered
           redirect_to posts_path, notice: message
         else
-          redirect_to posts_path, alert: 'Failed to schedule post. Please try again.'
+          redirect_to posts_path, alert: "Failed to schedule post. Please try again."
         end
       else
         if PublishingService.publish_post(@post)
-          redirect_to posts_path, notice: 'Post is being published.'
+          redirect_to posts_path, notice: "Post is being published."
         else
-          redirect_to posts_path, alert: 'Failed to publish post. Please try again.'
+          redirect_to posts_path, alert: "Failed to publish post. Please try again."
         end
       end
     else
@@ -66,7 +66,7 @@ class PostsController < ApplicationController
 
   def update
     if @post.update(post_params)
-      redirect_to posts_path, notice: 'Post was successfully updated.'
+      redirect_to posts_path, notice: "Post was successfully updated."
     else
       render :edit, status: :unprocessable_entity
     end
@@ -74,21 +74,21 @@ class PostsController < ApplicationController
 
   def destroy
     @post.destroy
-    redirect_to posts_path, notice: 'Post was successfully deleted.'
+    redirect_to posts_path, notice: "Post was successfully deleted."
   end
 
   def split
     content = params[:content]
     platform_id = params[:platform_id]
-    strategies = params[:strategies] || ['semantic']
+    strategies = params[:strategies] || [ "semantic" ]
 
     if content.present? && platform_id.present?
       openai_service = OpenaiService.new
       result = openai_service.split_post(content, platform_id, strategies)
 
       if result[:success]
-        render json: { 
-          success: true, 
+        render json: {
+          success: true,
           splits: result[:splits],
           reasoning: result[:reasoning]
         }
@@ -96,7 +96,7 @@ class PostsController < ApplicationController
         render json: { success: false, error: result[:error] }, status: :unprocessable_entity
       end
     else
-      render json: { success: false, error: 'Missing required parameters' }, status: :bad_request
+      render json: { success: false, error: "Missing required parameters" }, status: :bad_request
     end
   end
 
@@ -118,22 +118,22 @@ class PostsController < ApplicationController
         render json: { success: false, error: result[:error] }, status: :unprocessable_entity
       end
     else
-      render json: { success: false, error: 'Missing required parameters' }, status: :bad_request
+      render json: { success: false, error: "Missing required parameters" }, status: :bad_request
     end
   end
 
   def retry
     @post = current_user.posts.find(params[:id])
 
-    if @post.status != 'failed'
-      redirect_to posts_path, alert: 'Only failed posts can be retried.'
+    if @post.status != "failed"
+      redirect_to posts_path, alert: "Only failed posts can be retried."
       return
     end
 
     if PublishingService.retry_post(@post)
-      redirect_to posts_path, notice: 'Post is being republished.'
+      redirect_to posts_path, notice: "Post is being republished."
     else
-      redirect_to posts_path, alert: 'Failed to retry post. Please try again.'
+      redirect_to posts_path, alert: "Failed to retry post. Please try again."
     end
   end
 

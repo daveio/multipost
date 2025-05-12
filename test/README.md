@@ -196,7 +196,7 @@ context "with specific state" do
   setup do
     # Context-specific setup
   end
-  
+
   test "behaves correctly" do
     # Test code
   end

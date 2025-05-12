@@ -1,37 +1,36 @@
-import path from 'path';
-import fs from 'fs';
+import fs from 'fs'
+import path from 'path'
 
 const config = {
-  sourcemap: "external",
-  entrypoints: ["app/javascript/application.js"],
-  outdir: path.join(process.cwd(), "app/assets/builds"),
-};
+  sourcemap: 'external',
+  entrypoints: ['app/javascript/application.js'],
+  outdir: path.join(process.cwd(), 'app/assets/builds')
+}
 
 const build = async (config) => {
-  const result = await Bun.build(config);
+  const result = await Bun.build(config)
 
   if (!result.success) {
     if (process.argv.includes('--watch')) {
-      console.error("Build failed");
+      console.error('Build failed')
       for (const message of result.logs) {
-        console.error(message);
+        console.error(message)
       }
-      return;
+      return
     } else {
-      throw new AggregateError(result.logs, "Build failed");
+      throw new AggregateError(result.logs, 'Build failed')
     }
   }
-};
-
-(async () => {
-  await build(config);
+}
+;(async () => {
+  await build(config)
 
   if (process.argv.includes('--watch')) {
-    fs.watch(path.join(process.cwd(), "app/javascript"), { recursive: true }, (eventType, filename) => {
-      console.log(`File changed: ${filename}. Rebuilding...`);
-      build(config);
-    });
+    fs.watch(path.join(process.cwd(), 'app/javascript'), { recursive: true }, (eventType, filename) => {
+      console.log(`File changed: ${filename}. Rebuilding...`)
+      build(config)
+    })
   } else {
-    process.exit(0);
+    process.exit(0)
   }
-})();
+})()

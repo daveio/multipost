@@ -19,6 +19,7 @@ runtimes:
 # This is the section where you manage your linters. (https://docs.trunk.io/check/configuration)
 lint:
   disabled:
+    - prettier
     - sort-package-json
     - semgrep
     - terrascan
@@ -43,6 +44,7 @@ lint:
       paths:
         - "**/*.jpg"
         - "**/*.png"
+        - "**/*.html"
     - linters:
         - prettier
       paths:
@@ -59,6 +61,7 @@ lint:
         - ALL
       paths:
         - _tickets/**
+        - "**/*.zst"
   enabled:
     - trunk-toolbox@0.5.4
     - stylelint@16.19.1
@@ -75,7 +78,6 @@ lint:
     - hadolint@2.12.1-beta
     - osv-scanner@2.0.2
     - oxipng@9.1.5
-    - prettier@3.5.3
     - rubocop
     - shellcheck@0.10.0
     - shfmt@3.6.0

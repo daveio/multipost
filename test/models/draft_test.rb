@@ -33,7 +33,7 @@ class DraftTest < ActiveSupport::TestCase
 
   test "selected_platforms returns array of selected platform ids" do
     draft = drafts(:john_draft)
-    assert_equal ['bluesky', 'mastodon'], draft.selected_platforms
+    assert_equal [ "bluesky", "mastodon" ], draft.selected_platforms
   end
 
   test "selected_platforms returns empty array when platform_selections is empty" do
