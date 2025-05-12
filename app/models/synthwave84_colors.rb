@@ -5,18 +5,18 @@
 module Synthwave84Colors
   # Color map for Synthwave '84 colors
   COLORS = {
-    primary: '#f92aad',
-    secondary: '#03edf9',
-    tertiary: '#72f1b8',
-    background: '#2a2139',
-    background_dark: '#241b2f',
-    background_darker: '#1e1726',
-    text: '#f4eee4',
-    accent: '#34294f',
-    yellow: '#fff951',
-    orange: '#fc9867',
-    red: '#f97e72',
-    purple: '#b893ce'
+    primary: "#f92aad",
+    secondary: "#03edf9",
+    tertiary: "#72f1b8",
+    background: "#2a2139",
+    background_dark: "#241b2f",
+    background_darker: "#1e1726",
+    text: "#f4eee4",
+    accent: "#34294f",
+    yellow: "#fff951",
+    orange: "#fc9867",
+    red: "#f97e72",
+    purple: "#b893ce"
   }.freeze
 
   # Get a Synthwave '84 color value by name
@@ -42,6 +42,6 @@ module Synthwave84Colors
   # @param theme [String, Symbol] theme name
   # @return [Boolean] true if theme is Synthwave '84
   def self.synthwave84?(theme)
-    theme.to_s == 'synthwave84'
+    theme.to_s == "synthwave84"
   end
 end

@@ -25,7 +25,7 @@ module CatppuccinHelper
   # Returns all available themes, including Catppuccin flavors and the Synthwave '84 theme
   # @return [Array<String>] array of theme names
   def all_themes
-    catppuccin_flavors.map(&:to_s) + ['synthwave84']
+    catppuccin_flavors.map(&:to_s) + ["synthwave84"]
   end
 
   # Generates HTML attributes for theme switching
@@ -44,22 +44,22 @@ module CatppuccinHelper
   # Returns true if the current theme is Synthwave '84
   # @return [Boolean] true if current theme is Synthwave '84
   def synthwave_theme?
-    request.cookies['theme'] == 'synthwave84'
+    request.cookies["theme"] == "synthwave84"
   end
 
   # Returns CSS classes for Synthwave '84 glow effects
   # @param type [Symbol] type of glow effect (:text, :blue, or :green)
   # @return [String] CSS classes for the glow effect
   def synthwave_glow_class(type = :text)
-    return '' unless synthwave_theme?
+    return "" unless synthwave_theme?
 
     case type
     when :blue
-      'synthwave-glow-blue'
+      "synthwave-glow-blue"
     when :green
-      'synthwave-glow-green'
+      "synthwave-glow-green"
     else
-      'synthwave-glow-text'
+      "synthwave-glow-text"
     end
   end
 end

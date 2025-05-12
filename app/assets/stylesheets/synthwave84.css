@@ -46,10 +46,8 @@
 
   /* Special effects applied via a filter wrapper */
   --glow-intensity: 0.3;
-}
 
-/* Synthwave background with subtle gradient */
-[data-theme="synthwave84"] {
+  /* Synthwave background with subtle gradient */
   background-color: var(--base-100);
   background-image: linear-gradient(to bottom, var(--base-100) 75%, var(--neutral));
   background-size: auto 100vh;
@@ -128,5 +126,4 @@
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  text-fill-color: transparent;
 }
