@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 Pry.config.auto_reload = true
 Pry.config.color = true
 Pry.config.color_scheme = "monokai"
@@ -18,9 +20,9 @@ Pry.config.prompt = Pry::Prompt.new(
   :custom,
   "custom prompt with timestamp and Rails env",
   [
-    proc { |context, nesting, pry_instance|
+    proc { |_context, _nesting, pry_instance|
       env = defined?(Rails) ? "[#{Rails.env}] " : ""
-      "#{Time.now.to_s[0..-6]}#{env}#{pry_instance.config.prompt_name} > "
+      "#{Time.zone.now.to_s[0..-6]}#{env}#{pry_instance.config.prompt_name} > "
     }
   ]
 )
