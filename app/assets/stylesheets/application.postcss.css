@@ -1,8 +1,14 @@
 /* Entry point for your PostCSS build */
+@import "@catppuccin/palette/css/catppuccin.css";
 @import "tailwindcss/preflight";
 @import "tailwindcss/utilities";
+
+:root {
+  color-scheme: dark;
+}
+
 @plugin "daisyui" {
-  themes: light --default, dark --prefersdark, cupcake, corporate, synthwave;
+  themes: frappe --default, latte, macchiato, mocha;
 }
 
 /* Custom styles below this line */

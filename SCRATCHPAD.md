@@ -25,4 +25,26 @@ Also configure Ruby tooling and backend to use the theme where possible.
 
 Use `frappe` as the default dark mode theme, and `latte` as the default light mode theme.
 
-Default to dark mode; making `frappe` the default theme.
+Default to dark mode; making `frappe` the default
+
+## Synthwave prompt
+
+I would also like to add another theme option for the site, ie DaisyUI and Tailwind 4.
+
+I don't want you to use the DaisyUI `synthwave` theme as it doesn't have all the nice effects and makes other design decisions I don't like.
+
+We also have some theming infrastructure for Ruby: add it to that, too, if you can.
+
+The theme is `Synthwave '84`, available at [robb0wen/synthwave-vscode](https://github.com/robb0wen/synthwave-vscode).
+
+It is more than just colours: it includes effects like glow and (maybe) scanlines.
+
+You will have to read and interpret the theme and then reimplement it for CSS, JavaScript, and Ruby. The theme is presented as the source code for a Visual Studio Code plugin.
+
+I have checked out the repository and it can be found at `/Users/dave/src/github.com/robb0wen/synthwave-vscode`.
+
+Remember to involve PostCSS where appropriate in any CSS changes.
+
+Don't change the default theme: it should say as Catppuccin Frappé.
+
+Eventually, this theme will be added as available through a 'cheat code' as an easter egg. For now, it should appear as an option in any theme switchers.
