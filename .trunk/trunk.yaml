@@ -78,7 +78,10 @@ lint:
     - hadolint@2.12.1-beta
     - osv-scanner@2.0.2
     - oxipng@9.1.5
-    - rubocop
+    - rubocop:
+        packages:
+          - rubocop-rails
+          - rubocop-rails-omakase
     - shellcheck@0.10.0
     - shfmt@3.6.0
     - svgo@3.3.2

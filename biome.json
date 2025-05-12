@@ -1,1 +1,4 @@
-.trunk/configs/biome.json
+{
+	"$schema": "biome_schema.json",
+	"extends": [".trunk/configs/biome.json"]
+}
