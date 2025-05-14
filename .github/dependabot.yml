@@ -6,15 +6,11 @@ updates:
       interval: daily
     assignees:
       - daveio
-    reviewers:
-      - daveio
   - package-ecosystem: github-actions
     directory: /
     schedule:
       interval: daily
     assignees:
-      - daveio
-    reviewers:
       - daveio
   - package-ecosystem: npm
     directory: /
@@ -22,13 +18,9 @@ updates:
       interval: daily
     assignees:
       - daveio
-    reviewers:
-      - daveio
   - package-ecosystem: bun
     directory: /
     schedule:
       interval: daily
     assignees:
-      - daveio
-    reviewers:
       - daveio
