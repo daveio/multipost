@@ -28,3 +28,10 @@ updates:
     open-pull-requests-limit: 100
     assignees:
       - daveio
+  - package-ecosystem: bundler
+    directory: /
+    schedule:
+      interval: daily
+    open-pull-requests-limit: 100
+    assignees:
+      - daveio
