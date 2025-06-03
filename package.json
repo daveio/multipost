@@ -12,7 +12,7 @@
     "@catppuccin/palette": "^1.7.1",
     "@catppuccin/tailwindcss": "^0.1.6",
     "@hotwired/stimulus": "^3.2.2",
-    "@hotwired/turbo-rails": "^8.0.13",
+    "@hotwired/turbo-rails": "^8.0.16",
     "@tailwindcss/postcss": "^4.1.8",
     "autoprefixer": "^10.4.21",
     "daisyui": "^5.0.43",
