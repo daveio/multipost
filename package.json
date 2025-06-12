@@ -13,16 +13,16 @@
     "@catppuccin/tailwindcss": "^0.1.6",
     "@hotwired/stimulus": "^3.2.2",
     "@hotwired/turbo-rails": "^8.0.16",
-    "@tailwindcss/postcss": "^4.1.8",
+    "@tailwindcss/postcss": "^4.1.10",
     "autoprefixer": "^10.4.21",
     "daisyui": "^5.0.43",
-    "postcss": "^8.5.4",
+    "postcss": "^8.5.5",
     "postcss-cli": "^11.0.1",
     "postcss-import": "^16.1.0",
     "postcss-nesting": "^13.0.2",
     "stylelint-config-recommended": "^16.0.0",
     "stylelint-config-tailwindcss": "^1.0.0",
-    "tailwindcss": "^4.1.8"
+    "tailwindcss": "^4.1.10"
   },
   "trustedDependencies": [
     "@biomejs/biome",
