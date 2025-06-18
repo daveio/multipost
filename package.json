@@ -7,7 +7,7 @@
     "build:css": "bun run postcss ./app/assets/stylesheets/application.postcss.css -o ./app/assets/builds/application.css"
   },
   "dependencies": {
-    "@biomejs/biome": "^1.9.4",
+    "@biomejs/biome": "^2.0.0",
     "@catppuccin/daisyui": "^2.1.1",
     "@catppuccin/palette": "^1.7.1",
     "@catppuccin/tailwindcss": "^0.1.6",
