@@ -2,9 +2,9 @@
 
 source "https://rubygems.org" # https://github.com/rubygems/rubygems
 
-ruby "3.4.3"
+ruby "3.4.4"
 
-gem "bcrypt"                 # https://guides.rubyonrails.org/active_model_basics.html#securepassword
+gem "bcrypt" # https://guides.rubyonrails.org/active_model_basics.html#securepassword
 gem "bootsnap", require: false # https://github.com/Shopify/bootsnap
 gem "catppuccin"             # https://github.com/catppuccin/ruby
 gem "cssbundling-rails"      # https://github.com/rails/cssbundling-rails
@@ -21,7 +21,7 @@ gem "solid_queue"            # https://github.com/rails/solid_queue
 gem "sqlite3"                # https://github.com/sparklemotion/sqlite3-ruby
 gem "stimulus-rails"         # https://stimulus.hotwired.dev
 gem "thruster", require: false # https://github.com/basecamp/thruster
-gem "turbo-rails"            # https://turbo.hotwired.dev
+gem "turbo-rails" # https://turbo.hotwired.dev
 gem "tzinfo-data", platforms: %i[windows jruby] # https://github.com/tzinfo/tzinfo-data
 
 group :development, :test do

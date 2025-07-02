@@ -7,13 +7,13 @@
     "build:css": "bun run postcss ./app/assets/stylesheets/application.postcss.css -o ./app/assets/builds/application.css"
   },
   "dependencies": {
-    "@biomejs/biome": "^2.0.0",
+    "@biomejs/biome": "^2.0.6",
     "@catppuccin/daisyui": "^2.1.1",
     "@catppuccin/palette": "^1.7.1",
     "@catppuccin/tailwindcss": "^0.1.6",
     "@hotwired/stimulus": "^3.2.2",
     "@hotwired/turbo-rails": "^8.0.16",
-    "@tailwindcss/postcss": "^4.1.10",
+    "@tailwindcss/postcss": "^4.1.11",
     "autoprefixer": "^10.4.21",
     "daisyui": "^5.0.43",
     "postcss": "^8.5.6",
@@ -22,14 +22,14 @@
     "postcss-nesting": "^13.0.2",
     "stylelint-config-recommended": "^16.0.0",
     "stylelint-config-tailwindcss": "^1.0.0",
-    "tailwindcss": "^4.1.10"
+    "tailwindcss": "^4.1.11"
   },
   "trustedDependencies": [
     "@biomejs/biome",
     "@tailwindcss/oxide"
   ],
   "engines": {
-    "bun": "~1.2.13",
-    "node": "~lts"
+    "bun": "1.2.17",
+    "node": "22.17.0"
   }
 }
