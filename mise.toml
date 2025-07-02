@@ -7,9 +7,9 @@ idiomatic_version_file = false
 asdf_compat = false
 
 [tools]
-ruby = { version = '3.4.3' }
-bun = { version = '1.2.13' }
-node = { version = 'lts' }
+ruby = { version = '3.4.4' }
+bun = { version = '1.2.17' }
+node = { version = '22.17.0' }
 
 [tasks]
 'db:reset' = { run = [
