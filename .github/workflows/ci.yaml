@@ -18,7 +18,7 @@ jobs:
       - name: checkout
         uses: actions/checkout@09d2acae674a48949e3602304ab46fd20ae0c42f
       - name: mise
-        uses: jdx/mise-action@5cb1df66ed5e1fb3c670ea0b62fd17a76979826a
+        uses: jdx/mise-action@bfb9fa0b029db830a8c570757cee683df207a6c5
       - name: prepare-ci
         run: bin/mise run prepare-ci
       - name: ci:brakeman
