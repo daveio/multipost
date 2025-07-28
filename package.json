@@ -10,7 +10,7 @@
     "@biomejs/biome": "^2.0.6",
     "@catppuccin/daisyui": "^2.1.1",
     "@catppuccin/palette": "^1.7.1",
-    "@catppuccin/tailwindcss": "^0.1.6",
+    "@catppuccin/tailwindcss": "^1.0.0",
     "@hotwired/stimulus": "^3.2.2",
     "@hotwired/turbo-rails": "^8.0.16",
     "@tailwindcss/postcss": "^4.1.11",
