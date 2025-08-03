@@ -2,7 +2,7 @@
 
 source "https://rubygems.org" # https://github.com/rubygems/rubygems
 
-ruby "3.4.4"
+ruby "3.4.5"
 
 gem "bcrypt" # https://guides.rubyonrails.org/active_model_basics.html#securepassword
 gem "bootsnap", require: false # https://github.com/Shopify/bootsnap
