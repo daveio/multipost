@@ -31,6 +31,7 @@ group :development, :test do
   gem "devise-argon2"         # https://github.com/erdostom/devise-argon2
   gem "devise_zxcvbn"         # https://github.com/bitzesty/devise_zxcvbn
   gem "dotenv-rails"          # https://github.com/bkeepers/dotenv
+  gem "log_bench"             # https://github.com/silva96/log_bench
   gem "rubocop"               # https://github.com/rubocop/rubocop
   gem "rubocop-capybara"      # https://github.com/rubocop/rubocop-capybara
   gem "rubocop-minitest"      # https://github.com/rubocop/rubocop-minitest
