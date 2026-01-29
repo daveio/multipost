@@ -381,15 +381,15 @@ GEM
       fugit (~> 1.11)
       railties (>= 7.1)
       thor (>= 1.3.1)
-    sorbet (0.6.12903)
-      sorbet-static (= 0.6.12903)
-    sorbet-runtime (0.6.12903)
-    sorbet-static (0.6.12903-aarch64-linux)
-    sorbet-static (0.6.12903-universal-darwin)
-    sorbet-static (0.6.12903-x86_64-linux)
-    sorbet-static-and-runtime (0.6.12903)
-      sorbet (= 0.6.12903)
-      sorbet-runtime (= 0.6.12903)
+    sorbet (0.6.12904)
+      sorbet-static (= 0.6.12904)
+    sorbet-runtime (0.6.12904)
+    sorbet-static (0.6.12904-aarch64-linux)
+    sorbet-static (0.6.12904-universal-darwin)
+    sorbet-static (0.6.12904-x86_64-linux)
+    sorbet-static-and-runtime (0.6.12904)
+      sorbet (= 0.6.12904)
+      sorbet-runtime (= 0.6.12904)
     sqlite3 (2.9.0-aarch64-linux-gnu)
     sqlite3 (2.9.0-aarch64-linux-musl)
     sqlite3 (2.9.0-arm64-darwin)
@@ -411,7 +411,7 @@ GEM
     thruster (0.1.17-x86_64-linux)
     timeout (0.6.0)
     tsort (0.2.0)
-    turbo-rails (2.0.21)
+    turbo-rails (2.0.22)
       actionpack (>= 7.1.0)
       railties (>= 7.1.0)
     tzinfo (2.0.6)
@@ -623,12 +623,12 @@ CHECKSUMS
   solid_cable (3.0.12) sha256=a168a54731a455d5627af48d8441ea3b554b8c1f6e6cd6074109de493e6b0460
   solid_cache (1.0.10) sha256=bc05a2fb3ac78a6f43cbb5946679cf9db67dd30d22939ededc385cb93e120d41
   solid_queue (1.3.1) sha256=d9580111180c339804ff1a810a7768f69f5dc694d31e86cf1535ff2cd7a87428
-  sorbet (0.6.12903) sha256=569682679264c46faf4609b2ec5f0575f66bf3109119ac823e66a978f54e70f7
-  sorbet-runtime (0.6.12903) sha256=c23968c0dcf5a5db57f32c003fe3db7fb588c168cdd57d92ea4dceaba063118a
-  sorbet-static (0.6.12903-aarch64-linux) sha256=50e223f8ae8fe7b44046b6dcc4119d8e146da1228ea2726c99c79c3e27ca507c
-  sorbet-static (0.6.12903-universal-darwin) sha256=0770e5b04e4f13e8c4e50c5fca49631d848c151ae75cdfd740b00c5a191384d1
-  sorbet-static (0.6.12903-x86_64-linux) sha256=a9781a4d4eedf96ead6a8beed60f61c9e8e732c27625f196a4a3f870ee170042
-  sorbet-static-and-runtime (0.6.12903) sha256=6ae7b70ddecf504b7eb247f5aa28954c8d0e9e3eeba1e06d6b717db769fd6675
+  sorbet (0.6.12904) sha256=9604b3ce773c29b9fdfe85107884059ada4bd585207db9a347eeede427e3abec
+  sorbet-runtime (0.6.12904) sha256=0bf2ea0d70de7f3896ec1db3fbdbe89be970ddc1b92406630fd7411a3a8b1bd0
+  sorbet-static (0.6.12904-aarch64-linux) sha256=928fe5cb98da69d725339b920a962bbb4694487ae65c5e2dacfa890701eae74a
+  sorbet-static (0.6.12904-universal-darwin) sha256=56a8e94dbfccc19574fec9eff05c1a1b462e382d8c95991013268c0032bbf720
+  sorbet-static (0.6.12904-x86_64-linux) sha256=2ffffff1cc86dcce9c56909b72d1b141795b7dbd0e6f6befc7e9f0b87ec5da34
+  sorbet-static-and-runtime (0.6.12904) sha256=95a1cf4e29aa1a82a04b67f01a8bd52f97be98505af581115393e66059d64932
   sqlite3 (2.9.0-aarch64-linux-gnu) sha256=cfe1e0216f46d7483839719bf827129151e6c680317b99d7b8fc1597a3e13473
   sqlite3 (2.9.0-aarch64-linux-musl) sha256=56a35cb2d70779afc2ac191baf2c2148242285ecfed72f9b021218c5c4917913
   sqlite3 (2.9.0-arm64-darwin) sha256=a917bd9b84285766ff3300b7d79cd583f5a067594c8c1263e6441618c04a6ed3
@@ -643,7 +643,7 @@ CHECKSUMS
   thruster (0.1.17-x86_64-linux) sha256=77b8f335075bd4ece7631dc84a19a710a1e6e7102cbce147b165b45851bdfcd3
   timeout (0.6.0) sha256=6d722ad619f96ee383a0c557ec6eb8c4ecb08af3af62098a0be5057bf00de1af
   tsort (0.2.0) sha256=9650a793f6859a43b6641671278f79cfead60ac714148aabe4e3f0060480089f
-  turbo-rails (2.0.21) sha256=02070ea29fd11d8c1a07d9d7be980729a20e94e39b8c6c819f690f7959216bc7
+  turbo-rails (2.0.22) sha256=909f6f35a104aaad14cffbf43536aded9d4681352da6d8e79216fccd0282bb59
   tzinfo (2.0.6) sha256=8daf828cc77bcf7d63b0e3bdb6caa47e2272dcfaf4fbfe46f8c3a9df087a829b
   unicode-display_width (3.2.0) sha256=0cdd96b5681a5949cdbc2c55e7b420facae74c4aaf9a9815eee1087cb1853c42
   unicode-emoji (4.2.0) sha256=519e69150f75652e40bf736106cfbc8f0f73aa3fb6a65afe62fefa7f80b0f80f
